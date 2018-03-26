@@ -1,9 +1,61 @@
+[![Build Status](https://travis-ci.org/hufan-akari/seamless-scroll-polyfill.svg?branch=master)](https://travis-ci.org/hufan-akari/seamless-scroll-polyfill)
+
+This repo is forked from [iamdustan/smoothscroll](https://github.com/iamdustan/smoothscroll).
+
+## Installation and use
+
+```sh
+# npm
+npm install seamless-scroll-polyfill --save
+
+# yarn
+yarn add seamless-scroll-polyfill
+```
+
+```js
+import { polyfill } from 'seamless-scroll-polyfill';
+
+polyfill();
+```
+
+### Force polyfill implementation
+
+```js
+polyfill({ force: true });
+```
+
+### Use custom scroll time
+
+```js
+polyfill({ duration: 500 });
+```
+
+### Use as html script
+
+```html
+<script src="path/to/smoothscroll.min.js" ></script>
+<script>polyfill()</script>
+```
+
+or
+
+```html
+<script src="path/to/smoothscroll.min.js" data-polyfill="auto"></script>
+```
+
+or
+
+```html
+<script src="path/to/smoothscroll.min.js" data-polyfill="force"></script>
+```
+
+<blockquote>
+
 # Smooth Scroll behavior polyfill
 
 The [Scroll Behavior specification](https://developer.mozilla.org/en/docs/Web/CSS/scroll-behavior) has been introduced as an extension of the `Window` interface to allow for the developer to opt in to native smooth scrolling. To date this has only been implemented in _Firefox_.
 
 Check out all the methods covered here: https://iamdustan.github.io/smoothscroll
-
 
 ## Installation and use
 
@@ -30,7 +82,6 @@ In both cases, the script will detect if the spec is natively supported and take
 
 _The code requires requestAnimationFrame polyfill for browsers which don't support it._
 
-
 ### Force polyfill implementation
 
 If you prefer to always override the native scrolling methods, place this global variable before requiring the module or including the polyfill file.
@@ -40,7 +91,6 @@ window.__forceSmoothScrollPolyfill__ = true;
 ```
 
 _We strongly recommend not to do this unless your project strongly needs it._
-
 
 ## Contribute
 
@@ -56,25 +106,24 @@ _This is a polyfill, not library, so make sure the behavior you are introducing 
 
 On tests files we are using ES2015, but the polyfill is written in ES5 for browser compatibility.
 
-
 ### Watch tests
 
 If you want to watch tests as you write your code run `yarn test --watch`.
-
 
 ## Browser Support
 
 Successfully working in:
 
-- _natively supported in Chrome_
-- _natively supported in Firefox_
-- Safari 6+
-- Internet Explorer 9+
-- Microsoft Edge 12+
-- Opera Next
-
+* _natively supported in Chrome_
+* _natively supported in Firefox_
+* Safari 6+
+* Internet Explorer 9+
+* Microsoft Edge 12+
+* Opera Next
 
 ## Standards documentation
 
-- http://dev.w3.org/csswg/cssom-view
-- http://lists.w3.org/Archives/Public/www-style/2013Mar/0314.html
+* http://dev.w3.org/csswg/cssom-view
+* http://lists.w3.org/Archives/Public/www-style/2013Mar/0314.html
+
+</blockquote>

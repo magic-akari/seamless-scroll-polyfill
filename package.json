@@ -1,8 +1,8 @@
 {
   "title": "smoothscroll",
-  "name": "smoothscroll-polyfill",
+  "name": "seamless-scroll-polyfill",
   "description": "Smooth Scroll behavior polyfill",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "Dustan Kasten",
     "email": "dustan.kasten@gmail.com",
@@ -18,23 +18,23 @@
   "dependencies": {},
   "devDependencies": {
     "ava": "^0.25.0",
-    "eslint": "^4.7.1",
+    "eslint": "^4.19.1",
     "husky": "^0.14.3",
-    "lint-staged": "^6.0.1",
+    "lint-staged": "^6.1.1",
     "lodash.clonedeep": "^4.5.0",
-    "prettier": "^1.10.2",
-    "rollup": "^0.50.0",
-    "uglify-js": "^3.1.1"
+    "prettier": "^1.11.1",
+    "rollup": "^0.50.1",
+    "uglify-js": "^3.3.16"
   },
   "main": "dist/smoothscroll.js",
   "scripts": {
     "lint": "eslint {src,test}/**/*.js",
     "test": "ava test/smoothscroll.test.js --verbose",
-    "posttest": "yarn lint",
+    "posttest": "npm run lint",
     "precommit": "lint-staged",
     "prebuild": "npm test",
     "build": "rollup -c rollup.config.js",
-    "preminify": "yarn build",
+    "preminify": "npm run build",
     "minify": "uglifyjs dist/smoothscroll.js -c -m -o dist/smoothscroll.min.js --verbose",
     "listdiff": "prettier --list-different {src,test}/**/*.js",
     "format": "prettier --write {src,test}/**/*.js"
@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamdustan/smoothscroll.git"
+    "url": "git+https://github.com/hufan-akari/seamless-scroll-polyfill.git"
   },
   "keywords": [
     "smooth",
@@ -62,7 +62,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/iamdustan/smoothscroll/issues"
+    "url": "https://github.com/hufan-akari/seamless-scroll-polyfill/issues"
   },
-  "homepage": "https://iamdustan.com/smoothscroll"
+  "homepage": "https://github.com/hufan-akari/seamless-scroll-polyfill"
 }

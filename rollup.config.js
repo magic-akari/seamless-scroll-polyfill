@@ -12,5 +12,6 @@ export default {
   ],
   indent: true,
   strict: false,
-  banner: `/* ${ pkg.title } v${ pkg.version } - ${ year } - Dustan Kasten, Jeremias Menichelli - MIT License */`
+  banner: `/* ${ pkg.title } v${ pkg.version } - ${ year } - Dustan Kasten, Jeremias Menichelli - MIT License */`,
+  footer: `/* modified by 阿卡琳 - MIT License */`
 };

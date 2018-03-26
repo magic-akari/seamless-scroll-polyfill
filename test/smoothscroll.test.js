@@ -92,9 +92,7 @@ test('polyfill overrides native methods when implementation is forced', t => {
   document.documentElement.style.scrollBehavior = 'auto';
 
   // force implementation
-  window.__forceSmoothScrollPolyfill__ = true;
-
-  smoothscroll.polyfill();
+  smoothscroll.polyfill({ force: true });
 
   // global methods were forcefully replaced
   t.not(window.scroll, originalWindowScroll);
