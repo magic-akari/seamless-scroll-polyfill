@@ -180,6 +180,9 @@ function polyfill(option) {
    * @returns {undefined}
    */
   function step(context) {
+    if (userInterrupt) {
+      return;
+    }
     var time = now();
     var value;
     var currentX;
@@ -201,6 +204,21 @@ function polyfill(option) {
     if (currentX !== context.x || currentY !== context.y) {
       w.requestAnimationFrame(step.bind(w, context));
     }
+  }
+
+  var userInterrupt = false;
+  var timeOutHandler;
+
+  function userIsScrilling() {
+    userInterrupt = true;
+    clearTimeout(timeOutHandler);
+    timeOutHandler = setTimeout(userEndScroll, SCROLL_TIME);
+  }
+
+  function userEndScroll() {
+    userInterrupt = false;
+    w.removeEventListener('wheel', userIsScrilling);
+    w.removeEventListener('touchmove', userIsScrilling);
   }
 
   /**
@@ -230,6 +248,9 @@ function polyfill(option) {
       startY = el.scrollTop;
       method = scrollElement;
     }
+
+    w.addEventListener('wheel', userIsScrilling, { passive: true });
+    w.addEventListener('touchmove', userIsScrilling, { passive: true });
 
     // scroll looping over a frame
     step({
