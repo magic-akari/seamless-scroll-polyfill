@@ -217,8 +217,6 @@ function polyfill(option) {
 
   function userEndScroll() {
     userInterrupt = false;
-    w.removeEventListener('wheel', userIsScrilling);
-    w.removeEventListener('touchmove', userIsScrilling);
   }
 
   /**
@@ -249,8 +247,14 @@ function polyfill(option) {
       method = scrollElement;
     }
 
-    w.addEventListener('wheel', userIsScrilling, { passive: true });
-    w.addEventListener('touchmove', userIsScrilling, { passive: true });
+    w.addEventListener('wheel', userIsScrilling, {
+      passive: true,
+      once: true
+    });
+    w.addEventListener('touchmove', userIsScrilling, {
+      passive: true,
+      once: true
+    });
 
     // scroll looping over a frame
     step({
