@@ -217,6 +217,8 @@ function polyfill(option) {
 
   function userEndScroll() {
     userInterrupt = false;
+    w.removeEventListener('wheel', userIsScrilling);
+    w.removeEventListener('touchmove', userIsScrilling);
   }
 
   /**
@@ -521,7 +523,11 @@ function polyfill(option) {
 }
 
 if (typeof exports === 'object' && typeof module !== 'undefined') {
-  module.exports = { polyfill: polyfill };
+  module.exports = {
+    polyfill: polyfill,
+    seamless: polyfill,
+    default: polyfill
+  };
 } else if (typeof define === 'function' && define.amd) {
   define(polyfill);
 } else {
@@ -543,5 +549,5 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
       });
     }
   }
-  global.polyfill = polyfill;
+  global.seamless = polyfill;
 }

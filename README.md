@@ -34,7 +34,7 @@ polyfill({ duration: 500 });
 
 ```html
 <script src="path/to/smoothscroll.min.js" ></script>
-<script>polyfill()</script>
+<script>seamless()</script>
 ```
 
 or

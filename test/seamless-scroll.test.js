@@ -1,5 +1,5 @@
 import clone from 'lodash.clonedeep';
-import smoothscroll from '../src/smoothscroll';
+import smoothscroll from '../src/seamless-scroll';
 import test from 'ava';
 
 // mock window object
