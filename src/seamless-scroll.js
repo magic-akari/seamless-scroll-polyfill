@@ -555,6 +555,7 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
         force: force === 'force',
         duration: duration
       });
+      return;
     }
   }
   global.seamless = polyfill;
