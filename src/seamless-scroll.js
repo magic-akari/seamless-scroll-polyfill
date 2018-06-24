@@ -544,6 +544,7 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
     (document.currentScript ||
       document.querySelector('script[data-polyfill]') ||
       document.querySelector('script[data-duration]'));
+  var called = false;
 
   if (cs) {
     var force = cs.dataset.polyfill;
@@ -555,7 +556,10 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
         force: force === 'force',
         duration: duration
       });
+      called = true;
     }
   }
-  global.seamless = polyfill;
+  if (!called) {
+    global.seamless = polyfill;
+  }
 }
