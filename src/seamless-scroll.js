@@ -545,6 +545,7 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
       document.querySelector('script[data-polyfill]') ||
       document.querySelector('script[data-duration]'));
   var called = false;
+
   if (cs) {
     var force = cs.dataset.polyfill;
     var _duration = ~~cs.dataset.duration;
