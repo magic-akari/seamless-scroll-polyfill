@@ -1,6 +1,8 @@
-import clone from 'lodash.clonedeep';
-import smoothscroll from '../src/seamless-scroll';
-import test from 'ava';
+import clone from "lodash.clonedeep";
+import { seamless } from "../src/seamless.ts";
+import { test } from "ava";
+
+// tslint:disable:object-literal-sort-keys
 
 // mock window object
 const mockedWindow = {
@@ -8,25 +10,25 @@ const mockedWindow = {
     prototype: {
       scroll: f => f,
       scrollBy: f => f,
-      scrollIntoView: f => f
-    }
+      scrollIntoView: f => f,
+    },
   },
   scroll: f => f,
   scrollBy: f => f,
   navigator: {
-    userAgent: 'test'
+    userAgent: "test",
   },
   performance: {
-    now: f => f
+    now: f => f,
   },
-  requestAnimationFrame: f => f
+  requestAnimationFrame: f => f,
 };
 
 // mock document object
 const mockedDocument = {
   documentElement: {
-    style: {}
-  }
+    style: {},
+  },
 };
 
 // expose clean browser objects as global
@@ -41,18 +43,18 @@ test.afterEach.always(() => {
   global.document = null;
 });
 
-test('polyfill is available as method', t => {
-  t.truthy(typeof smoothscroll.polyfill === 'function');
+test("polyfill is available as method", t => {
+  t.truthy(typeof seamless === "function");
 });
 
-test('polyfill overrides native methods when polyfill is not supported', t => {
+test("polyfill overrides native methods when polyfill is not supported", t => {
   const originalWindowScroll = window.scroll;
   const originalWindowScrollBy = window.scrollBy;
   const originalElScroll = window.Element.prototype.scroll;
   const originalElScrollBy = window.Element.prototype.scrollBy;
   const originalElScrollIntoView = window.Element.prototype.scrollIntoView;
 
-  smoothscroll.polyfill();
+  seamless();
 
   // global methods were replaced
   t.not(window.scroll, originalWindowScroll);
@@ -62,7 +64,7 @@ test('polyfill overrides native methods when polyfill is not supported', t => {
   t.not(window.Element.prototype.scrollIntoView, originalElScrollIntoView);
 });
 
-test('polyfill bails out when polyfill is supported', t => {
+test("polyfill bails out when polyfill is supported", t => {
   const originalWindowScroll = window.scroll;
   const originalWindowScrollBy = window.scrollBy;
   const originalElScroll = window.Element.prototype.scroll;
@@ -70,9 +72,9 @@ test('polyfill bails out when polyfill is supported', t => {
   const originalElScrollIntoView = window.Element.prototype.scrollIntoView;
 
   // global methods remained untouched
-  document.documentElement.style.scrollBehavior = 'auto';
+  document.documentElement.style.scrollBehavior = "auto";
 
-  smoothscroll.polyfill();
+  seamless();
 
   t.is(window.scroll, originalWindowScroll);
   t.is(window.scrollBy, originalWindowScrollBy);
@@ -81,7 +83,7 @@ test('polyfill bails out when polyfill is supported', t => {
   t.is(window.Element.prototype.scrollIntoView, originalElScrollIntoView);
 });
 
-test('polyfill overrides native methods when implementation is forced', t => {
+test("polyfill overrides native methods when implementation is forced", t => {
   const originalWindowScroll = window.scroll;
   const originalWindowScrollBy = window.scrollBy;
   const originalElScroll = window.Element.prototype.scroll;
@@ -89,10 +91,10 @@ test('polyfill overrides native methods when implementation is forced', t => {
   const originalElScrollIntoView = window.Element.prototype.scrollIntoView;
 
   // simulate smooth scroll spec native support
-  document.documentElement.style.scrollBehavior = 'auto';
+  document.documentElement.style.scrollBehavior = "auto";
 
   // force implementation
-  smoothscroll.polyfill({ force: true });
+  seamless({ force: true });
 
   // global methods were forcefully replaced
   t.not(window.scroll, originalWindowScroll);

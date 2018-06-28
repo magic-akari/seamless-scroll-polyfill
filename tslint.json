@@ -1,0 +1,10 @@
+{
+  "defaultSeverity": "error",
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "rules": {
+    "object-literal-sort-keys": false,
+    "no-bitwise": false,
+    "prettier": true
+  }
+}

@@ -13,40 +13,33 @@ yarn add seamless-scroll-polyfill
 ```
 
 ```js
-import { polyfill } from 'seamless-scroll-polyfill';
+import { seamless } from 'seamless-scroll-polyfill';
 
-polyfill();
+seamless();
 ```
 
 ### Force polyfill implementation
 
 ```js
-polyfill({ force: true });
+seamless({ force: true });
 ```
 
 ### Use custom scroll time
 
 ```js
-polyfill({ duration: 500 });
+seamless({ duration: 500 });
 ```
 
 ### Use as html script
 
 ```html
-<script src="path/to/smoothscroll.min.js" ></script>
-<script>seamless()</script>
+<script src="path/to/seamless.browser.min.js" ></script>
 ```
 
 or
 
 ```html
-<script src="path/to/smoothscroll.min.js" data-polyfill="auto"></script>
-```
-
-or
-
-```html
-<script src="path/to/smoothscroll.min.js" data-polyfill="force"></script>
+<script src="path/to/seamless.browser.min.js" data-polyfill="force"></script>
 ```
 
 <blockquote>
