@@ -1,17 +1,77 @@
-const pkg = require('./package.json');
-const year = new Date().getFullYear();
+import typescript from "rollup-plugin-typescript2";
+import babel from "rollup-plugin-babel";
 
-export default {
-  input: 'src/seamless-scroll.js',
-  output: {
-    file: 'dist/seamless-scroll.js',
-    format: 'iife'
+const input = "src/seamless.ts";
+
+const tsconfigOverride = {
+  compilerOptions: {
+    target: "es2015",
+    module: "esnext",
+    lib: ["dom", "es2015"],
+    strict: true,
+    sourceMap: true,
+    downlevelIteration: true,
   },
-  globals: ['window'],
-  indent: true,
-  strict: false,
-  banner: `/* ${pkg.title} v${
-    pkg.version
-  } - ${year} - Dustan Kasten, Jeremias Menichelli - MIT License */`,
-  footer: '/* modified by 阿卡琳 - MIT License */'
 };
+
+const plugins = [
+  typescript({
+    tsconfigOverride,
+  }),
+];
+
+export default [
+  {
+    input,
+    output: [
+      {
+        file: "dist/seamless.js",
+        name: "seamless",
+        format: "umd",
+        sourcemap: true,
+      },
+      {
+        file: "dist/seamless.esm.js",
+        format: "es",
+        sourcemap: true,
+      },
+    ],
+    plugins,
+  },
+  {
+    input,
+    output: [
+      {
+        file: "dist/seamless.min.js",
+        name: "seamless",
+        format: "umd",
+        sourcemap: true,
+      },
+      {
+        file: "dist/seamless.esm.min.js",
+        format: "es",
+        sourcemap: true,
+      },
+    ],
+    plugins: [...plugins, babel()],
+  },
+  {
+    input: "src/auto-polyfill.js",
+    output: {
+      file: "dist/seamless.browser.min.js",
+      format: "iife",
+      sourcemap: true,
+    },
+    plugins: [
+      typescript({
+        tsconfigOverride: {
+          compilerOptions: {
+            ...tsconfigOverride.compilerOptions,
+            target: "es5",
+          },
+        },
+      }),
+      babel(),
+    ],
+  },
+];

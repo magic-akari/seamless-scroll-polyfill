@@ -17,38 +17,45 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "ava": "^0.25.0",
-    "eslint": "^4.19.1",
-    "husky": "^0.14.3",
+    "@babel/core": "^7.0.0-beta.51",
+    "ava": "1.0.0-beta.6",
+    "babel-minify": "^0.4.3",
+    "babel-preset-minify": "^0.4.3",
     "lint-staged": "^6.1.1",
     "lodash.clonedeep": "^4.5.0",
-    "prettier": "^1.11.1",
-    "rollup": "^0.50.1",
-    "uglify-js": "^3.3.16"
+    "prettier": "^1.13.5",
+    "rollup": "^0.61.2",
+    "rollup-plugin-babel": "^4.0.0-beta.5",
+    "rollup-plugin-typescript2": "^0.15.1",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^2.9.2"
   },
-  "main": "dist/seamless-scroll.js",
+  "main": "dist/seamless.js",
+  "umd:main": "dist/seamless.js",
+  "jsnext:main": "dist/seamless.esm.js",
+  "module": "dist/seamless.esm.js",
+  "browser": "dist/seamless.browser.min.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "lint": "eslint {src,test}/**/*.js",
-    "test": "ava test/seamless-scroll.test.js --verbose",
-    "posttest": "npm run lint",
+    "lint": "tslint {src,test}/**/*.{js,ts}",
+    "test": "ava -v",
     "precommit": "lint-staged",
-    "prebuild": "npm test",
     "build": "rollup -c rollup.config.js",
-    "preminify": "npm run build",
-    "minify": "uglifyjs dist/seamless-scroll.js -c -m -o dist/seamless-scroll.min.js --verbose",
-    "listdiff": "prettier --list-different {src,test}/**/*.js",
-    "format": "prettier --write {src,test}/**/*.js"
+    "listdiff": "prettier --list-different {src,test}/**/*.{js,ts}",
+    "format": "prettier --write {src,test}/**/*.{js,ts}"
   },
   "lint-staged": {
     "linters": {
-      "{src,test}/**/*.js": [
+      "{src,test}/**/*.{js,ts}": [
         "prettier --list-different",
         "git add"
       ]
     }
-  },
-  "prettier": {
-    "singleQuote": true
   },
   "repository": {
     "type": "git",
