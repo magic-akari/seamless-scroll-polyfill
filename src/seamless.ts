@@ -61,9 +61,7 @@ export const seamless = ({
     return 0.5 * (1 - Math.cos(Math.PI * k));
   };
 
-  const shouldBailOut = (
-    firstArg: number | { behavior?: "auto" | "instant" | "smooth" },
-  ): boolean => {
+  const shouldBailOut = (firstArg?: number | ScrollOptions): boolean => {
     if (
       firstArg === null ||
       typeof firstArg !== "object" ||
@@ -176,9 +174,9 @@ export const seamless = ({
   }
 
   const seamlessScroll = (el: Element, x: number, y: number) => {
-    let scrollable;
-    let startX;
-    let startY;
+    let scrollable: Element | Window;
+    let startX: number;
+    let startY: number;
     let method;
     const startTime = now();
 
@@ -218,65 +216,67 @@ export const seamless = ({
 
   // ORIGINAL METHODS OVERRIDES
   // w.scroll and w.scrollTo
-  win.scroll = win.scrollTo = (...args: any[]) => {
+  function winScrollTo(options?: ScrollToOptions): void;
+  function winScrollTo(x: number, y: number): void;
+  function winScrollTo(): void {
     // avoid action when no arguments are passed
-    if (args[0] === undefined) {
+    if (arguments[0] === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(args[0]) === true) {
+    if (shouldBailOut(arguments[0]) === true) {
       original.scroll.call(
         win,
-        args[0].left !== undefined
-          ? args[0].left
-          : typeof args[0] !== "object"
-            ? args[0]
+        arguments[0].left !== undefined
+          ? arguments[0].left
+          : typeof arguments[0] !== "object"
+            ? arguments[0]
             : win.scrollX || win.pageXOffset,
         // use top prop, second argument if present or fallback to scrollY
-        args[0].top !== undefined
-          ? args[0].top
-          : args[1] !== undefined
-            ? args[1]
+        arguments[0].top !== undefined
+          ? arguments[0].top
+          : arguments[1] !== undefined
+            ? arguments[1]
             : win.scrollY || win.pageYOffset,
       );
 
       return;
     }
 
+    const {
+      left = win.scrollX || win.pageXOffset,
+      top = win.scrollY || win.pageYOffset,
+    } = arguments[0] as ScrollToOptions;
+
     // LET THE SMOOTHNESS BEGIN!
-    seamlessScroll.call(
-      win,
-      doc.body,
-      args[0].left !== undefined
-        ? ~~args[0].left
-        : win.scrollX || win.pageXOffset,
-      args[0].top !== undefined
-        ? ~~args[0].top
-        : win.scrollY || win.pageYOffset,
-    );
-  };
+    seamlessScroll.call(win, doc.body, ~~left, ~~top);
+  }
+
+  win.scroll = win.scrollTo = winScrollTo;
 
   // w.scrollBy
-  win.scrollBy = (...args: any[]) => {
+  function winScrollBy(options?: ScrollToOptions): void;
+  function winScrollBy(x?: number, y?: number): void;
+  function winScrollBy(): void {
     // avoid action when no arguments are passed
-    if (args[0] === undefined) {
+    if (arguments[0] === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(args[0])) {
+    if (shouldBailOut(arguments[0])) {
       original.scrollBy.call(
         win,
-        args[0].left !== undefined
-          ? args[0].left
-          : typeof args[0] !== "object"
-            ? args[0]
+        arguments[0].left !== undefined
+          ? arguments[0].left
+          : typeof arguments[0] !== "object"
+            ? arguments[0]
             : 0,
-        args[0].top !== undefined
-          ? args[0].top
-          : args[1] !== undefined
-            ? args[1]
+        arguments[0].top !== undefined
+          ? arguments[0].top
+          : arguments[1] !== undefined
+            ? arguments[1]
             : 0,
       );
 
@@ -287,13 +287,16 @@ export const seamless = ({
     seamlessScroll.call(
       win,
       doc.body,
-      ~~args[0].left + (win.scrollX || win.pageXOffset),
-      ~~args[0].top + (win.scrollY || win.pageYOffset),
+      ~~arguments[0].left + (win.scrollX || win.pageXOffset),
+      ~~arguments[0].top + (win.scrollY || win.pageYOffset),
     );
-  };
+  }
+  win.scrollBy = winScrollBy;
 
   // Element.prototype.scroll and Element.prototype.scrollTo
-  win.Element.prototype.scroll = win.Element.prototype.scrollTo = function() {
+  function eleScrollTo(options?: ScrollToOptions): void;
+  function eleScrollTo(x: number, y: number): void;
+  function eleScrollTo(this: Element): void {
     // avoid action when no arguments are passed
     if (arguments[0] === undefined) {
       return;
@@ -325,20 +328,20 @@ export const seamless = ({
       return;
     }
 
-    const left = arguments[0].left;
-    const top = arguments[0].top;
+    const {
+      left = this.scrollLeft,
+      top = this.scrollTop,
+    } = arguments[0] as ScrollToOptions;
 
     // LET THE SMOOTHNESS BEGIN!
-    seamlessScroll.call(
-      this,
-      this,
-      typeof left === "undefined" ? this.scrollLeft : ~~left,
-      typeof top === "undefined" ? this.scrollTop : ~~top,
-    );
-  };
+    seamlessScroll.call(this, this, ~~left, ~~top);
+  }
+  win.Element.prototype.scroll = win.Element.prototype.scrollTo = eleScrollTo;
 
   // Element.prototype.scrollBy
-  win.Element.prototype.scrollBy = function() {
+  function eleScrollBy(options?: ScrollToOptions): void;
+  function eleScrollBy(x: number, y: number): void;
+  function eleScrollBy(this: Element) {
     // avoid action when no arguments are passed
     if (arguments[0] === undefined) {
       return;
@@ -364,16 +367,81 @@ export const seamless = ({
       top: ~~arguments[0].top + this.scrollTop,
       behavior: arguments[0].behavior,
     });
+  }
+  win.Element.prototype.scrollBy = eleScrollBy;
+
+  const enum ScrollAlignment {
+    AlignToEdgeIfNeeded,
+    AlignCenterAlways,
+    AlignTopAlways,
+    AlignBottomAlways,
+    AlignLeftAlways,
+    AlignRightAlways,
+  }
+  const enum ScrollOrientation {
+    HorizontalScroll,
+    VerticalScroll,
+  }
+
+  // https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/dom/element.cc?l=498-532&rcl=b0f7ee7dfea5ecef6850808aefd4beebc753bd06
+  const ToPhysicalAlignment = (
+    options: ScrollIntoViewOptions,
+    axis: ScrollOrientation,
+    isHorizontalWritingMode: boolean,
+    isFlippedBlocksMode: boolean,
+  ): ScrollAlignment => {
+    const alignment =
+      (axis === ScrollOrientation.HorizontalScroll &&
+        isHorizontalWritingMode) ||
+      (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
+        ? options.inline
+        : options.block;
+
+    if (alignment === "center") {
+      return ScrollAlignment.AlignCenterAlways;
+    }
+    if (alignment === "nearest") {
+      return ScrollAlignment.AlignToEdgeIfNeeded;
+    }
+    if (alignment === "start") {
+      return axis === ScrollOrientation.HorizontalScroll
+        ? isFlippedBlocksMode
+          ? ScrollAlignment.AlignRightAlways
+          : ScrollAlignment.AlignLeftAlways
+        : ScrollAlignment.AlignTopAlways;
+    }
+    if (alignment === "end") {
+      return axis === ScrollOrientation.HorizontalScroll
+        ? isFlippedBlocksMode
+          ? ScrollAlignment.AlignLeftAlways
+          : ScrollAlignment.AlignRightAlways
+        : ScrollAlignment.AlignBottomAlways;
+    }
+
+    // Default values
+    if (isHorizontalWritingMode) {
+      return axis === ScrollOrientation.HorizontalScroll
+        ? ScrollAlignment.AlignToEdgeIfNeeded
+        : ScrollAlignment.AlignTopAlways;
+    }
+    return axis === ScrollOrientation.HorizontalScroll
+      ? ScrollAlignment.AlignLeftAlways
+      : ScrollAlignment.AlignToEdgeIfNeeded;
   };
 
   // Element.prototype.scrollIntoView
-  win.Element.prototype.scrollIntoView = function() {
+  win.Element.prototype.scrollIntoView = function(
+    this: Element,
+    arg?: boolean | ScrollIntoViewOptions,
+  ): void {
     // avoid smooth behavior if not required
-    if (shouldBailOut(arguments[0]) === true) {
-      original.scrollIntoView.call(
-        this,
-        arguments[0] === undefined ? true : arguments[0],
-      );
+    if (
+      arg === undefined ||
+      arg === true ||
+      arg === false ||
+      shouldBailOut(arg) === true
+    ) {
+      original.scrollIntoView.call(this, arg === undefined ? true : arg);
 
       return;
     }
@@ -383,6 +451,23 @@ export const seamless = ({
     const parentRects = scrollableParent.getBoundingClientRect();
     const clientRects = this.getBoundingClientRect();
 
+    const { writingMode } = win.getComputedStyle(this);
+
+    const isHorizontalWritingMode = writingMode === "horizontal-tb";
+    const isFlippedBlocksWritingMode = writingMode === "vertical-rl";
+    const alignX = ToPhysicalAlignment(
+      arg,
+      ScrollOrientation.HorizontalScroll,
+      isHorizontalWritingMode,
+      isFlippedBlocksWritingMode,
+    );
+    const alignY = ToPhysicalAlignment(
+      arg,
+      ScrollOrientation.VerticalScroll,
+      isHorizontalWritingMode,
+      isFlippedBlocksWritingMode,
+    );
+
     let cx = 0;
     let cy = 0;
     let dx = 0;
@@ -390,16 +475,13 @@ export const seamless = ({
     let px = 0;
     let py = 0;
 
-    const inline = arguments[0].inline || "nearest";
-    const block = arguments[0].block || "start";
-
-    switch (inline) {
-      case "start":
+    switch (alignX) {
+      case ScrollAlignment.AlignLeftAlways:
         cx = clientRects.left - parentRects.left;
         px = parentRects.left;
         dx = clientRects.left;
         break;
-      case "center":
+      case ScrollAlignment.AlignCenterAlways:
         cx =
           clientRects.left -
           parentRects.left +
@@ -408,29 +490,43 @@ export const seamless = ({
         px = (parentRects.left + parentRects.right - win.innerWidth) / 2;
         dx = (clientRects.left + clientRects.right - win.innerWidth) / 2;
         break;
-      case "end":
+      case ScrollAlignment.AlignRightAlways:
         cx = clientRects.right - parentRects.right;
         px = parentRects.right - win.innerWidth;
         dx = clientRects.right - win.innerWidth;
         break;
-      case "nearest":
-        // There is still something to do
-        // https://drafts.csswg.org/cssom-view/#element-scrolling-members
-        cx = 0;
-        px = 0;
-        dx = 0;
-        break;
-      default:
+      case ScrollAlignment.AlignToEdgeIfNeeded:
+        {
+          if (
+            (clientRects.left < parentRects.left &&
+              clientRects.width < parentRects.width) ||
+            (clientRects.right > parentRects.right &&
+              clientRects.width > parentRects.width)
+          ) {
+            cx = clientRects.left - parentRects.left;
+            px = parentRects.left;
+            dx = clientRects.left;
+          } else if (
+            (clientRects.left < parentRects.left &&
+              clientRects.width > parentRects.width) ||
+            (clientRects.right > parentRects.right &&
+              clientRects.width < parentRects.width)
+          ) {
+            cx = clientRects.right - parentRects.right;
+            px = parentRects.right - win.innerWidth;
+            dx = clientRects.right - win.innerWidth;
+          }
+        }
         break;
     }
 
-    switch (block) {
-      case "start":
+    switch (alignY) {
+      case ScrollAlignment.AlignTopAlways:
         cy = clientRects.top - parentRects.top;
         py = parentRects.top;
         dy = clientRects.top;
         break;
-      case "center":
+      case ScrollAlignment.AlignCenterAlways:
         cy =
           clientRects.top -
           parentRects.top +
@@ -439,17 +535,33 @@ export const seamless = ({
         py = (parentRects.top + parentRects.bottom - win.innerHeight) / 2;
         dy = (clientRects.top + clientRects.bottom - win.innerHeight) / 2;
         break;
-      case "end":
+      case ScrollAlignment.AlignBottomAlways:
         cy = clientRects.bottom - parentRects.bottom;
         py = parentRects.bottom - win.innerHeight;
         dy = clientRects.bottom - win.innerHeight;
         break;
-      case "nearest":
-        cy = 0;
-        py = 0;
-        dy = 0;
-        break;
-      default:
+      case ScrollAlignment.AlignToEdgeIfNeeded:
+        {
+          if (
+            (clientRects.top < parentRects.top &&
+              clientRects.height < parentRects.height) ||
+            (clientRects.bottom > parentRects.bottom &&
+              clientRects.height > parentRects.height)
+          ) {
+            cy = clientRects.top - parentRects.top;
+            py = parentRects.top;
+            dy = clientRects.top;
+          } else if (
+            (clientRects.top < parentRects.top &&
+              clientRects.height > parentRects.height) ||
+            (clientRects.bottom > parentRects.bottom &&
+              clientRects.height < parentRects.height)
+          ) {
+            cy = clientRects.bottom - parentRects.bottom;
+            py = parentRects.bottom - win.innerHeight;
+            dy = clientRects.bottom - win.innerHeight;
+          }
+        }
         break;
     }
 
