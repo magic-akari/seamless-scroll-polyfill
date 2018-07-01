@@ -218,26 +218,26 @@ export const seamless = ({
   // w.scroll and w.scrollTo
   function winScrollTo(options?: ScrollToOptions): void;
   function winScrollTo(x: number, y: number): void;
-  function winScrollTo(): void {
+  function winScrollTo(firstArg?: any, secondArg?: any): void {
     // avoid action when no arguments are passed
-    if (arguments[0] === undefined) {
+    if (firstArg === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(arguments[0]) === true) {
+    if (shouldBailOut(firstArg) === true) {
       original.scroll.call(
         win,
-        arguments[0].left !== undefined
-          ? arguments[0].left
-          : typeof arguments[0] !== "object"
-            ? arguments[0]
+        firstArg.left !== undefined
+          ? firstArg.left
+          : typeof firstArg !== "object"
+            ? firstArg
             : win.scrollX || win.pageXOffset,
         // use top prop, second argument if present or fallback to scrollY
-        arguments[0].top !== undefined
-          ? arguments[0].top
-          : arguments[1] !== undefined
-            ? arguments[1]
+        firstArg.top !== undefined
+          ? firstArg.top
+          : secondArg !== undefined
+            ? secondArg
             : win.scrollY || win.pageYOffset,
       );
 
@@ -247,7 +247,7 @@ export const seamless = ({
     const {
       left = win.scrollX || win.pageXOffset,
       top = win.scrollY || win.pageYOffset,
-    } = arguments[0] as ScrollToOptions;
+    } = firstArg as ScrollToOptions;
 
     // LET THE SMOOTHNESS BEGIN!
     seamlessScroll.call(win, doc.body, ~~left, ~~top);
@@ -258,25 +258,25 @@ export const seamless = ({
   // w.scrollBy
   function winScrollBy(options?: ScrollToOptions): void;
   function winScrollBy(x?: number, y?: number): void;
-  function winScrollBy(): void {
+  function winScrollBy(firstArg?: any, secondArg?: any): void {
     // avoid action when no arguments are passed
-    if (arguments[0] === undefined) {
+    if (firstArg === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(arguments[0])) {
+    if (shouldBailOut(firstArg)) {
       original.scrollBy.call(
         win,
-        arguments[0].left !== undefined
-          ? arguments[0].left
-          : typeof arguments[0] !== "object"
-            ? arguments[0]
+        firstArg.left !== undefined
+          ? firstArg.left
+          : typeof firstArg !== "object"
+            ? firstArg
             : 0,
-        arguments[0].top !== undefined
-          ? arguments[0].top
-          : arguments[1] !== undefined
-            ? arguments[1]
+        firstArg.top !== undefined
+          ? firstArg.top
+          : secondArg !== undefined
+            ? secondArg
             : 0,
       );
 
@@ -287,8 +287,8 @@ export const seamless = ({
     seamlessScroll.call(
       win,
       doc.body,
-      ~~arguments[0].left + (win.scrollX || win.pageXOffset),
-      ~~arguments[0].top + (win.scrollY || win.pageYOffset),
+      ~~firstArg.left + (win.scrollX || win.pageXOffset),
+      ~~firstArg.top + (win.scrollY || win.pageYOffset),
     );
   }
   win.scrollBy = winScrollBy;
@@ -296,32 +296,32 @@ export const seamless = ({
   // Element.prototype.scroll and Element.prototype.scrollTo
   function eleScrollTo(options?: ScrollToOptions): void;
   function eleScrollTo(x: number, y: number): void;
-  function eleScrollTo(this: Element): void {
+  function eleScrollTo(this: Element, firstArg?: any, secondArg?: any): void {
     // avoid action when no arguments are passed
-    if (arguments[0] === undefined) {
+    if (firstArg === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(arguments[0]) === true) {
+    if (shouldBailOut(firstArg) === true) {
       // if one number is passed, throw error to match Firefox implementation
-      if (typeof arguments[0] === "number" && arguments[1] === undefined) {
+      if (typeof firstArg === "number" && secondArg === undefined) {
         throw new SyntaxError("Value could not be converted");
       }
 
       original.elementScroll.call(
         this,
         // use left prop, first number argument or fallback to scrollLeft
-        arguments[0].left !== undefined
-          ? ~~arguments[0].left
-          : typeof arguments[0] !== "object"
-            ? ~~arguments[0]
+        firstArg.left !== undefined
+          ? ~~firstArg.left
+          : typeof firstArg !== "object"
+            ? ~~firstArg
             : this.scrollLeft,
         // use top prop, second argument or fallback to scrollTop
-        arguments[0].top !== undefined
-          ? ~~arguments[0].top
-          : arguments[1] !== undefined
-            ? ~~arguments[1]
+        firstArg.top !== undefined
+          ? ~~firstArg.top
+          : secondArg !== undefined
+            ? ~~secondArg
             : this.scrollTop,
       );
 
@@ -331,7 +331,7 @@ export const seamless = ({
     const {
       left = this.scrollLeft,
       top = this.scrollTop,
-    } = arguments[0] as ScrollToOptions;
+    } = firstArg as ScrollToOptions;
 
     // LET THE SMOOTHNESS BEGIN!
     seamlessScroll.call(this, this, ~~left, ~~top);
@@ -341,31 +341,31 @@ export const seamless = ({
   // Element.prototype.scrollBy
   function eleScrollBy(options?: ScrollToOptions): void;
   function eleScrollBy(x: number, y: number): void;
-  function eleScrollBy(this: Element) {
+  function eleScrollBy(this: Element, firstArg?: any, secondArg?: any) {
     // avoid action when no arguments are passed
-    if (arguments[0] === undefined) {
+    if (firstArg === undefined) {
       return;
     }
 
     // avoid smooth behavior if not required
-    if (shouldBailOut(arguments[0]) === true) {
+    if (shouldBailOut(firstArg) === true) {
       original.elementScroll.call(
         this,
-        arguments[0].left !== undefined
-          ? ~~arguments[0].left + this.scrollLeft
-          : ~~arguments[0] + this.scrollLeft,
-        arguments[0].top !== undefined
-          ? ~~arguments[0].top + this.scrollTop
-          : ~~arguments[1] + this.scrollTop,
+        firstArg.left !== undefined
+          ? ~~firstArg.left + this.scrollLeft
+          : ~~firstArg + this.scrollLeft,
+        firstArg.top !== undefined
+          ? ~~firstArg.top + this.scrollTop
+          : ~~secondArg + this.scrollTop,
       );
 
       return;
     }
 
     this.scroll({
-      left: ~~arguments[0].left + this.scrollLeft,
-      top: ~~arguments[0].top + this.scrollTop,
-      behavior: arguments[0].behavior,
+      left: ~~firstArg.left + this.scrollLeft,
+      top: ~~firstArg.top + this.scrollTop,
+      behavior: firstArg.behavior,
     });
   }
   win.Element.prototype.scrollBy = eleScrollBy;
@@ -451,6 +451,26 @@ export const seamless = ({
     const parentRects = scrollableParent.getBoundingClientRect();
     const clientRects = this.getBoundingClientRect();
 
+    const {
+      left: parentLeft,
+      right: parentRight,
+      top: parentTop,
+      bottom: parentBottom,
+      height: parentHeight,
+      width: parentWidth,
+    } = parentRects;
+
+    const {
+      left: clientLeft,
+      right: clientRight,
+      top: clientTop,
+      bottom: clientBottom,
+      height: clientHeight,
+      width: clientWidth,
+    } = clientRects;
+
+    const { innerHeight: winInnerHeight, innerWidth: winInnerWidth } = win;
+
     const { writingMode } = win.getComputedStyle(this);
 
     const isHorizontalWritingMode = writingMode === "horizontal-tb";
@@ -477,90 +497,102 @@ export const seamless = ({
 
     switch (alignX) {
       case ScrollAlignment.AlignLeftAlways:
-        cx = clientRects.left - parentRects.left;
-        px = parentRects.left;
-        dx = clientRects.left;
+        cx = clientLeft - parentLeft;
+        px = parentLeft;
+        dx = clientLeft;
         break;
       case ScrollAlignment.AlignCenterAlways:
-        cx =
-          clientRects.left -
-          parentRects.left +
-          clientRects.width / 2 -
-          parentRects.width / 2;
-        px = (parentRects.left + parentRects.right - win.innerWidth) / 2;
-        dx = (clientRects.left + clientRects.right - win.innerWidth) / 2;
+        cx = clientLeft - parentLeft + clientWidth / 2 - parentWidth / 2;
+        px = (parentLeft + parentRight - winInnerWidth) / 2;
+        dx = (clientLeft + clientRight - winInnerWidth) / 2;
         break;
       case ScrollAlignment.AlignRightAlways:
-        cx = clientRects.right - parentRects.right;
-        px = parentRects.right - win.innerWidth;
-        dx = clientRects.right - win.innerWidth;
+        cx = clientRight - parentRight;
+        px = parentRight - winInnerWidth;
+        dx = clientRight - winInnerWidth;
         break;
       case ScrollAlignment.AlignToEdgeIfNeeded:
         {
+          let targetStart = clientLeft + cx;
           if (
-            (clientRects.left < parentRects.left &&
-              clientRects.width < parentRects.width) ||
-            (clientRects.right > parentRects.right &&
-              clientRects.width > parentRects.width)
+            (clientLeft < parentLeft && clientWidth < parentWidth) ||
+            (clientRight > parentRight && clientWidth > parentWidth)
           ) {
-            cx = clientRects.left - parentRects.left;
-            px = parentRects.left;
-            dx = clientRects.left;
+            cx = clientLeft - parentLeft;
+            targetStart = parentLeft;
           } else if (
-            (clientRects.left < parentRects.left &&
-              clientRects.width > parentRects.width) ||
-            (clientRects.right > parentRects.right &&
-              clientRects.width < parentRects.width)
+            (clientLeft < parentLeft && clientWidth > parentWidth) ||
+            (clientRight > parentRight && clientWidth < parentWidth)
           ) {
-            cx = clientRects.right - parentRects.right;
-            px = parentRects.right - win.innerWidth;
-            dx = clientRects.right - win.innerWidth;
+            cx = clientRight - parentRight;
+            targetStart = parentRight - clientWidth;
           }
+
+          if (
+            (targetStart < 0 && clientWidth < winInnerWidth) ||
+            (targetStart + clientWidth > winInnerWidth &&
+              clientWidth > winInnerWidth)
+          ) {
+            px = targetStart;
+          } else if (
+            (targetStart < 0 && clientWidth > winInnerWidth) ||
+            (targetStart + clientWidth > winInnerWidth &&
+              clientWidth < winInnerWidth)
+          ) {
+            px = targetStart + clientWidth - winInnerWidth;
+          }
+          dx = cx + px;
         }
         break;
     }
 
     switch (alignY) {
       case ScrollAlignment.AlignTopAlways:
-        cy = clientRects.top - parentRects.top;
-        py = parentRects.top;
-        dy = clientRects.top;
+        cy = clientTop - parentTop;
+        py = parentTop;
+        dy = clientTop;
         break;
       case ScrollAlignment.AlignCenterAlways:
-        cy =
-          clientRects.top -
-          parentRects.top +
-          clientRects.height / 2 -
-          parentRects.height / 2;
-        py = (parentRects.top + parentRects.bottom - win.innerHeight) / 2;
-        dy = (clientRects.top + clientRects.bottom - win.innerHeight) / 2;
+        cy = clientTop - parentTop + clientHeight / 2 - parentHeight / 2;
+        py = (parentTop + parentBottom - winInnerHeight) / 2;
+        dy = (clientTop + clientBottom - winInnerHeight) / 2;
         break;
       case ScrollAlignment.AlignBottomAlways:
-        cy = clientRects.bottom - parentRects.bottom;
-        py = parentRects.bottom - win.innerHeight;
-        dy = clientRects.bottom - win.innerHeight;
+        cy = clientBottom - parentBottom;
+        py = parentBottom - winInnerHeight;
+        dy = clientBottom - winInnerHeight;
         break;
       case ScrollAlignment.AlignToEdgeIfNeeded:
         {
+          let targetStart = clientTop + cy;
           if (
-            (clientRects.top < parentRects.top &&
-              clientRects.height < parentRects.height) ||
-            (clientRects.bottom > parentRects.bottom &&
-              clientRects.height > parentRects.height)
+            (clientTop < parentTop && clientHeight < parentHeight) ||
+            (clientBottom > parentBottom && clientHeight > parentHeight)
           ) {
-            cy = clientRects.top - parentRects.top;
-            py = parentRects.top;
-            dy = clientRects.top;
+            cy = clientTop - parentTop;
+            targetStart = parentTop;
           } else if (
-            (clientRects.top < parentRects.top &&
-              clientRects.height > parentRects.height) ||
-            (clientRects.bottom > parentRects.bottom &&
-              clientRects.height < parentRects.height)
+            (clientTop < parentTop && clientHeight > parentHeight) ||
+            (clientBottom > parentBottom && clientHeight < parentHeight)
           ) {
-            cy = clientRects.bottom - parentRects.bottom;
-            py = parentRects.bottom - win.innerHeight;
-            dy = clientRects.bottom - win.innerHeight;
+            cy = clientBottom - parentBottom;
+            targetStart = parentBottom - clientHeight;
           }
+
+          if (
+            (targetStart < 0 && clientHeight < winInnerHeight) ||
+            (targetStart + clientHeight > winInnerHeight &&
+              clientHeight > winInnerHeight)
+          ) {
+            py = targetStart;
+          } else if (
+            (targetStart < 0 && clientHeight > winInnerHeight) ||
+            (targetStart + clientHeight > winInnerHeight &&
+              clientHeight < winInnerHeight)
+          ) {
+            py = targetStart + clientHeight - winInnerHeight;
+          }
+          dy = cy + py;
         }
         break;
     }
