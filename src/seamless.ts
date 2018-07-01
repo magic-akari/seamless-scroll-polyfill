@@ -115,13 +115,13 @@ export const seamless = ({
   };
 
   const findScrollableParent = (el: Element) => {
-    let parent;
+    let parent = el;
 
     do {
-      parent = el.parentElement;
-    } while (parent !== doc.body && isScrollable(parent!) === false);
+      parent = parent.parentElement!;
+    } while (parent !== doc.body && isScrollable(parent) === false);
 
-    return parent!;
+    return parent;
   };
 
   interface Icontext {
