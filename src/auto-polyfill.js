@@ -14,7 +14,7 @@ if (currentScript) {
 
   seamless({
     force: force === "force",
-    duration,
+    duration: duration,
   });
 } else {
   global.seamless = seamless;
