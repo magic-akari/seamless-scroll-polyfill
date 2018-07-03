@@ -21,11 +21,10 @@
     "ava": "1.0.0-beta.6",
     "babel-minify": "^0.4.3",
     "babel-preset-minify": "^0.4.3",
-    "lint-staged": "^6.1.1",
     "lodash.clonedeep": "^4.5.0",
-    "prettier": "^1.13.5",
-    "rollup": "^0.61.2",
-    "rollup-plugin-babel": "^4.0.0-beta.5",
+    "prettier": "^1.13.7",
+    "rollup": "^0.62.0",
+    "rollup-plugin-babel": "^4.0.0-beta.7",
     "rollup-plugin-typescript2": "^0.15.1",
     "ts-node": "^7.0.0",
     "tslint": "^5.10.0",
@@ -44,18 +43,9 @@
   "scripts": {
     "lint": "tslint {src,test}/**/*.{js,ts}",
     "test": "ava -v",
-    "precommit": "lint-staged",
     "build": "rollup -c rollup.config.js",
     "listdiff": "prettier --list-different {src,test}/**/*.{js,ts}",
     "format": "prettier --write {src,test}/**/*.{js,ts}"
-  },
-  "lint-staged": {
-    "linters": {
-      "{src,test}/**/*.{js,ts}": [
-        "prettier --list-different",
-        "git add"
-      ]
-    }
   },
   "repository": {
     "type": "git",
