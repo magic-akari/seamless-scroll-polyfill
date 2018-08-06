@@ -160,6 +160,13 @@
     "@babel/types" "7.0.0-beta.51"
     lodash "^4.17.5"
 
+"@babel/helper-module-imports@7.0.0-beta.56":
+  version "7.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/@babel/helper-module-imports/-/helper-module-imports-7.0.0-beta.56.tgz#edf9494ef1f36674bb19cec9ea142b70f186406d"
+  dependencies:
+    "@babel/types" "7.0.0-beta.56"
+    lodash "^4.17.10"
+
 "@babel/helper-module-transforms@7.0.0-beta.51":
   version "7.0.0-beta.51"
   resolved "https://registry.yarnpkg.com/@babel/helper-module-transforms/-/helper-module-transforms-7.0.0-beta.51.tgz#13af0c8ee41f277743c8fc43d444315db2326f73"
@@ -393,6 +400,14 @@
   dependencies:
     esutils "^2.0.2"
     lodash "^4.17.5"
+    to-fast-properties "^2.0.0"
+
+"@babel/types@7.0.0-beta.56":
+  version "7.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.56.tgz#df456947a82510ec30361971e566110d89489056"
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
 "@concordance/react@^1.0.0":
@@ -2133,7 +2148,7 @@ lodash.some@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.some/-/lodash.some-4.6.0.tgz#1bb9f314ef6b8baded13b549169b2a945eb68e4d"
 
-lodash@^4.17.5:
+lodash@^4.17.10, lodash@^4.17.5:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -2869,10 +2884,10 @@ rimraf@^2.2.8, rimraf@^2.6.1:
     glob "^7.0.5"
 
 rollup-plugin-babel@^4.0.0-beta.7:
-  version "4.0.0-beta.7"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-babel/-/rollup-plugin-babel-4.0.0-beta.7.tgz#8c38a685f8009fc6fbf1d31597cb3c5f8060caf5"
+  version "4.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-babel/-/rollup-plugin-babel-4.0.0-beta.8.tgz#6dac37d8e285ba8f7feb5aaafd99c78d7363a001"
   dependencies:
-    "@babel/helper-module-imports" "7.0.0-beta.51"
+    "@babel/helper-module-imports" "7.0.0-beta.56"
     rollup-pluginutils "^2.3.0"
 
 rollup-plugin-typescript2@^0.15.1:
