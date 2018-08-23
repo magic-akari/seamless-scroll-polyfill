@@ -1,6 +1,6 @@
 import clone from "lodash.clonedeep";
 import { seamless } from "../src/seamless.ts";
-import { test } from "ava";
+import * as test from "ava";
 
 // tslint:disable:object-literal-sort-keys
 
