@@ -49,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hufan-akari/seamless-scroll-polyfill.git"
+    "url": "git+https://github.com/magic-akari/seamless-scroll-polyfill.git"
   },
   "keywords": [
     "smooth",
@@ -59,7 +59,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hufan-akari/seamless-scroll-polyfill/issues"
+    "url": "https://github.com/magic-akari/seamless-scroll-polyfill/issues"
   },
-  "homepage": "https://github.com/hufan-akari/seamless-scroll-polyfill"
+  "homepage": "https://github.com/magic-akari/seamless-scroll-polyfill"
 }

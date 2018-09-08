@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hufan-akari/seamless-scroll-polyfill.svg?branch=master)](https://travis-ci.org/hufan-akari/seamless-scroll-polyfill)
+[![Build Status](https://travis-ci.org/magic-akari/seamless-scroll-polyfill.svg?branch=master)](https://travis-ci.org/magic-akari/seamless-scroll-polyfill)
 
 This repo is forked from [iamdustan/smoothscroll](https://github.com/iamdustan/smoothscroll).
 
