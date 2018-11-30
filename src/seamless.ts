@@ -66,8 +66,7 @@ export const seamless = ({
       firstArg === null ||
       typeof firstArg !== "object" ||
       firstArg.behavior === undefined ||
-      firstArg.behavior === "auto" ||
-      firstArg.behavior === "instant"
+      firstArg.behavior === "auto"
     ) {
       // first argument is not an object/null
       // or behavior is auto, instant or undefined
