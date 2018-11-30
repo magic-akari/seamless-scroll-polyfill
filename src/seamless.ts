@@ -230,14 +230,14 @@ export const seamless = ({
         firstArg.left !== undefined
           ? firstArg.left
           : typeof firstArg !== "object"
-            ? firstArg
-            : win.scrollX || win.pageXOffset,
+          ? firstArg
+          : win.scrollX || win.pageXOffset,
         // use top prop, second argument if present or fallback to scrollY
         firstArg.top !== undefined
           ? firstArg.top
           : secondArg !== undefined
-            ? secondArg
-            : win.scrollY || win.pageYOffset,
+          ? secondArg
+          : win.scrollY || win.pageYOffset,
       );
 
       return;
@@ -270,13 +270,13 @@ export const seamless = ({
         firstArg.left !== undefined
           ? firstArg.left
           : typeof firstArg !== "object"
-            ? firstArg
-            : 0,
+          ? firstArg
+          : 0,
         firstArg.top !== undefined
           ? firstArg.top
           : secondArg !== undefined
-            ? secondArg
-            : 0,
+          ? secondArg
+          : 0,
       );
 
       return;
@@ -314,14 +314,14 @@ export const seamless = ({
         firstArg.left !== undefined
           ? ~~firstArg.left
           : typeof firstArg !== "object"
-            ? ~~firstArg
-            : this.scrollLeft,
+          ? ~~firstArg
+          : this.scrollLeft,
         // use top prop, second argument or fallback to scrollTop
         firstArg.top !== undefined
           ? ~~firstArg.top
           : secondArg !== undefined
-            ? ~~secondArg
-            : this.scrollTop,
+          ? ~~secondArg
+          : this.scrollTop,
       );
 
       return;
