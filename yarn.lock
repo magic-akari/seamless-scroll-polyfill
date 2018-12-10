@@ -3296,8 +3296,8 @@ tsutils@^2.27.2:
     tslib "^1.8.1"
 
 typescript@^3.0.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.1.tgz#0b7a04b8cf3868188de914d9568bd030f0c56192"
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.2.tgz#fe8101c46aa123f8353523ebdcf5730c2ae493e5"
 
 uid2@0.0.3:
   version "0.0.3"
