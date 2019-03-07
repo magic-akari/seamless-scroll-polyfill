@@ -13,7 +13,7 @@ yarn add seamless-scroll-polyfill
 ```
 
 ```js
-import { seamless } from 'seamless-scroll-polyfill';
+import { seamless } from "seamless-scroll-polyfill";
 
 seamless();
 ```
@@ -33,7 +33,7 @@ seamless({ duration: 500 });
 ### Use as html script
 
 ```html
-<script src="path/to/seamless.browser.min.js" ></script>
+<script src="path/to/seamless.browser.min.js"></script>
 ```
 
 or
@@ -67,7 +67,7 @@ When including the polyfill in a script tag, it will run immediately after loade
 If you are importing it as a dependency, make sure to call the `polyfill` method:
 
 ```js
-import smoothscroll from 'smoothscroll-polyfill';
+import smoothscroll from "smoothscroll-polyfill";
 
 // kick off the polyfill!
 smoothscroll.polyfill();
@@ -109,16 +109,16 @@ If you want to watch tests as you write your code run `yarn test --watch`.
 
 Successfully working in:
 
-* _natively supported in Chrome_
-* _natively supported in Firefox_
-* Safari 6+
-* Internet Explorer 9+
-* Microsoft Edge 12+
-* Opera Next
+-   _natively supported in Chrome_
+-   _natively supported in Firefox_
+-   Safari 6+
+-   Internet Explorer 9+
+-   Microsoft Edge 12+
+-   Opera Next
 
 ## Standards documentation
 
-* http://dev.w3.org/csswg/cssom-view
-* http://lists.w3.org/Archives/Public/www-style/2013Mar/0314.html
+-   http://dev.w3.org/csswg/cssom-view
+-   http://lists.w3.org/Archives/Public/www-style/2013Mar/0314.html
 
 </blockquote>

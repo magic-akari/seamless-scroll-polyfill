@@ -1,65 +1,65 @@
 {
-  "title": "smoothscroll",
-  "name": "seamless-scroll-polyfill",
-  "description": "Smooth Scroll behavior polyfill",
-  "version": "0.5.3",
-  "author": {
-    "name": "Dustan Kasten",
-    "email": "dustan.kasten@gmail.com",
-    "url": "https://iamdustan.com"
-  },
-  "contributors": [
-    {
-      "name": "Jeremias Menichelli",
-      "email": "jmenichelli@gmail.com",
-      "url": "https://jeremenichelli.io"
-    }
-  ],
-  "dependencies": {},
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "ava": "^1.3.1",
-    "babel-minify": "^0.5.0",
-    "babel-preset-minify": "^0.5.0",
-    "lodash.clonedeep": "^4.5.0",
-    "prettier": "^1.16.4",
-    "rollup": "^1.5.0",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-typescript2": "^0.19.3",
-    "ts-node": "^8.0.3",
-    "tslint": "^5.13.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.3.3333"
-  },
-  "main": "dist/seamless.js",
-  "umd:main": "dist/seamless.js",
-  "jsnext:main": "dist/seamless.esm.js",
-  "module": "dist/seamless.esm.js",
-  "browser": "dist/seamless.browser.min.js",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "lint": "tslint {src,test}/**/*.{js,ts}",
-    "test": "ava -v",
-    "build": "rollup -c rollup.config.js",
-    "listdiff": "prettier --list-different {src,test}/**/*.{js,ts}",
-    "format": "prettier --write {src,test}/**/*.{js,ts}"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/magic-akari/seamless-scroll-polyfill.git"
-  },
-  "keywords": [
-    "smooth",
-    "scroll",
-    "CSSOM",
-    "polyfill"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/magic-akari/seamless-scroll-polyfill/issues"
-  },
-  "homepage": "https://github.com/magic-akari/seamless-scroll-polyfill"
+    "title": "smoothscroll",
+    "name": "seamless-scroll-polyfill",
+    "description": "Smooth Scroll behavior polyfill",
+    "version": "0.5.3",
+    "author": {
+        "name": "Dustan Kasten",
+        "email": "dustan.kasten@gmail.com",
+        "url": "https://iamdustan.com"
+    },
+    "contributors": [
+        {
+            "name": "Jeremias Menichelli",
+            "email": "jmenichelli@gmail.com",
+            "url": "https://jeremenichelli.io"
+        }
+    ],
+    "dependencies": {},
+    "devDependencies": {
+        "@babel/core": "^7.3.4",
+        "ava": "^1.3.1",
+        "babel-minify": "^0.5.0",
+        "babel-preset-minify": "^0.5.0",
+        "lodash.clonedeep": "^4.5.0",
+        "prettier": "^1.16.4",
+        "rollup": "^1.5.0",
+        "rollup-plugin-babel": "^4.3.2",
+        "rollup-plugin-typescript2": "^0.19.3",
+        "ts-node": "^8.0.3",
+        "tslint": "^5.13.1",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-plugin-prettier": "^2.0.1",
+        "typescript": "^3.3.3333"
+    },
+    "main": "dist/seamless.js",
+    "umd:main": "dist/seamless.js",
+    "jsnext:main": "dist/seamless.esm.js",
+    "module": "dist/seamless.esm.js",
+    "browser": "dist/seamless.browser.min.js",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "lint": "tslint {src,test}/**/*.{js,ts}",
+        "test": "ava -v",
+        "build": "rollup -c rollup.config.js",
+        "listdiff": "prettier --list-different \"{src,test}/**/*.{js,ts}\" \"./*.{js,json,md}\" \"./*rc\"",
+        "format": "prettier --write \"{src,test}/**/*.{js,ts}\" \"./*.{js,json,md}\" \"./*rc\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/magic-akari/seamless-scroll-polyfill.git"
+    },
+    "keywords": [
+        "smooth",
+        "scroll",
+        "CSSOM",
+        "polyfill"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/magic-akari/seamless-scroll-polyfill/issues"
+    },
+    "homepage": "https://github.com/magic-akari/seamless-scroll-polyfill"
 }
