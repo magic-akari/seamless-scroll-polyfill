@@ -1,5 +1,5 @@
 import typescript from "rollup-plugin-typescript2";
-import babel from "rollup-plugin-babel";
+import minify from "rollup-plugin-babel-minify";
 
 const input = "src/seamless.ts";
 
@@ -53,7 +53,7 @@ export default [
                 sourcemap: true,
             },
         ],
-        plugins: [...plugins, babel()],
+        plugins: [...plugins, minify({ comments: false })],
     },
     {
         input: "src/auto-polyfill.js",
@@ -71,7 +71,7 @@ export default [
                     },
                 },
             }),
-            babel(),
+            minify({ comments: false }),
         ],
     },
 ];
