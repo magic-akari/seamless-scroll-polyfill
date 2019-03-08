@@ -489,13 +489,13 @@ export const seamless = ({ force = false, duration = 468, win = window as IWindo
                     }
 
                     if (
-                        (targetStart < 0 && clientWidth < winInnerWidth) ||
+                        (targetStart < 0 && clientWidth <= winInnerWidth) ||
                         (targetStart + clientWidth > winInnerWidth && clientWidth > winInnerWidth)
                     ) {
                         px = targetStart;
                     } else if (
                         (targetStart < 0 && clientWidth > winInnerWidth) ||
-                        (targetStart + clientWidth > winInnerWidth && clientWidth < winInnerWidth)
+                        (targetStart + clientWidth >= winInnerWidth && clientWidth <= winInnerWidth)
                     ) {
                         px = targetStart + clientWidth - winInnerWidth;
                     }
