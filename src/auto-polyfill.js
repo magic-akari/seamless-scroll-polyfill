@@ -16,5 +16,5 @@ if (currentScript) {
         duration: duration,
     });
 } else {
-    global.seamless = seamless;
+    (globalThis || global).seamless = seamless;
 }
