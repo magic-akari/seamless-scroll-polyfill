@@ -29,7 +29,7 @@
         "tslint-plugin-prettier": "^2.0.1",
         "typescript": "^3.4.3"
     },
-    "main": "dist/seamless.js",
+    "main": "dist/seamless.es5.js",
     "umd:main": "dist/seamless.js",
     "jsnext:main": "dist/seamless.esm.js",
     "module": "dist/seamless.esm.js",
