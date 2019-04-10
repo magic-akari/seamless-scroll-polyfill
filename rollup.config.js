@@ -1,5 +1,5 @@
-import typescript from "rollup-plugin-typescript2";
 import minify from "rollup-plugin-babel-minify";
+import typescript from "rollup-plugin-typescript2";
 
 const input = "src/seamless.ts";
 
@@ -56,12 +56,59 @@ export default [
         plugins: [...plugins, minify({ comments: false })],
     },
     {
-        input: "src/auto-polyfill.js",
+        input,
         output: {
-            file: "dist/seamless.browser.min.js",
-            format: "iife",
+            file: "dist/seamless.es5.js",
+            name: "seamless",
+            format: "umd",
             sourcemap: true,
         },
+        plugins: [
+            typescript({
+                tsconfigOverride: {
+                    compilerOptions: {
+                        ...tsconfigOverride.compilerOptions,
+                        target: "es5",
+                    },
+                },
+            }),
+        ],
+    },
+    {
+        input,
+        output: {
+            file: "dist/seamless.es5.min.js",
+            name: "seamless",
+            format: "umd",
+            sourcemap: true,
+        },
+        plugins: [
+            typescript({
+                tsconfigOverride: {
+                    compilerOptions: {
+                        ...tsconfigOverride.compilerOptions,
+                        target: "es5",
+                    },
+                },
+            }),
+            minify({ comments: false }),
+        ],
+    },
+    {
+        input: "src/auto-polyfill.js",
+        output: [
+            {
+                file: "dist/seamless.browser.min.js",
+                format: "iife",
+                sourcemap: true,
+            },
+            {
+                file: "dist/seamless.es5.min.js",
+                name: "seamless",
+                format: "umd",
+                sourcemap: true,
+            },
+        ],
         plugins: [
             typescript({
                 tsconfigOverride: {
