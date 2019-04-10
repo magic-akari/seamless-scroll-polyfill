@@ -10,6 +10,8 @@ const tsconfigOverride = {
         lib: ["dom", "es2015"],
         strict: true,
         sourceMap: true,
+        declaration: true,
+        declarationMap: true,
         downlevelIteration: true,
     },
 };
@@ -20,6 +22,11 @@ const plugins = [
     }),
 ];
 
+const sourceMap = {
+    sourcemap: true,
+    sourcemapExcludeSources: true,
+};
+
 export default [
     {
         input,
@@ -28,12 +35,12 @@ export default [
                 file: "dist/seamless.js",
                 name: "seamless",
                 format: "umd",
-                sourcemap: true,
+                ...sourceMap,
             },
             {
                 file: "dist/seamless.esm.js",
                 format: "es",
-                sourcemap: true,
+                ...sourceMap,
             },
         ],
         plugins,
@@ -45,12 +52,12 @@ export default [
                 file: "dist/seamless.min.js",
                 name: "seamless",
                 format: "umd",
-                sourcemap: true,
+                ...sourceMap,
             },
             {
                 file: "dist/seamless.esm.min.js",
                 format: "es",
-                sourcemap: true,
+                ...sourceMap,
             },
         ],
         plugins: [...plugins, minify({ comments: false })],
@@ -62,6 +69,7 @@ export default [
             name: "seamless",
             format: "umd",
             sourcemap: true,
+            sourcemapExcludeSources: true,
         },
         plugins: [
             typescript({
@@ -81,6 +89,7 @@ export default [
             name: "seamless",
             format: "umd",
             sourcemap: true,
+            sourcemapExcludeSources: true,
         },
         plugins: [
             typescript({
@@ -100,13 +109,13 @@ export default [
             {
                 file: "dist/seamless.browser.min.js",
                 format: "iife",
-                sourcemap: true,
+                ...sourceMap,
             },
             {
                 file: "dist/seamless.es5.min.js",
                 name: "seamless",
                 format: "umd",
-                sourcemap: true,
+                ...sourceMap,
             },
         ],
         plugins: [

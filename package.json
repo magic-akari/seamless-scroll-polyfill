@@ -35,6 +35,7 @@
     "module": "dist/seamless.esm.js",
     "browser": "dist/seamless.browser.min.js",
     "files": [
+        "src",
         "dist"
     ],
     "scripts": {
