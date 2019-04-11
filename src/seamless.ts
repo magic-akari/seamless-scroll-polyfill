@@ -2,14 +2,14 @@ interface IWindow extends Window {
     Element: typeof Element;
 }
 
-interface Ioption {
+interface IOption {
     force?: boolean;
     duration?: number;
     win?: IWindow;
     doc?: Document;
 }
 
-export const seamless = ({ force = false, duration = 468, win = window as IWindow, doc = document }: Ioption = {}) => {
+export const seamless = ({ force = false, duration = 468, win = window as IWindow, doc = document }: IOption = {}) => {
     // return if scroll behavior is supported and polyfill is not forced
     if ("scrollBehavior" in doc.documentElement.style && force !== true) {
         return;
@@ -112,7 +112,7 @@ export const seamless = ({ force = false, duration = 468, win = window as IWindo
         return parent;
     };
 
-    interface Icontext {
+    interface IContext {
         startTime: number;
         x: number;
         y: number;
@@ -122,7 +122,7 @@ export const seamless = ({ force = false, duration = 468, win = window as IWindo
         method: any;
     }
 
-    const step = (context: Icontext) => {
+    const step = (context: IContext) => {
         if (userInterrupt) {
             return;
         }
