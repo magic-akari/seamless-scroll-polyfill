@@ -105,19 +105,11 @@ export default [
     },
     {
         input: "src/auto-polyfill.js",
-        output: [
-            {
-                file: "dist/seamless.browser.min.js",
-                format: "iife",
-                ...sourceMap,
-            },
-            {
-                file: "dist/seamless.es5.min.js",
-                name: "seamless",
-                format: "umd",
-                ...sourceMap,
-            },
-        ],
+        output: {
+            file: "dist/seamless.browser.min.js",
+            format: "iife",
+            ...sourceMap,
+        },
         plugins: [
             typescript({
                 tsconfigOverride: {
