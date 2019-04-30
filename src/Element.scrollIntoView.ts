@@ -344,19 +344,6 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     const actions: IAction[] = [];
     for (const frame of frames) {
         const { height, width, top, right, bottom, left } = frame.getBoundingClientRect();
-        if (
-            targetTop >= 0 &&
-            targetLeft >= 0 &&
-            targetBottom <= viewportHeight &&
-            targetRight <= viewportWidth &&
-            targetTop >= top &&
-            targetBottom <= bottom &&
-            targetLeft >= left &&
-            targetRight <= right
-        ) {
-            // Break the loop for things that are not fully visible
-            break;
-        }
 
         const frameStyle = getComputedStyle(frame);
         const borderLeft = parseInt(frameStyle.borderLeftWidth as string, 10);
