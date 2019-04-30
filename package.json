@@ -17,33 +17,31 @@
     ],
     "dependencies": {},
     "devDependencies": {
-        "ava": "^1.4.1",
-        "lodash.clonedeep": "^4.5.0",
-        "prettier": "^1.16.4",
-        "rollup": "^1.9.3",
+        "prettier": "^1.17.0",
+        "rollup": "^1.10.1",
         "rollup-plugin-babel-minify": "^8.0.0",
-        "rollup-plugin-typescript2": "^0.20.1",
-        "ts-node": "^8.0.3",
-        "tslint": "^5.15.0",
-        "tslint-config-prettier": "^1.18.0",
-        "tslint-plugin-prettier": "^2.0.1",
-        "typescript": "^3.4.3"
+        "rollup-plugin-typescript2": "^0.21.0",
+        "ts-node": "^8.1.0",
+        "tslint": "^5.16.0",
+        "typescript": "^3.4.5"
     },
-    "main": "dist/seamless.es5.js",
-    "umd:main": "dist/seamless.js",
-    "jsnext:main": "dist/seamless.esm.js",
-    "module": "dist/seamless.esm.js",
-    "browser": "dist/seamless.browser.min.js",
+    "main": "dist/es5/seamless.js",
+    "umd:main": "dist/umd/index.js",
+    "module": "dist/esm/index.js",
+    "browser": "dist/es5/seamless.browser.min.js",
     "files": [
         "src",
         "dist"
     ],
     "scripts": {
-        "lint": "tslint {src,test}/**/*.{js,ts}",
-        "test": "ava -v",
-        "build": "rollup -c rollup.config.js",
-        "listdiff": "prettier --list-different \"{src,test}/**/*.{js,ts}\" \"./*.{js,json,md}\" \"./*rc\"",
-        "format": "prettier --write \"{src,test}/**/*.{js,ts}\" \"./*.{js,json,md}\" \"./*rc\""
+        "esm": "tsc",
+        "umd": "tsc -P tsconfig.umd.json",
+        "es6": "tsc -P tsconfig.es6.json",
+        "es5": "rollup -c",
+        "build": "npm run esm && npm run umd && npm run es6 && npm run es5",
+        "lint": "tslint \"src/**/*.{js,ts}\"",
+        "listdiff": "prettier --list-different \"{.,src/**}/*.{ts,js,json,md,*rc}\"",
+        "format": "prettier --write \"{.,src/**}/*.{ts,js,json,md,*rc}\""
     },
     "repository": {
         "type": "git",

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "esnext",
+        "lib": ["dom", "es2018"],
+        "rootDir": "./src",
+        "outDir": "./dist/esm",
+        "strict": true,
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "downlevelIteration": true
+    }
+}
