@@ -24,6 +24,11 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
         return originalElementScroll.call(element, targetX, startY);
     }
 
+    const removeEventListener = () => {
+        window.removeEventListener("wheel", cancelScroll);
+        window.removeEventListener("touchmove", cancelScroll);
+    };
+
     const context: IContext = {
         timeStamp: now(),
         duration: options.duration,
@@ -34,15 +39,12 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
         rafId: 0,
         method: originalFunc,
         timingFunc: options.timingFunc,
-        callback: () => {
-            window.removeEventListener("wheel", cancelScroll);
-            window.removeEventListener("touchmove", cancelScroll);
-        },
+        callback: removeEventListener,
     };
 
     const cancelScroll = () => {
         cancelAnimationFrame(context.rafId);
-        context.callback();
+        removeEventListener();
     };
 
     window.addEventListener("wheel", cancelScroll, {
