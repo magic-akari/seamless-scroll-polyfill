@@ -519,6 +519,6 @@ export const polyfill = (options: IAnimationOptions) => {
             );
         }
 
-        return elementScroll(this, { ...arg, ...options });
+        return elementScrollIntoView(this, { ...arg, ...options });
     };
 };
