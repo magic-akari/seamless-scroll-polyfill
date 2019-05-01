@@ -43,6 +43,7 @@ export default [
         output: [
             {
                 file: "dist/es5/seamless.browser.min.js",
+                name: "seamless",
                 format: "iife",
                 ...sourceMap,
             },
