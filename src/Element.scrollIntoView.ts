@@ -320,9 +320,11 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     let targetBlock = (() => {
         switch (alignY) {
             case ScrollAlignment.AlignTopAlways:
+            case ScrollAlignment.AlignToEdgeIfNeeded:
                 return targetTop;
             case ScrollAlignment.AlignBottomAlways:
                 return targetBottom;
+            // case ScrollAlignment.AlignCenterAlways:
             default:
                 return targetTop + targetHeight / 2;
         }
@@ -334,6 +336,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
                 return targetLeft + targetWidth / 2;
             case ScrollAlignment.AlignRightAlways:
                 return targetRight;
+            // case ScrollAlignment.AlignLeftAlways:
+            // case ScrollAlignment.AlignToEdgeIfNeeded:
             default:
                 return targetLeft;
         }
