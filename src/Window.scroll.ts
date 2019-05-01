@@ -1,8 +1,14 @@
 import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./common.js";
 
-export const originalWindowScroll = (x: number, y: number) => (window.scroll || window.scrollTo)(x, y);
+let $original: (x: number, y: number) => void;
+
+export const getOriginalFunc = () => {
+    return $original || ($original = window.scroll || window.scrollTo);
+};
 
 export const windowScroll = (options: IScrollToOptions) => {
+    const originalBoundFunc = getOriginalFunc().bind(window);
+
     if (options.left === undefined && options.top === undefined) {
         return;
     }
@@ -13,7 +19,7 @@ export const windowScroll = (options: IScrollToOptions) => {
     const { left: targetX = startX, top: targetY = startY } = options;
 
     if (options.behavior !== "smooth") {
-        return originalWindowScroll(targetX, targetY);
+        return originalBoundFunc(targetX, targetY);
     }
 
     const removeEventListener = () => {
@@ -29,7 +35,7 @@ export const windowScroll = (options: IScrollToOptions) => {
         targetX,
         targetY,
         rafId: 0,
-        method: originalWindowScroll,
+        method: originalBoundFunc,
         timingFunc: options.timingFunc,
         callback: removeEventListener,
     };
@@ -52,7 +58,8 @@ export const windowScroll = (options: IScrollToOptions) => {
 };
 
 export const polyfill = (options: IAnimationOptions) => {
-    const originalFunc = window.scroll || window.scrollTo;
+    const originalFunc = getOriginalFunc();
+
     window.scroll = function scroll() {
         const [arg0 = 0, arg1 = 0] = arguments;
 

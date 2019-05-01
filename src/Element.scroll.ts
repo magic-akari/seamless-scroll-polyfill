@@ -1,15 +1,22 @@
 import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./common.js";
 
-export const originalElementScroll =
-    Element.prototype.scroll ||
-    Element.prototype.scrollTo ||
-    function(this: Element, x: number, y: number) {
-        this.scrollLeft = x;
-        this.scrollTop = y;
-    };
+let $original: (x: number, y: number) => void;
+
+export const getOriginalFunc = () => {
+    return (
+        $original ||
+        ($original =
+            Element.prototype.scroll ||
+            Element.prototype.scrollTo ||
+            function(this: Element, x: number, y: number) {
+                this.scrollLeft = x;
+                this.scrollTop = y;
+            })
+    );
+};
 
 export const elementScroll = (element: Element, options: IScrollToOptions) => {
-    const originalFunc = originalElementScroll.bind(element);
+    const originalBoundFunc = getOriginalFunc().bind(element);
 
     if (options.left === undefined && options.top === undefined) {
         return;
@@ -21,7 +28,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
     const { left: targetX = startX, top: targetY = startY } = options;
 
     if (options.behavior !== "smooth") {
-        return originalElementScroll.call(element, targetX, startY);
+        return originalBoundFunc(targetX, targetY);
     }
 
     const removeEventListener = () => {
@@ -37,7 +44,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
         targetX,
         targetY,
         rafId: 0,
-        method: originalFunc,
+        method: originalBoundFunc,
         timingFunc: options.timingFunc,
         callback: removeEventListener,
     };
@@ -60,11 +67,13 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
 };
 
 export const polyfill = (options: IAnimationOptions) => {
+    const originalFunc = getOriginalFunc();
+
     Element.prototype.scroll = function scroll() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {
-            return originalElementScroll.call(this, arg0, arg1);
+            return originalFunc.call(this, arg0, arg1);
         }
 
         if (Object(arg0) !== arg0) {

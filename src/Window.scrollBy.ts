@@ -1,24 +1,29 @@
 import { IAnimationOptions, IScrollToOptions } from "./common.js";
-import { originalWindowScroll, windowScroll } from "./Window.scroll.js";
+import { getOriginalFunc, windowScroll } from "./Window.scroll.js";
 
 export const windowScrollBy = (options: IScrollToOptions) => {
     const left = (options.left || 0) + (window.scrollX || window.pageXOffset);
     const top = (options.top || 0) + (window.scrollY || window.pageYOffset);
 
     if (options.behavior !== "smooth") {
-        return originalWindowScroll(left, top);
+        return getOriginalFunc()(left, top);
     }
 
     return windowScroll({ ...options, left, top });
 };
 
+let $original: (x: number, y: number) => void;
+
 export const polyfill = (options: IAnimationOptions) => {
-    const originalFunc = window.scrollBy;
+    const originalFunc = (() => {
+        return $original || ($original = window.scrollBy);
+    })();
+
     window.scrollBy = function scrollBy() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {
-            return originalFunc(arg0, arg1);
+            return originalFunc.call(this, arg0, arg1);
         }
 
         if (Object(arg0) !== arg0) {

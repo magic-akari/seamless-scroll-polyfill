@@ -3,8 +3,15 @@ import { windowScroll } from "./Window.scroll.js";
 
 export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 
+let $original: (x: number, y: number) => void;
+
+export const getOriginalFunc = () => {
+    return $original || ($original = window.scrollTo || window.scroll);
+};
+
 export const polyfill = (options: IAnimationOptions) => {
-    const originalFunc = window.scrollTo || window.scroll;
+    const originalFunc = getOriginalFunc();
+
     window.scrollTo = function scrollTo() {
         const [arg0 = 0, arg1 = 0] = arguments;
 

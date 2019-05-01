@@ -2,8 +2,6 @@ import { IAnimationOptions, IScrollIntoViewOptions } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 import { windowScroll } from "./Window.scroll.js";
 
-const originalFunc = document.documentElement.scrollIntoView;
-
 declare global {
     // tslint:disable-next-line: interface-name
     interface Window {
@@ -242,10 +240,6 @@ const parentElement = (element: Element): Element | null => {
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions) => {
     if (!element.ownerDocument!.documentElement!.contains(element)) {
         return;
-    }
-
-    if (options.behavior !== "smooth") {
-        return originalFunc.call(element, options.block !== "end");
     }
 
     // On Chrome and Firefox, document.scrollingElement will return the <html> element.
@@ -507,8 +501,14 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     actions.forEach((run) => run());
 };
 
+let $original: (arg?: boolean) => void;
+
+const getOriginalFunc = () => $original || ($original = document.documentElement.scrollIntoView);
+
 export const polyfill = (options: IAnimationOptions) => {
-    Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions | undefined) {
+    const originalFunc = getOriginalFunc();
+
+    Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
         if (typeof arg === "boolean") {
             return originalFunc.call(this, arg);
         }
