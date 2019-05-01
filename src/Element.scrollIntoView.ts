@@ -430,7 +430,6 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             }
 
             // Apply scroll position offsets and ensure they are within bounds
-            // @TODO add more test cases to cover this 100%
             blockScroll = Math.max(0, blockScroll + viewportY);
             inlineScroll = Math.max(0, inlineScroll + viewportX);
             actions.push(() => windowScroll({ ...options, top: blockScroll, left: inlineScroll }));
@@ -509,7 +508,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 };
 
 export const polyfill = (options: IAnimationOptions) => {
-    Element.prototype.scrollIntoView = function scroll(arg?: boolean | ScrollIntoViewOptions | undefined) {
+    Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions | undefined) {
         if (typeof arg === "boolean") {
             return originalFunc.call(this, arg);
         }
