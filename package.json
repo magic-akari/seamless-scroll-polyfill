@@ -28,6 +28,7 @@
     "umd:main": "dist/umd/index.js",
     "module": "dist/esm/index.js",
     "browser": "dist/es5/seamless.min.js",
+    "types": "dist/esm/index.d.ts",
     "sideEffects": [
         "./src/auto-polyfill.js",
         "./dist/es5/seamless.auto-polyfill.min.js"
