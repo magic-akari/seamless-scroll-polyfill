@@ -27,10 +27,10 @@
     "main": "dist/es5/seamless.js",
     "umd:main": "dist/umd/index.js",
     "module": "dist/esm/index.js",
-    "browser": "dist/es5/seamless.browser.min.js",
+    "browser": "dist/es5/seamless.min.js",
     "sideEffects": [
         "./src/auto-polyfill.js",
-        "./dist/es5/seamless.browser.min.js"
+        "./dist/es5/seamless.auto-polyfill.min.js"
     ],
     "files": [
         "src",

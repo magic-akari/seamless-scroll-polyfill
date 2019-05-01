@@ -42,8 +42,7 @@ export default [
         input: "src/auto-polyfill.js",
         output: [
             {
-                file: "dist/es5/seamless.browser.min.js",
-                name: "seamless",
+                file: "dist/es5/seamless.auto-polyfill.min.js",
                 format: "iife",
                 ...sourceMap,
             },

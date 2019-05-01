@@ -10,5 +10,3 @@ import { seamless } from "./index.js";
         seamless({ duration: duration });
     }
 })(document.currentScript || document.querySelector("script[data-seamless]"));
-
-export * from "./index.js";
