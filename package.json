@@ -1,5 +1,5 @@
 {
-    "title": "smoothscroll",
+    "title": "seamless scroll polyfill",
     "name": "seamless-scroll-polyfill",
     "description": "Smooth Scroll behavior polyfill",
     "version": "0.5.9",
@@ -15,7 +15,6 @@
             "url": "https://jeremenichelli.io"
         }
     ],
-    "dependencies": {},
     "devDependencies": {
         "prettier": "^1.17.0",
         "rollup": "^1.10.1",
@@ -29,6 +28,10 @@
     "umd:main": "dist/umd/index.js",
     "module": "dist/esm/index.js",
     "browser": "dist/es5/seamless.browser.min.js",
+    "sideEffects": [
+        "./src/auto-polyfill.js",
+        "./dist/es5/seamless.browser.min.js"
+    ],
     "files": [
         "src",
         "dist"
