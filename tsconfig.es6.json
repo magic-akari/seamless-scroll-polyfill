@@ -1,7 +1,0 @@
-{
-    "extends": "./tsconfig.umd.json",
-    "compilerOptions": {
-        "target": "es2015",
-        "outDir": "./dist/es6"
-    }
-}

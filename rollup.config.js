@@ -1,52 +1,55 @@
 import minify from "rollup-plugin-babel-minify";
 import typescript from "rollup-plugin-typescript2";
 
-const sourceMap = {
-    sourcemap: true,
-    sourcemapExcludeSources: true,
-};
+const input = "src/index.ts";
 
-const typescriptConfig = typescript({
-    tsconfigOverride: {
-        compilerOptions: {
-            target: "es5",
-            outDir: "./dist/es5",
+const tsc = (target, outDir) =>
+    typescript({
+        tsconfigOverride: {
+            compilerOptions: {
+                target,
+                outDir,
+            },
         },
-    },
-});
+    });
 
-export default [
-    {
-        input: "src/index.ts",
+const config = (target, outDir) => {
+    return {
+        input,
         output: {
-            file: "dist/es5/seamless.js",
+            file: `${outDir}/seamless.js`,
             name: "seamless",
             format: "umd",
-            ...sourceMap,
+            sourcemap: true,
         },
-        plugins: [typescriptConfig],
-    },
-    {
-        input: "src/index.ts",
-        output: [
-            {
-                file: "dist/es5/seamless.min.js",
-                name: "seamless",
-                format: "umd",
-                ...sourceMap,
-            },
-        ],
-        plugins: [typescriptConfig, minify({ comments: false })],
-    },
+        plugins: [tsc(target, outDir)],
+    };
+};
+
+export default [
+    config("es2018", "dist/umd"),
+    config("es2015", "dist/es6"),
+    config("es5", "dist/es5"),
     {
         input: "src/auto-polyfill.js",
-        output: [
-            {
-                file: "dist/es5/seamless.auto-polyfill.min.js",
-                format: "iife",
-                ...sourceMap,
-            },
+        output: {
+            file: `dist/es5/seamless.auto-polyfill.min.js`,
+            name: "seamless",
+            format: "umd",
+            sourcemap: true,
+        },
+        plugins: [
+            typescript({
+                tsconfigOverride: {
+                    compilerOptions: {
+                        target: "es5",
+                        outDir: "dist/es5",
+                        declaration: false,
+                        declarationMap: false,
+                    },
+                },
+            }),
+            minify({ comments: false }),
         ],
-        plugins: [typescriptConfig, minify({ comments: false })],
     },
 ];

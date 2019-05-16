@@ -27,7 +27,7 @@
     "main": "dist/es5/seamless.js",
     "umd:main": "dist/umd/index.js",
     "module": "dist/esm/index.js",
-    "browser": "dist/es5/seamless.min.js",
+    "browser": "dist/es5/seamless.auto-polyfill.min.js",
     "types": "dist/esm/index.d.ts",
     "sideEffects": [
         "./src/auto-polyfill.js",
@@ -39,10 +39,8 @@
     ],
     "scripts": {
         "esm": "tsc",
-        "umd": "tsc -P tsconfig.umd.json",
-        "es6": "tsc -P tsconfig.es6.json",
-        "es5": "rollup -c",
-        "build": "npm run esm && npm run umd && npm run es6 && npm run es5",
+        "rollup": "rollup -c",
+        "build": "npm run esm && npm run rollup",
         "lint": "tslint \"src/**/*.{js,ts}\"",
         "listdiff": "prettier --list-different \"{.,src/**}/*.{ts,js,json,md,*rc}\"",
         "format": "prettier --write \"{.,src/**}/*.{ts,js,json,md,*rc}\""
