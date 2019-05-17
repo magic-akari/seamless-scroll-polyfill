@@ -292,7 +292,12 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
         left: targetLeft,
     } = element.getBoundingClientRect();
 
-    const { writingMode } = getComputedStyle(element);
+    const computedStyle = getComputedStyle(element);
+    const writingMode =
+        computedStyle.writingMode ||
+        computedStyle.webkitWritingMode ||
+        computedStyle.getPropertyValue("-ms-writing-mode") ||
+        "horizontal-tb";
 
     const isHorizontalWritingMode = ["horizontal-tb", "lr", "lr-tb", "rl"].some((mode) => mode === writingMode);
     const isFlippedBlocksWritingMode = ["vertical-rl", "tb-rl"].some((mode) => mode === writingMode);
