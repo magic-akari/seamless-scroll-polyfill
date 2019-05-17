@@ -507,7 +507,12 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 
 let $original: (arg?: boolean) => void;
 
-const getOriginalFunc = () => $original || ($original = document.documentElement.scrollIntoView);
+const getOriginalFunc = () => {
+    if ($original === undefined) {
+        $original = document.documentElement.scrollIntoView;
+    }
+    return $original;
+};
 
 export const polyfill = (options: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();

@@ -3,16 +3,16 @@ import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./comm
 let $original: (x: number, y: number) => void;
 
 export const getOriginalFunc = () => {
-    return (
-        $original ||
-        ($original =
+    if ($original === undefined) {
+        $original =
             Element.prototype.scroll ||
             Element.prototype.scrollTo ||
             function(this: Element, x: number, y: number) {
                 this.scrollLeft = x;
                 this.scrollTop = y;
-            })
-    );
+            };
+    }
+    return $original;
 };
 
 export const elementScroll = (element: Element, options: IScrollToOptions) => {
