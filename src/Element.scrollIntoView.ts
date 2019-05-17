@@ -1,6 +1,5 @@
 import { IAnimationOptions, IScrollIntoViewOptions } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
-import { windowScroll } from "./Window.scroll.js";
 
 declare global {
     // tslint:disable-next-line: interface-name
@@ -426,7 +425,6 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             // Apply scroll position offsets and ensure they are within bounds
             blockScroll = Math.max(0, blockScroll + viewportY);
             inlineScroll = Math.max(0, inlineScroll + viewportX);
-            actions.push(() => windowScroll({ ...options, top: blockScroll, left: inlineScroll }));
         } else {
             // Handle each scrolling frame that might exist between the target and the viewport
 
@@ -494,8 +492,9 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             // Cache the offset so that parent frames can scroll this into view correctly
             targetBlock += scrollTop - blockScroll;
             targetInline += scrollLeft - inlineScroll;
-            actions.push(() => elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }));
         }
+
+        actions.push(() => elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }));
     }
 
     actions.forEach((run) => run());
