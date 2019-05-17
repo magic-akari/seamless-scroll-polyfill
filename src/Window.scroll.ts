@@ -3,11 +3,14 @@ import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./comm
 let $original: (x: number, y: number) => void;
 
 export const getOriginalFunc = () => {
-    return $original || ($original = window.scroll || window.scrollTo);
+    if ($original === undefined) {
+        $original = (window.scroll || window.scrollTo).bind(window);
+    }
+    return $original;
 };
 
 export const windowScroll = (options: IScrollToOptions) => {
-    const originalBoundFunc = getOriginalFunc().bind(window);
+    const originalBoundFunc = getOriginalFunc();
 
     if (options.left === undefined && options.top === undefined) {
         return;

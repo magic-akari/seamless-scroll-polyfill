@@ -6,7 +6,10 @@ export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 let $original: (x: number, y: number) => void;
 
 export const getOriginalFunc = () => {
-    return $original || ($original = window.scrollTo || window.scroll);
+    if ($original === undefined) {
+        $original = (window.scrollTo || window.scroll).bind(window);
+    }
+    return $original;
 };
 
 export const polyfill = (options: IAnimationOptions) => {

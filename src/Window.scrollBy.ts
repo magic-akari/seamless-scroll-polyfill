@@ -16,7 +16,10 @@ let $original: (x: number, y: number) => void;
 
 export const polyfill = (options: IAnimationOptions) => {
     const originalFunc = (() => {
-        return $original || ($original = window.scrollBy);
+        if ($original === undefined) {
+            $original = window.scrollBy.bind(window);
+        }
+        return $original;
     })();
 
     window.scrollBy = function scrollBy() {
