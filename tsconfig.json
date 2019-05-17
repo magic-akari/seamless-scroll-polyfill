@@ -10,5 +10,6 @@
         "declaration": true,
         "declarationMap": true,
         "downlevelIteration": true
-    }
+    },
+    "include": ["./src"]
 }

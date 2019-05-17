@@ -65,10 +65,10 @@ elementScrollIntoView(document.querySelector("#target"), { behavior: "smooth", b
 
 ## Generated files structure
 
-|           dir | dist/esm   | dist/umd | dist/es6 | dist/es5 |
-| ------------: | ---------- | -------- | -------- | -------- |
-| module format | ES Modules | UMD      | UMD      | UMD      |
-|    ES version | ESNext     | ESNext   | ES2015   | ES5      |
+|           dir | dist/esm   | dist/umd | dist/es6 | dist/cjs | dist/es5 |
+| ------------: | ---------- | -------- | -------- | -------- | -------- |
+| module format | ES Modules | UMD      | UMD      | CJS      | UMD      |
+|    ES version | ESNext     | ESNext   | ES2015   | ES2015   | ES5      |
 
 ## Thanks
 

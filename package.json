@@ -39,8 +39,9 @@
     ],
     "scripts": {
         "esm": "tsc",
+        "cjs": "tsc -m commonjs -t es2015 --outDir dist/cjs",
         "rollup": "rollup -c",
-        "build": "npm run esm && npm run rollup",
+        "build": "npm run esm && npm run cjs && npm run rollup",
         "lint": "tslint \"src/**/*.{js,ts}\"",
         "listdiff": "prettier --list-different \"{.,src/**}/*.{ts,js,json,md,*rc}\"",
         "format": "prettier --write \"{.,src/**}/*.{ts,js,json,md,*rc}\""
