@@ -294,8 +294,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 
     const { writingMode } = getComputedStyle(element);
 
-    const isHorizontalWritingMode = writingMode === "horizontal-tb";
-    const isFlippedBlocksWritingMode = writingMode === "vertical-rl";
+    const isHorizontalWritingMode = ["horizontal-tb", "lr", "lr-tb", "rl"].some((mode) => mode === writingMode);
+    const isFlippedBlocksWritingMode = ["vertical-rl", "tb-rl"].some((mode) => mode === writingMode);
 
     const alignX = toPhysicalAlignment(
         options,
