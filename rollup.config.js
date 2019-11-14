@@ -31,7 +31,7 @@ export default [
     config("es2015", "dist/es6"),
     config("es5", "dist/es5"),
     {
-        input: "src/auto-polyfill.js",
+        input: "src/auto-polyfill.ts",
         output: {
             file: `dist/es5/seamless.auto-polyfill.min.js`,
             name: "seamless",

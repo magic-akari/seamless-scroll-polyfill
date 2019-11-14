@@ -2,11 +2,11 @@ import { seamless } from "./index.js";
 
 // tslint:disable:no-bitwise
 
-(function(currentScript, duration) {
+((currentScript) => {
     if (currentScript) {
-        duration = ~~currentScript.dataset.duration;
+        let duration: number | undefined = ~~currentScript.dataset.duration;
         duration = duration > 0 ? duration : undefined;
 
-        seamless({ duration: duration });
+        seamless({ duration });
     }
 })(document.currentScript || document.querySelector("script[data-seamless]"));

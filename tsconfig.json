@@ -11,5 +11,6 @@
         "declarationMap": true,
         "downlevelIteration": true
     },
-    "include": ["./src"]
+    "include": ["./src"],
+    "exclude": ["src/auto-polyfill.ts"]
 }
