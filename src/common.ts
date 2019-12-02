@@ -24,7 +24,7 @@ export interface IContext extends IAnimationOptions {
     callback: () => void;
 }
 
-export const now = () => (performance?.now ?? Date.now)();
+export const now = () => (performance && performance.now ? performance : Date).now();
 
 export const step = (context: IContext) => {
     const currentTime = now();
