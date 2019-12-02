@@ -2,7 +2,7 @@
     "title": "seamless scroll polyfill",
     "name": "seamless-scroll-polyfill",
     "description": "Smooth Scroll behavior polyfill",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "author": {
         "name": "Dustan Kasten",
         "email": "dustan.kasten@gmail.com",
