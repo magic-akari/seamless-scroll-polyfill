@@ -17,12 +17,12 @@
     ],
     "devDependencies": {
         "prettier": "^1.19.1",
-        "rollup": "^1.27.0",
+        "rollup": "^1.30.0",
         "rollup-plugin-babel-minify": "^9.1.1",
-        "rollup-plugin-typescript2": "^0.25.2",
-        "ts-node": "^8.5.0",
-        "tslint": "^5.20.1",
-        "typescript": "^3.7.2"
+        "rollup-plugin-typescript2": "^0.25.3",
+        "ts-node": "^8.6.2",
+        "tslint": "^6.0.0",
+        "typescript": "^3.7.5"
     },
     "main": "dist/es5/seamless.js",
     "umd:main": "dist/umd/index.js",
