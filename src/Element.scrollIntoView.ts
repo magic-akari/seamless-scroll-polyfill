@@ -522,7 +522,7 @@ export const polyfill = (options: IAnimationOptions) => {
             return originalFunc.call(this, arg);
         }
 
-        if (Object(arg) !== arg) {
+        if (arg !== undefined && Object(arg) !== arg) {
             throw new TypeError(
                 "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
             );
