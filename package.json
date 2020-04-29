@@ -16,13 +16,13 @@
         }
     ],
     "devDependencies": {
-        "prettier": "^1.19.1",
-        "rollup": "^1.30.0",
-        "rollup-plugin-babel-minify": "^9.1.1",
-        "rollup-plugin-typescript2": "^0.25.3",
-        "ts-node": "^8.6.2",
-        "tslint": "^6.0.0",
-        "typescript": "^3.7.5"
+        "prettier": "^2.0.5",
+        "rollup": "^2.7.3",
+        "rollup-plugin-babel-minify": "^10.0.0",
+        "rollup-plugin-typescript2": "^0.27.0",
+        "ts-node": "^8.9.1",
+        "tslint": "^6.1.2",
+        "typescript": "^3.8.3"
     },
     "main": "dist/es5/seamless.js",
     "umd:main": "dist/umd/index.js",
@@ -42,8 +42,8 @@
         "rollup": "rollup -c",
         "build": "npm run esm && npm run cjs && npm run rollup",
         "lint": "tslint \"src/**/*.{js,ts}\"",
-        "listdiff": "prettier --list-different \"{.,src/**}/*.{ts,js,json,md,*rc}\"",
-        "format": "prettier --write \"{.,src/**}/*.{ts,js,json,md,*rc}\""
+        "listdiff": "prettier --list-different \"src/**/*.ts\" \"*.{js,json,md,*rc}\"",
+        "format": "prettier --write \"src/**/*.ts\" \"*.{js,json,md,*rc}\""
     },
     "repository": {
         "type": "git",

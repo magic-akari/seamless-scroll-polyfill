@@ -7,7 +7,7 @@ export const getOriginalFunc = () => {
         $original =
             Element.prototype.scroll ||
             Element.prototype.scrollTo ||
-            function(this: Element, x: number, y: number) {
+            function (this: Element, x: number, y: number) {
                 this.scrollLeft = x;
                 this.scrollTop = y;
             };
