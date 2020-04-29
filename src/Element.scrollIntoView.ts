@@ -518,7 +518,7 @@ export const polyfill = (options: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
-        if (typeof arg === "boolean") {
+        if (typeof arg === "boolean" || arg === undefined) {
             return originalFunc.call(this, arg);
         }
 
