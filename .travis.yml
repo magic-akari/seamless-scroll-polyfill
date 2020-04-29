@@ -4,9 +4,7 @@ script: yarn listdiff && yarn lint && yarn build
 
 deploy:
     - provider: npm
-      skip-cleanup: true
-      email: $NPM_EMAIL
-      api_key: $NPM_AUTH_TOKEN
+      edge: true
       on:
           repo: magic-akari/seamless-scroll-polyfill
           branch: master
