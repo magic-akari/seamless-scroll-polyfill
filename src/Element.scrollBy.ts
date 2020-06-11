@@ -1,11 +1,11 @@
 import { IAnimationOptions, IScrollToOptions } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
-export const elementScrollBy = (elememt: Element, options: IScrollToOptions) => {
-    const left = (options.left || 0) + elememt.scrollLeft;
-    const top = (options.top || 0) + elememt.scrollTop;
+export const elementScrollBy = (element: Element, options: IScrollToOptions) => {
+    const left = (options.left || 0) + element.scrollLeft;
+    const top = (options.top || 0) + element.scrollTop;
 
-    return elementScroll(elememt, { ...options, left, top });
+    return elementScroll(element, { ...options, left, top });
 };
 
 export const polyfill = (options: IAnimationOptions) => {
