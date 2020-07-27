@@ -514,7 +514,7 @@ const getOriginalFunc = () => {
     return $original;
 };
 
-export const polyfill = (options: IAnimationOptions) => {
+export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {

@@ -8,7 +8,7 @@ export const elementScrollBy = (element: Element, options: IScrollToOptions) => 
     return elementScroll(element, { ...options, left, top });
 };
 
-export const polyfill = (options: IAnimationOptions) => {
+export const polyfill = (options?: IAnimationOptions) => {
     Element.prototype.scrollBy = function scrollBy() {
         const [arg0 = 0, arg1 = 0] = arguments;
 

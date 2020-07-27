@@ -66,7 +66,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
     step(context);
 };
 
-export const polyfill = (options: IAnimationOptions) => {
+export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     Element.prototype.scroll = function scroll() {
