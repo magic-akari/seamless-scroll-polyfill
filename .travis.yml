@@ -1,6 +1,10 @@
 language: node_js
 node_js: node
-script: yarn listdiff && yarn lint && yarn build
+
+script:
+    - npm run listdiff
+    - npm run lint
+    - npm run build
 
 deploy:
     - provider: npm

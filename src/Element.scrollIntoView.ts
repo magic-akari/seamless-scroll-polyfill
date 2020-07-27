@@ -295,7 +295,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     const computedStyle = getComputedStyle(element);
     const writingMode =
         computedStyle.writingMode ||
-        computedStyle.webkitWritingMode ||
+        computedStyle.getPropertyValue("-webkit-writing-mode") ||
         computedStyle.getPropertyValue("-ms-writing-mode") ||
         "horizontal-tb";
 
