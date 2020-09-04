@@ -4,14 +4,16 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
+export const supportsScrollBehavior = "scrollBehavior" in document.documentElement.style
+
 export interface IAnimationOptions {
     duration?: number;
     timingFunc?: (k: number) => number;
 }
 
-export interface IScrollToOptions extends ScrollToOptions, IAnimationOptions {}
+export interface IScrollToOptions extends ScrollToOptions, IAnimationOptions { }
 
-export interface IScrollIntoViewOptions extends ScrollIntoViewOptions, IAnimationOptions {}
+export interface IScrollIntoViewOptions extends ScrollIntoViewOptions, IAnimationOptions { }
 
 export interface IContext extends IAnimationOptions {
     timeStamp: number;

@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollIntoViewOptions } from "./common.js";
+import { IAnimationOptions, IScrollIntoViewOptions, supportsScrollBehavior } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 declare global {
@@ -508,7 +508,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 let $original: (arg?: boolean) => void;
 
 const getOriginalFunc = () => {
-    if ($original === undefined) {
+    if ($original === undefined && supportsScrollBehavior) {
         $original = document.documentElement.scrollIntoView;
     }
     return $original;
