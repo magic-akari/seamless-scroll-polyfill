@@ -34,7 +34,7 @@ const toPhysicalAlignment = (
 ): ScrollAlignment => {
     const alignment =
         (axis === ScrollOrientation.HorizontalScroll && isHorizontalWritingMode) ||
-        (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
+            (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
             ? options.inline
             : options.block;
 
@@ -517,7 +517,7 @@ const getOriginalFunc = () => {
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+    HTMLElement.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
         if (typeof arg === "boolean" || arg === undefined) {
             return originalFunc.call(this, arg);
         }

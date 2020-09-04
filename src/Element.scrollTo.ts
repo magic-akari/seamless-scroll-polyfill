@@ -6,7 +6,7 @@ export { elementScroll as elementScrollTo } from "./Element.scroll.js";
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    Element.prototype.scrollTo = function scrollTo() {
+    HTMLElement.prototype.scrollTo = function scrollTo() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {

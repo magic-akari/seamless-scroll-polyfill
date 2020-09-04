@@ -9,7 +9,7 @@ export const elementScrollBy = (element: Element, options: IScrollToOptions) => 
 };
 
 export const polyfill = (options?: IAnimationOptions) => {
-    Element.prototype.scrollBy = function scrollBy() {
+    HTMLElement.prototype.scrollBy = function scrollBy() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {

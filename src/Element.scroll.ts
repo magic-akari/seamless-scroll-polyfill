@@ -5,8 +5,8 @@ let $original: (x: number, y: number) => void;
 export const getOriginalFunc = () => {
     if ($original === undefined) {
         $original =
-            Element.prototype.scroll ||
-            Element.prototype.scrollTo ||
+            HTMLElement.prototype.scroll ||
+            HTMLElement.prototype.scrollTo ||
             function (this: Element, x: number, y: number) {
                 this.scrollLeft = x;
                 this.scrollTop = y;
@@ -69,7 +69,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    Element.prototype.scroll = function scroll() {
+    HTMLElement.prototype.scroll = function scroll() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {
