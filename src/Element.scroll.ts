@@ -1,9 +1,9 @@
-import { IAnimationOptions, IContext, IScrollToOptions, now, step, supportsScrollBehavior } from "./common.js";
+import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./common.js";
 
 let $original: (x: number, y: number) => void;
 
 export const getOriginalFunc = () => {
-    if ($original === undefined && supportsScrollBehavior) {
+    if ($original === undefined) {
         $original =
             HTMLElement.prototype.scroll ||
             HTMLElement.prototype.scrollTo ||

@@ -1,4 +1,4 @@
-import { IAnimationOptions, supportsScrollBehavior } from "./common.js";
+import { IAnimationOptions } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
 export { windowScroll as windowScrollTo } from "./Window.scroll.js";
@@ -6,7 +6,7 @@ export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 let $original: (x: number, y: number) => void;
 
 export const getOriginalFunc = () => {
-    if ($original === undefined && supportsScrollBehavior) {
+    if ($original === undefined) {
         $original = (window.scrollTo || window.scroll).bind(window);
     }
     return $original;
