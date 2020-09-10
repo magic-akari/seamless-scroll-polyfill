@@ -14,7 +14,7 @@ export const windowScrollBy = (options: IScrollToOptions) => {
 
 let $original: (x: number, y: number) => void;
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const windowScrollByPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = (() => {
         if ($original === undefined) {
             $original = window.scrollBy.bind(window);

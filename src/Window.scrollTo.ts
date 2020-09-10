@@ -12,7 +12,7 @@ export const getOriginalFunc = () => {
     return $original;
 };
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const windowScrollToPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     window.scrollTo = function scrollTo() {

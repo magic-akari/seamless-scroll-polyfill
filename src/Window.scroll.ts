@@ -60,7 +60,7 @@ export const windowScroll = (options: IScrollToOptions) => {
     step(context);
 };
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const windowScrollPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     window.scroll = function scroll() {

@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollIntoViewOptions, supportsScrollBehavior, modifyPrototypes } from "./common.js";
+import { IAnimationOptions, IScrollIntoViewOptions, modifyPrototypes, supportsScrollBehavior } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 declare global {
@@ -514,7 +514,7 @@ const getOriginalFunc = () => {
     return $original;
 };
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const elementScrollIntoViewPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     modifyPrototypes(

@@ -3,7 +3,7 @@ import { elementScroll, getOriginalFunc } from "./Element.scroll.js";
 
 export { elementScroll as elementScrollTo } from "./Element.scroll.js";
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const elementScrollToPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     modifyPrototypes(

@@ -1,4 +1,4 @@
-import { IAnimationOptions, IContext, IScrollToOptions, now, step, modifyPrototypes } from "./common.js";
+import { IAnimationOptions, IContext, IScrollToOptions, modifyPrototypes, now, step } from "./common.js";
 
 let $original: (x: number, y: number) => void;
 
@@ -66,7 +66,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
     step(context);
 };
 
-export const polyfill = (options?: IAnimationOptions) => {
+export const elementScrollPolyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
     modifyPrototypes(
