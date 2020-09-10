@@ -1,16 +1,6 @@
 import { IAnimationOptions, IScrollIntoViewOptions, modifyPrototypes, supportsScrollBehavior } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
-declare global {
-    // tslint:disable-next-line: interface-name
-    interface Window {
-        visualViewport?: {
-            height: number;
-            width: number;
-        };
-    }
-}
-
 const enum ScrollAlignment {
     AlignToEdgeIfNeeded,
     AlignCenterAlways,
