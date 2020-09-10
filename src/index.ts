@@ -1,4 +1,4 @@
-import { IAnimationOptions } from "./common.js";
+import { IAnimationOptions, supportsScrollBehavior } from "./common.js";
 import { polyfill as elementScrollPolyfill } from "./Element.scroll.js";
 import { polyfill as elementScrollByPolyfill } from "./Element.scrollBy.js";
 import { polyfill as elementScrollIntoViewPolyfill } from "./Element.scrollIntoView.js";
@@ -8,7 +8,7 @@ import { polyfill as windowScrollByPolyfill } from "./Window.scrollBy.js";
 import { polyfill as windowScrollToPolyfill } from "./Window.scrollTo.js";
 
 export const polyfill = (options?: IAnimationOptions) => {
-    if ("scrollBehavior" in document.documentElement.style) {
+    if (supportsScrollBehavior) {
         return;
     }
 

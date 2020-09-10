@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollIntoViewOptions } from "./common.js";
+import { IAnimationOptions, IScrollIntoViewOptions, supportsScrollBehavior, modifyPrototypes } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 declare global {
@@ -508,7 +508,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 let $original: (arg?: boolean) => void;
 
 const getOriginalFunc = () => {
-    if ($original === undefined) {
+    if ($original === undefined && supportsScrollBehavior) {
         $original = document.documentElement.scrollIntoView;
     }
     return $original;
@@ -517,17 +517,20 @@ const getOriginalFunc = () => {
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    Element.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
-        if (typeof arg === "boolean" || arg === undefined) {
-            return originalFunc.call(this, arg);
-        }
+    modifyPrototypes(
+        (prototype) =>
+            (prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+                if (typeof arg === "boolean" || arg === undefined) {
+                    return originalFunc.call(this, arg);
+                }
 
-        if (Object(arg) !== arg) {
-            throw new TypeError(
-                "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
-            );
-        }
+                if (Object(arg) !== arg) {
+                    throw new TypeError(
+                        "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
+                    );
+                }
 
-        return elementScrollIntoView(this, { ...arg, ...options });
-    };
+                return elementScrollIntoView(this, { ...arg, ...options });
+            }),
+    );
 };
