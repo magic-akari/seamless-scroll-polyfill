@@ -6,6 +6,13 @@ const DURATION = 500;
 
 export const supportsScrollBehavior = "scrollBehavior" in document.documentElement.style
 
+type Prototype = typeof HTMLElement.prototype | typeof SVGElement.prototype | typeof Element.prototype
+
+export const modifyPrototypes = (modification: (prototype: Prototype) => void): void => {
+    const prototypes = [HTMLElement.prototype, SVGElement.prototype, Element.prototype]
+    prototypes.forEach(prototype => modification(prototype))
+}
+
 export interface IAnimationOptions {
     duration?: number;
     timingFunc?: (k: number) => number;

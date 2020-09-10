@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollToOptions } from "./common.js";
+import { IAnimationOptions, IScrollToOptions, modifyPrototypes } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 export const elementScrollBy = (element: Element, options: IScrollToOptions) => {
@@ -9,7 +9,8 @@ export const elementScrollBy = (element: Element, options: IScrollToOptions) => 
 };
 
 export const polyfill = (options?: IAnimationOptions) => {
-    HTMLElement.prototype.scrollBy = function scrollBy() {
+
+    modifyPrototypes(prototype => prototype.scrollBy = function scrollBy() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {
@@ -21,5 +22,6 @@ export const polyfill = (options?: IAnimationOptions) => {
         }
 
         return elementScrollBy(this, { ...arg0, ...options });
-    };
+    })
+
 };

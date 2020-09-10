@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollIntoViewOptions, supportsScrollBehavior } from "./common.js";
+import { IAnimationOptions, IScrollIntoViewOptions, supportsScrollBehavior, modifyPrototypes } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 declare global {
@@ -517,7 +517,7 @@ const getOriginalFunc = () => {
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    HTMLElement.prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+    modifyPrototypes(prototype => prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
         if (typeof arg === "boolean" || arg === undefined) {
             return originalFunc.call(this, arg);
         }
@@ -529,5 +529,5 @@ export const polyfill = (options?: IAnimationOptions) => {
         }
 
         return elementScrollIntoView(this, { ...arg, ...options });
-    };
+    })
 };

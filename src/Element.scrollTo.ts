@@ -1,4 +1,4 @@
-import { IAnimationOptions } from "./common.js";
+import { IAnimationOptions, modifyPrototypes } from "./common.js";
 import { elementScroll, getOriginalFunc } from "./Element.scroll.js";
 
 export { elementScroll as elementScrollTo } from "./Element.scroll.js";
@@ -6,7 +6,7 @@ export { elementScroll as elementScrollTo } from "./Element.scroll.js";
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    HTMLElement.prototype.scrollTo = function scrollTo() {
+    modifyPrototypes(prototype => prototype.scrollTo = function scrollTo() {
         const [arg0 = 0, arg1 = 0] = arguments;
 
         if (typeof arg0 === "number" && typeof arg1 === "number") {
@@ -18,5 +18,5 @@ export const polyfill = (options?: IAnimationOptions) => {
         }
 
         return elementScroll(this, { ...arg0, ...options });
-    };
+    })
 };
