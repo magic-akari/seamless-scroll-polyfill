@@ -9,19 +9,22 @@ export const elementScrollBy = (element: Element, options: IScrollToOptions) => 
 };
 
 export const polyfill = (options?: IAnimationOptions) => {
+    modifyPrototypes(
+        (prototype) =>
+            (prototype.scrollBy = function scrollBy() {
+                const [arg0 = 0, arg1 = 0] = arguments;
 
-    modifyPrototypes(prototype => prototype.scrollBy = function scrollBy() {
-        const [arg0 = 0, arg1 = 0] = arguments;
+                if (typeof arg0 === "number" && typeof arg1 === "number") {
+                    return elementScrollBy(this, { left: arg0, top: arg1 });
+                }
 
-        if (typeof arg0 === "number" && typeof arg1 === "number") {
-            return elementScrollBy(this, { left: arg0, top: arg1 });
-        }
+                if (Object(arg0) !== arg0) {
+                    throw new TypeError(
+                        "Failed to execute 'scrollBy' on 'Element': parameter 1 ('options') is not an object.",
+                    );
+                }
 
-        if (Object(arg0) !== arg0) {
-            throw new TypeError("Failed to execute 'scrollBy' on 'Element': parameter 1 ('options') is not an object.");
-        }
-
-        return elementScrollBy(this, { ...arg0, ...options });
-    })
-
+                return elementScrollBy(this, { ...arg0, ...options });
+            }),
+    );
 };

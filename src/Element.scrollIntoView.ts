@@ -34,7 +34,7 @@ const toPhysicalAlignment = (
 ): ScrollAlignment => {
     const alignment =
         (axis === ScrollOrientation.HorizontalScroll && isHorizontalWritingMode) ||
-            (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
+        (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
             ? options.inline
             : options.block;
 
@@ -517,17 +517,20 @@ const getOriginalFunc = () => {
 export const polyfill = (options?: IAnimationOptions) => {
     const originalFunc = getOriginalFunc();
 
-    modifyPrototypes(prototype => prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
-        if (typeof arg === "boolean" || arg === undefined) {
-            return originalFunc.call(this, arg);
-        }
+    modifyPrototypes(
+        (prototype) =>
+            (prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+                if (typeof arg === "boolean" || arg === undefined) {
+                    return originalFunc.call(this, arg);
+                }
 
-        if (Object(arg) !== arg) {
-            throw new TypeError(
-                "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
-            );
-        }
+                if (Object(arg) !== arg) {
+                    throw new TypeError(
+                        "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
+                    );
+                }
 
-        return elementScrollIntoView(this, { ...arg, ...options });
-    })
+                return elementScrollIntoView(this, { ...arg, ...options });
+            }),
+    );
 };
