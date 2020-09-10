@@ -23,9 +23,9 @@ polyfill();
 ## Use specific polyfill
 
 ```js
-import { polyfill } from "seamless-scroll-polyfill/esm/Element.scrollIntoView.js";
+import { elementScrollIntoViewPolyfill } from "seamless-scroll-polyfill";
 
-polyfill();
+elementScrollIntoViewPolyfill();
 ```
 
 ## Use methods directly without patching
