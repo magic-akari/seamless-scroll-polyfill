@@ -4,7 +4,7 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
-export const supportsScrollBehavior = "scrollBehavior" in document.documentElement.style;
+export const supportsScrollBehavior = typeof document !== "undefined" && "scrollBehavior" in document.documentElement.style;
 
 type Prototype = typeof HTMLElement.prototype | typeof SVGElement.prototype | typeof Element.prototype;
 
