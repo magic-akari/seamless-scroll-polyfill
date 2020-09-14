@@ -1,22 +1,16 @@
-import { IAnimationOptions, IContext, IScrollToOptions, modifyPrototypes, now, step } from "./common.js";
-
-let $original: (x: number, y: number) => void;
-
-export const getOriginalFunc = () => {
-    if ($original === undefined) {
-        $original =
-            HTMLElement.prototype.scroll ||
-            HTMLElement.prototype.scrollTo ||
-            function (this: Element, x: number, y: number) {
-                this.scrollLeft = x;
-                this.scrollTop = y;
-            };
-    }
-    return $original;
-};
+import {
+    IAnimationOptions,
+    IContext,
+    IScrollToOptions,
+    modifyPrototypes,
+    now,
+    original,
+    step,
+    supportsScrollBehavior,
+} from "./common.js";
 
 export const elementScroll = (element: Element, options: IScrollToOptions) => {
-    const originalBoundFunc = getOriginalFunc().bind(element);
+    const originalBoundFunc = original.elementScroll.bind(element);
 
     if (options.left === undefined && options.top === undefined) {
         return;
@@ -67,7 +61,11 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
 };
 
 export const elementScrollPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+    if (supportsScrollBehavior()) {
+        return;
+    }
+
+    const originalFunc = original.elementScroll;
 
     modifyPrototypes(
         (prototype) =>

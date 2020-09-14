@@ -1,4 +1,10 @@
-import { IAnimationOptions, IScrollIntoViewOptions, modifyPrototypes, supportsScrollBehavior } from "./common.js";
+import {
+    IAnimationOptions,
+    IScrollIntoViewOptions,
+    modifyPrototypes,
+    original,
+    supportsScrollBehavior,
+} from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 const enum ScrollAlignment {
@@ -495,17 +501,12 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     actions.forEach((run) => run());
 };
 
-let $original: (arg?: boolean) => void;
-
-const getOriginalFunc = () => {
-    if ($original === undefined && supportsScrollBehavior) {
-        $original = document.documentElement.scrollIntoView;
-    }
-    return $original;
-};
-
 export const elementScrollIntoViewPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+    if (supportsScrollBehavior()) {
+        return;
+    }
+
+    const originalFunc = original.elementScrollIntoView;
 
     modifyPrototypes(
         (prototype) =>

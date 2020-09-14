@@ -1,16 +1,15 @@
-import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./common.js";
-
-let $original: (x: number, y: number) => void;
-
-export const getOriginalFunc = () => {
-    if ($original === undefined) {
-        $original = (window.scroll || window.scrollTo).bind(window);
-    }
-    return $original;
-};
+import {
+    IAnimationOptions,
+    IContext,
+    IScrollToOptions,
+    now,
+    original,
+    step,
+    supportsScrollBehavior,
+} from "./common.js";
 
 export const windowScroll = (options: IScrollToOptions) => {
-    const originalBoundFunc = getOriginalFunc();
+    const originalBoundFunc = original.windowScroll.bind(window);
 
     if (options.left === undefined && options.top === undefined) {
         return;
@@ -61,7 +60,11 @@ export const windowScroll = (options: IScrollToOptions) => {
 };
 
 export const windowScrollPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+    if (supportsScrollBehavior()) {
+        return;
+    }
+
+    const originalFunc = original.windowScroll;
 
     window.scroll = function scroll() {
         const [arg0 = 0, arg1 = 0] = arguments;

@@ -1,19 +1,14 @@
-import { IAnimationOptions } from "./common.js";
+import { IAnimationOptions, original, supportsScrollBehavior } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
 export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 
-let $original: (x: number, y: number) => void;
-
-export const getOriginalFunc = () => {
-    if ($original === undefined) {
-        $original = (window.scrollTo || window.scroll).bind(window);
-    }
-    return $original;
-};
-
 export const windowScrollToPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+    if (supportsScrollBehavior()) {
+        return;
+    }
+
+    const originalFunc = original.windowScroll;
 
     window.scrollTo = function scrollTo() {
         const [arg0 = 0, arg1 = 0] = arguments;

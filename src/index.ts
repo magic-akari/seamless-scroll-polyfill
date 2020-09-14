@@ -8,7 +8,7 @@ import { windowScrollByPolyfill } from "./Window.scrollBy.js";
 import { windowScrollToPolyfill } from "./Window.scrollTo.js";
 
 export const polyfill = (options?: IAnimationOptions) => {
-    if (supportsScrollBehavior) {
+    if (supportsScrollBehavior()) {
         return;
     }
 

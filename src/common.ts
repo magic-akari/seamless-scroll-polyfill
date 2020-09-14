@@ -4,7 +4,30 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
-export const supportsScrollBehavior = "scrollBehavior" in document.documentElement.style;
+export const supportsScrollBehavior = () => "scrollBehavior" in document.documentElement.style;
+
+export const original = {
+    _elementScroll: undefined as typeof HTMLElement.prototype.scroll | undefined,
+    get elementScroll() {
+        return (this._elementScroll ||=
+            HTMLElement.prototype.scroll ||
+            HTMLElement.prototype.scrollTo ||
+            function (this: Element, x: number, y: number) {
+                this.scrollLeft = x;
+                this.scrollTop = y;
+            });
+    },
+
+    _elementScrollIntoView: undefined as typeof HTMLElement.prototype.scrollIntoView | undefined,
+    get elementScrollIntoView() {
+        return (this._elementScrollIntoView ||= document.documentElement.scrollIntoView);
+    },
+
+    _windowScroll: undefined as typeof window.scroll | undefined,
+    get windowScroll() {
+        return (this._windowScroll ||= window.scroll || window.scrollTo);
+    },
+};
 
 type Prototype = typeof HTMLElement.prototype | typeof SVGElement.prototype | typeof Element.prototype;
 
@@ -33,7 +56,7 @@ export interface IContext extends IAnimationOptions {
     callback: () => void;
 }
 
-export const now = () => (performance && performance.now ? performance : Date).now();
+export const now = () => window.performance?.now?.() ?? Date.now();
 
 export const step = (context: IContext) => {
     const currentTime = now();

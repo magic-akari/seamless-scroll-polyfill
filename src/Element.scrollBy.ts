@@ -1,4 +1,4 @@
-import { IAnimationOptions, IScrollToOptions, modifyPrototypes } from "./common.js";
+import { IAnimationOptions, IScrollToOptions, modifyPrototypes, supportsScrollBehavior } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 export const elementScrollBy = (element: Element, options: IScrollToOptions) => {
@@ -9,6 +9,10 @@ export const elementScrollBy = (element: Element, options: IScrollToOptions) => 
 };
 
 export const elementScrollByPolyfill = (options?: IAnimationOptions) => {
+    if (supportsScrollBehavior()) {
+        return;
+    }
+
     modifyPrototypes(
         (prototype) =>
             (prototype.scrollBy = function scrollBy() {
