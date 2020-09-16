@@ -3,7 +3,7 @@ import { windowScroll } from "./Window.scroll.js";
 
 export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 
-export const windowScrollToPolyfill = (animationOptions?: IAnimationOptions) => {
+export const windowScrollToPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }

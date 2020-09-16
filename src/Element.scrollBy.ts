@@ -8,14 +8,14 @@ import {
 } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
-export const elementScrollBy = (element: Element, options: IScrollToOptions) => {
+export const elementScrollBy = (element: Element, options: IScrollToOptions): void => {
     const left = nonFinite(options.left || 0) + element.scrollLeft;
     const top = nonFinite(options.top || 0) + element.scrollTop;
 
     return elementScroll(element, { ...options, left, top });
 };
 
-export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions) => {
+export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }

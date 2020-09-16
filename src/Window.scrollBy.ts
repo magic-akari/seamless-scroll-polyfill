@@ -8,7 +8,7 @@ import {
 } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
-export const windowScrollBy = (options: IScrollToOptions) => {
+export const windowScrollBy = (options: IScrollToOptions): void => {
     const left = nonFinite(options.left || 0) + (window.scrollX || window.pageXOffset);
     const top = nonFinite(options.top || 0) + (window.scrollY || window.pageYOffset);
 
@@ -19,7 +19,7 @@ export const windowScrollBy = (options: IScrollToOptions) => {
     return windowScroll({ ...options, left, top });
 };
 
-export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions) => {
+export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }

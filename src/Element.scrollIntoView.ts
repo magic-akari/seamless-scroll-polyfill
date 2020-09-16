@@ -21,7 +21,6 @@ const enum ScrollOrientation {
     VerticalScroll,
 }
 
-// tslint:disable-next-line: max-line-length
 // https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/dom/element.cc?l=647-681&rcl=02a6466f4efa021e4e198f373eccda3cfc56142b
 const toPhysicalAlignment = (
     options: ScrollIntoViewOptions,
@@ -233,8 +232,8 @@ const parentElement = (element: Element): Element | null => {
     );
 };
 
-export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions) => {
-    if (!element.ownerDocument!.documentElement!.contains(element)) {
+export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
+    if (!element.ownerDocument.documentElement.contains(element)) {
         return;
     }
 
@@ -502,7 +501,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     actions.forEach((run) => run());
 };
 
-export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptions) => {
+export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -511,7 +510,7 @@ export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptio
 
     modifyPrototypes(
         (prototype) =>
-            (prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+            (prototype.scrollIntoView = function scrollIntoView(): void {
                 const scrollIntoViewOptions = arguments[0];
 
                 if (arguments.length === 1 && isObject(scrollIntoViewOptions)) {

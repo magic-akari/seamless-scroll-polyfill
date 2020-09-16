@@ -4,7 +4,7 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
-export const isScrollBehaviorSupported = () => "scrollBehavior" in document.documentElement.style;
+export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in document.documentElement.style;
 
 export const original = {
     _elementScroll: undefined as typeof Element.prototype.scroll | undefined,
@@ -56,9 +56,9 @@ export interface IContext extends IAnimationOptions {
     callback: () => void;
 }
 
-export const now = () => window.performance?.now?.() ?? Date.now();
+export const now = (): number => window.performance?.now?.() ?? Date.now();
 
-export const step = (context: IContext) => {
+export const step = (context: IContext): void => {
     const currentTime = now();
 
     const elapsed = (currentTime - context.timeStamp) / (context.duration || DURATION);
@@ -87,7 +87,7 @@ export const nonFinite = (value: number): number => {
     return value;
 };
 
-export const isObject = (value: any): value is Record<string, unknown> => {
+export const isObject = (value: unknown): value is Record<string, unknown> => {
     const type = typeof value;
     return value !== null && (type === "object" || type === "function");
 };

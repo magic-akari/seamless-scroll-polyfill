@@ -3,7 +3,7 @@ import { elementScroll } from "./Element.scroll.js";
 
 export { elementScroll as elementScrollTo } from "./Element.scroll.js";
 
-export const elementScrollToPolyfill = (animationOptions?: IAnimationOptions) => {
+export const elementScrollToPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }

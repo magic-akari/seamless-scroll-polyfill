@@ -10,7 +10,7 @@ import {
     step,
 } from "./common.js";
 
-export const windowScroll = (options: IScrollToOptions) => {
+export const windowScroll = (options: IScrollToOptions): void => {
     const originalBoundFunc = original.windowScroll.bind(window);
 
     if (options.left === undefined && options.top === undefined) {
@@ -62,7 +62,7 @@ export const windowScroll = (options: IScrollToOptions) => {
     step(context);
 };
 
-export const windowScrollPolyfill = (animationOptions?: IAnimationOptions) => {
+export const windowScrollPolyfill = (animationOptions?: IAnimationOptions): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
