@@ -1,16 +1,17 @@
-import { IAnimationOptions, IContext, IScrollToOptions, now, step } from "./common.js";
-
-let $original: (x: number, y: number) => void;
-
-export const getOriginalFunc = () => {
-    if ($original === undefined) {
-        $original = (window.scroll || window.scrollTo).bind(window);
-    }
-    return $original;
-};
+import {
+    IAnimationOptions,
+    IContext,
+    IScrollToOptions,
+    isObject,
+    isScrollBehaviorSupported,
+    nonFinite,
+    now,
+    original,
+    step,
+} from "./common.js";
 
 export const windowScroll = (options: IScrollToOptions) => {
-    const originalBoundFunc = getOriginalFunc();
+    const originalBoundFunc = original.windowScroll.bind(window);
 
     if (options.left === undefined && options.top === undefined) {
         return;
@@ -19,7 +20,8 @@ export const windowScroll = (options: IScrollToOptions) => {
     const startX = window.scrollX || window.pageXOffset;
     const startY = window.scrollY || window.pageYOffset;
 
-    const { left: targetX = startX, top: targetY = startY } = options;
+    const targetX = nonFinite(options.left || startX);
+    const targetY = nonFinite(options.top || startY);
 
     if (options.behavior !== "smooth") {
         return originalBoundFunc(targetX, targetY);
@@ -60,20 +62,28 @@ export const windowScroll = (options: IScrollToOptions) => {
     step(context);
 };
 
-export const windowScrollPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+export const windowScrollPolyfill = (animationOptions?: IAnimationOptions) => {
+    if (isScrollBehaviorSupported()) {
+        return;
+    }
+
+    const originalFunc = original.windowScroll;
 
     window.scroll = function scroll() {
-        const [arg0 = 0, arg1 = 0] = arguments;
+        if (arguments.length === 1) {
+            const scrollOptions = arguments[0];
+            if (!isObject(scrollOptions)) {
+                throw new TypeError(
+                    "Failed to execute 'scroll' on 'Window': parameter 1 ('options') is not an object.",
+                );
+            }
 
-        if (typeof arg0 === "number" && typeof arg1 === "number") {
-            return originalFunc.call(this, arg0, arg1);
+            const left = Number(scrollOptions.left);
+            const top = Number(scrollOptions.top);
+
+            return windowScroll({ ...scrollOptions, left, top, ...animationOptions });
         }
 
-        if (Object(arg0) !== arg0) {
-            throw new TypeError("Failed to execute 'scroll' on 'Window': parameter 1 ('options') is not an object.");
-        }
-
-        return windowScroll({ ...arg0, ...options });
+        return originalFunc.apply(this, arguments as any);
     };
 };

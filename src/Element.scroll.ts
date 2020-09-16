@@ -1,22 +1,18 @@
-import { IAnimationOptions, IContext, IScrollToOptions, modifyPrototypes, now, step } from "./common.js";
-
-let $original: (x: number, y: number) => void;
-
-export const getOriginalFunc = () => {
-    if ($original === undefined) {
-        $original =
-            HTMLElement.prototype.scroll ||
-            HTMLElement.prototype.scrollTo ||
-            function (this: Element, x: number, y: number) {
-                this.scrollLeft = x;
-                this.scrollTop = y;
-            };
-    }
-    return $original;
-};
+import {
+    IAnimationOptions,
+    IContext,
+    IScrollToOptions,
+    isObject,
+    isScrollBehaviorSupported,
+    modifyPrototypes,
+    nonFinite,
+    now,
+    original,
+    step,
+} from "./common.js";
 
 export const elementScroll = (element: Element, options: IScrollToOptions) => {
-    const originalBoundFunc = getOriginalFunc().bind(element);
+    const originalBoundFunc = original.elementScroll.bind(element);
 
     if (options.left === undefined && options.top === undefined) {
         return;
@@ -25,7 +21,8 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
     const startX = element.scrollLeft;
     const startY = element.scrollTop;
 
-    const { left: targetX = startX, top: targetY = startY } = options;
+    const targetX = nonFinite(options.left || startX);
+    const targetY = nonFinite(options.top || startY);
 
     if (options.behavior !== "smooth") {
         return originalBoundFunc(targetX, targetY);
@@ -66,25 +63,31 @@ export const elementScroll = (element: Element, options: IScrollToOptions) => {
     step(context);
 };
 
-export const elementScrollPolyfill = (options?: IAnimationOptions) => {
-    const originalFunc = getOriginalFunc();
+export const elementScrollPolyfill = (animationOptions?: IAnimationOptions) => {
+    if (isScrollBehaviorSupported()) {
+        return;
+    }
+
+    const originalFunc = original.elementScroll;
 
     modifyPrototypes(
         (prototype) =>
             (prototype.scroll = function scroll() {
-                const [arg0 = 0, arg1 = 0] = arguments;
+                if (arguments.length === 1) {
+                    const scrollOptions = arguments[0];
+                    if (!isObject(scrollOptions)) {
+                        throw new TypeError(
+                            "Failed to execute 'scroll' on 'Element': parameter 1 ('options') is not an object.",
+                        );
+                    }
 
-                if (typeof arg0 === "number" && typeof arg1 === "number") {
-                    return originalFunc.call(this, arg0, arg1);
+                    const left = Number(scrollOptions.left);
+                    const top = Number(scrollOptions.top);
+
+                    return elementScroll(this, { ...scrollOptions, left, top, ...animationOptions });
                 }
 
-                if (Object(arg0) !== arg0) {
-                    throw new TypeError(
-                        "Failed to execute 'scroll' on 'Element': parameter 1 ('options') is not an object.",
-                    );
-                }
-
-                return elementScroll(this, { ...arg0, ...options });
+                return originalFunc.apply(this, arguments as any);
             }),
     );
 };
