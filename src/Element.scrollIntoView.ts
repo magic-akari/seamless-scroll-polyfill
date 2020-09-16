@@ -514,13 +514,7 @@ export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptio
             (prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
                 const scrollIntoViewOptions = arguments[0];
 
-                if (arguments.length === 1 && typeof scrollIntoViewOptions !== "boolean") {
-                    if (!isObject(scrollIntoViewOptions)) {
-                        throw new TypeError(
-                            "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
-                        );
-                    }
-
+                if (arguments.length === 1 && isObject(scrollIntoViewOptions)) {
                     return elementScrollIntoView(this, { ...scrollIntoViewOptions, ...animationOptions });
                 }
 
