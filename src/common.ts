@@ -4,10 +4,10 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
-export const supportsScrollBehavior = () => "scrollBehavior" in document.documentElement.style;
+export const isScrollBehaviorSupported = () => "scrollBehavior" in document.documentElement.style;
 
 export const original = {
-    _elementScroll: undefined as typeof HTMLElement.prototype.scroll | undefined,
+    _elementScroll: undefined as typeof Element.prototype.scroll | undefined,
     get elementScroll() {
         return (this._elementScroll ||=
             HTMLElement.prototype.scroll ||
@@ -18,9 +18,9 @@ export const original = {
             });
     },
 
-    _elementScrollIntoView: undefined as typeof HTMLElement.prototype.scrollIntoView | undefined,
+    _elementScrollIntoView: undefined as typeof Element.prototype.scrollIntoView | undefined,
     get elementScrollIntoView() {
-        return (this._elementScrollIntoView ||= document.documentElement.scrollIntoView);
+        return (this._elementScrollIntoView ||= HTMLElement.prototype.scrollIntoView);
     },
 
     _windowScroll: undefined as typeof window.scroll | undefined,
@@ -77,4 +77,17 @@ export const step = (context: IContext) => {
     context.rafId = requestAnimationFrame(() => {
         step(context);
     });
+};
+
+// https://drafts.csswg.org/cssom-view/#normalize-non-finite-values
+export const nonFinite = (value: number): number => {
+    if (Number.isNaN(value) || value === Infinity || value === -Infinity) {
+        return 0;
+    }
+    return value;
+};
+
+export const isObject = (value: any): value is Record<string, unknown> => {
+    const type = typeof value;
+    return value !== null && (type === "object" || type === "function");
 };

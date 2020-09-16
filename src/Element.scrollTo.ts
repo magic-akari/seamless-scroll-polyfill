@@ -1,10 +1,10 @@
-import { IAnimationOptions, modifyPrototypes, original, supportsScrollBehavior } from "./common.js";
+import { IAnimationOptions, isObject, isScrollBehaviorSupported, modifyPrototypes, original } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 export { elementScroll as elementScrollTo } from "./Element.scroll.js";
 
-export const elementScrollToPolyfill = (options?: IAnimationOptions) => {
-    if (supportsScrollBehavior()) {
+export const elementScrollToPolyfill = (animationOptions?: IAnimationOptions) => {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
@@ -13,19 +13,21 @@ export const elementScrollToPolyfill = (options?: IAnimationOptions) => {
     modifyPrototypes(
         (prototype) =>
             (prototype.scrollTo = function scrollTo() {
-                const [arg0 = 0, arg1 = 0] = arguments;
+                if (arguments.length === 1) {
+                    const scrollToOptions = arguments[0];
+                    if (!isObject(scrollToOptions)) {
+                        throw new TypeError(
+                            "Failed to execute 'scrollTo' on 'Element': parameter 1 ('options') is not an object.",
+                        );
+                    }
 
-                if (typeof arg0 === "number" && typeof arg1 === "number") {
-                    return originalFunc.call(this, arg0, arg1);
+                    const left = Number(scrollToOptions.left);
+                    const top = Number(scrollToOptions.top);
+
+                    return elementScroll(this, { ...scrollToOptions, left, top, ...animationOptions });
                 }
 
-                if (Object(arg0) !== arg0) {
-                    throw new TypeError(
-                        "Failed to execute 'scrollTo' on 'Element': parameter 1 ('options') is not an object.",
-                    );
-                }
-
-                return elementScroll(this, { ...arg0, ...options });
+                return originalFunc.apply(this, arguments as any);
             }),
     );
 };

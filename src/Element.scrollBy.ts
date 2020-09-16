@@ -1,34 +1,46 @@
-import { IAnimationOptions, IScrollToOptions, modifyPrototypes, supportsScrollBehavior } from "./common.js";
+import {
+    IAnimationOptions,
+    IScrollToOptions,
+    isObject,
+    isScrollBehaviorSupported,
+    modifyPrototypes,
+    nonFinite,
+} from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 export const elementScrollBy = (element: Element, options: IScrollToOptions) => {
-    const left = (options.left || 0) + element.scrollLeft;
-    const top = (options.top || 0) + element.scrollTop;
+    const left = nonFinite(options.left || 0) + element.scrollLeft;
+    const top = nonFinite(options.top || 0) + element.scrollTop;
 
     return elementScroll(element, { ...options, left, top });
 };
 
-export const elementScrollByPolyfill = (options?: IAnimationOptions) => {
-    if (supportsScrollBehavior()) {
+export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions) => {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
     modifyPrototypes(
         (prototype) =>
             (prototype.scrollBy = function scrollBy() {
-                const [arg0 = 0, arg1 = 0] = arguments;
+                if (arguments.length === 1) {
+                    const scrollByOptions = arguments[0];
+                    if (!isObject(scrollByOptions)) {
+                        throw new TypeError(
+                            "Failed to execute 'scrollBy' on 'Element': parameter 1 ('options') is not an object.",
+                        );
+                    }
 
-                if (typeof arg0 === "number" && typeof arg1 === "number") {
-                    return elementScrollBy(this, { left: arg0, top: arg1 });
+                    const left = Number(scrollByOptions.left);
+                    const top = Number(scrollByOptions.top);
+
+                    return elementScrollBy(this, { ...scrollByOptions, left, top, ...animationOptions });
                 }
 
-                if (Object(arg0) !== arg0) {
-                    throw new TypeError(
-                        "Failed to execute 'scrollBy' on 'Element': parameter 1 ('options') is not an object.",
-                    );
-                }
+                const left = Number(arguments[0]);
+                const top = Number(arguments[1]);
 
-                return elementScrollBy(this, { ...arg0, ...options });
+                return elementScrollBy(this, { left, top });
             }),
     );
 };

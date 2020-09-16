@@ -1,9 +1,10 @@
 import {
     IAnimationOptions,
     IScrollIntoViewOptions,
+    isObject,
+    isScrollBehaviorSupported,
     modifyPrototypes,
     original,
-    supportsScrollBehavior,
 } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
@@ -77,7 +78,7 @@ const toPhysicalAlignment = (
  * │ target │   frame
  * └────────┘ ┗ ━ ━ ━ ┛
  */
-function alignNearest(
+const alignNearest = (
     scrollingEdgeStart: number,
     scrollingEdgeEnd: number,
     scrollingSize: number,
@@ -86,7 +87,7 @@ function alignNearest(
     elementEdgeStart: number,
     elementEdgeEnd: number,
     elementSize: number,
-) {
+): number => {
     /**
      * If element edge A and element edge B are both outside scrolling box edge A and scrolling box edge B
      *
@@ -207,7 +208,7 @@ function alignNearest(
     }
 
     return 0;
-}
+};
 
 const canOverflow = (overflow: string | null) => {
     return overflow !== "visible" && overflow !== "clip";
@@ -501,8 +502,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     actions.forEach((run) => run());
 };
 
-export const elementScrollIntoViewPolyfill = (options?: IAnimationOptions) => {
-    if (supportsScrollBehavior()) {
+export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptions) => {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
@@ -511,17 +512,19 @@ export const elementScrollIntoViewPolyfill = (options?: IAnimationOptions) => {
     modifyPrototypes(
         (prototype) =>
             (prototype.scrollIntoView = function scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
-                if (typeof arg === "boolean" || arg === undefined) {
-                    return originalFunc.call(this, arg);
+                const scrollIntoViewOptions = arguments[0];
+
+                if (arguments.length === 1 && typeof scrollIntoViewOptions !== "boolean") {
+                    if (!isObject(scrollIntoViewOptions)) {
+                        throw new TypeError(
+                            "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
+                        );
+                    }
+
+                    return elementScrollIntoView(this, { ...scrollIntoViewOptions, ...animationOptions });
                 }
 
-                if (Object(arg) !== arg) {
-                    throw new TypeError(
-                        "Failed to execute 'scrollIntoView' on 'Element': parameter 1 ('options') is not an object.",
-                    );
-                }
-
-                return elementScrollIntoView(this, { ...arg, ...options });
+                return originalFunc.apply(this, arguments as any);
             }),
     );
 };
