@@ -21,8 +21,8 @@ export const elementScroll = (element: Element, options: IScrollToOptions): void
     const startX = element.scrollLeft;
     const startY = element.scrollTop;
 
-    const targetX = nonFinite(options.left || startX);
-    const targetY = nonFinite(options.top || startY);
+    const targetX = nonFinite(options.left ?? startX);
+    const targetY = nonFinite(options.top ?? startY);
 
     if (options.behavior !== "smooth") {
         return originalBoundFunc(targetX, targetY);

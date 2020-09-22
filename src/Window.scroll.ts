@@ -20,8 +20,8 @@ export const windowScroll = (options: IScrollToOptions): void => {
     const startX = window.scrollX || window.pageXOffset;
     const startY = window.scrollY || window.pageYOffset;
 
-    const targetX = nonFinite(options.left || startX);
-    const targetY = nonFinite(options.top || startY);
+    const targetX = nonFinite(options.left ?? startX);
+    const targetY = nonFinite(options.top ?? startY);
 
     if (options.behavior !== "smooth") {
         return originalBoundFunc(targetX, targetY);
