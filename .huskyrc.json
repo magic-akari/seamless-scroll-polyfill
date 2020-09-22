@@ -1,0 +1,7 @@
+{
+    "hooks": {
+        "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+        "pre-commit": "npm run listdiff && npm run lint && npm run type-check",
+        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+}

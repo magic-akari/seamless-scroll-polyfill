@@ -16,10 +16,15 @@
         }
     ],
     "devDependencies": {
+        "@commitlint/cli": "^11.0.0",
+        "@commitlint/config-conventional": "^11.0.0",
         "@typescript-eslint/eslint-plugin": "^4.1.1",
         "@typescript-eslint/parser": "^4.1.1",
+        "commitizen": "^4.2.1",
+        "cz-conventional-changelog": "^3.3.0",
         "eslint": "^7.9.0",
         "eslint-config-prettier": "^6.11.0",
+        "husky": "^4.3.0",
         "prettier": "^2.1.1",
         "rollup": "^2.26.11",
         "rollup-plugin-babel-minify": "^10.0.0",
@@ -44,9 +49,10 @@
         "cjs": "tsc -m commonjs -t es2015 --outDir dist/cjs",
         "rollup": "rollup -c",
         "build": "npm run esm && npm run cjs && npm run rollup",
+        "type-check": "tsc --noEmit --skipLibCheck",
         "lint": "eslint \"src/**/*.{js,ts}\"",
-        "listdiff": "prettier --list-different \"src/**/*.ts\" \"*.{js,json,md,*rc}\"",
-        "format": "prettier --write \"src/**/*.ts\" \"*.{js,json,md,*rc}\""
+        "listdiff": "prettier --list-different \"src/**/*.ts\" \"*.{js,json,md}\"",
+        "format": "prettier --write \"src/**/*.ts\" \"*.{js,json,md}\""
     },
     "repository": {
         "type": "git",
