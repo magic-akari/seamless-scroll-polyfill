@@ -81,7 +81,7 @@ export const step = (context: IContext): void => {
 
 // https://drafts.csswg.org/cssom-view/#normalize-non-finite-values
 export const nonFinite = (value: number): number => {
-    if (Number.isNaN(value) || value === Infinity || value === -Infinity) {
+    if (!isFinite(value)) {
         return 0;
     }
     return value;
