@@ -78,10 +78,7 @@ export const windowScrollPolyfill = (animationOptions?: IAnimationOptions): void
                 );
             }
 
-            const left = Number(scrollOptions.left);
-            const top = Number(scrollOptions.top);
-
-            return windowScroll({ ...scrollOptions, left, top, ...animationOptions });
+            return windowScroll({ ...scrollOptions, ...animationOptions });
         }
 
         return originalFunc.apply(this, arguments as any);

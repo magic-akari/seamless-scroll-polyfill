@@ -33,10 +33,7 @@ export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): vo
                 );
             }
 
-            const left = Number(scrollByOptions.left);
-            const top = Number(scrollByOptions.top);
-
-            return windowScrollBy({ ...scrollByOptions, left, top, ...animationOptions });
+            return windowScrollBy({ ...scrollByOptions, ...animationOptions });
         }
 
         const left = Number(arguments[0]);

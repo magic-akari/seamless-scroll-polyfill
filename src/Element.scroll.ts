@@ -81,10 +81,7 @@ export const elementScrollPolyfill = (animationOptions?: IAnimationOptions): voi
                         );
                     }
 
-                    const left = Number(scrollOptions.left);
-                    const top = Number(scrollOptions.top);
-
-                    return elementScroll(this, { ...scrollOptions, left, top, ...animationOptions });
+                    return elementScroll(this, { ...scrollOptions, ...animationOptions });
                 }
 
                 return originalFunc.apply(this, arguments as any);

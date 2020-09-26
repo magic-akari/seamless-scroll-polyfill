@@ -31,10 +31,7 @@ export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions): v
                         );
                     }
 
-                    const left = Number(scrollByOptions.left);
-                    const top = Number(scrollByOptions.top);
-
-                    return elementScrollBy(this, { ...scrollByOptions, left, top, ...animationOptions });
+                    return elementScrollBy(this, { ...scrollByOptions, ...animationOptions });
                 }
 
                 const left = Number(arguments[0]);

@@ -84,7 +84,7 @@ export const nonFinite = (value: number): number => {
     if (!isFinite(value)) {
         return 0;
     }
-    return value;
+    return Number(value);
 };
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {
