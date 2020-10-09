@@ -232,6 +232,15 @@ const parentElement = (element: Element): Element | null => {
     );
 };
 
+const propertyValueToNumber = (propertyValue: string): number => {
+    const match = propertyValue.match(/\d+/);
+    if (match) {
+        const [value] = match;
+        return parseInt(value);
+    }
+    return 0;
+};
+
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
     if (!element.ownerDocument.documentElement.contains(element)) {
         return;
@@ -294,6 +303,11 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
         computedStyle.getPropertyValue("-webkit-writing-mode") ||
         computedStyle.getPropertyValue("-ms-writing-mode") ||
         "horizontal-tb";
+    const scrollMargins = ["top", "right", "bottom", "left"].map((edge) => {
+        const value = computedStyle.getPropertyValue(`scroll-margin-${edge}`);
+        return propertyValueToNumber(value);
+    });
+    const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = scrollMargins;
 
     const isHorizontalWritingMode = ["horizontal-tb", "lr", "lr-tb", "rl"].some((mode) => mode === writingMode);
     const isFlippedBlocksWritingMode = ["vertical-rl", "tb-rl"].some((mode) => mode === writingMode);
@@ -315,9 +329,9 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
         switch (alignY) {
             case ScrollAlignment.AlignTopAlways:
             case ScrollAlignment.AlignToEdgeIfNeeded:
-                return targetTop;
+                return targetTop - scrollMarginTop;
             case ScrollAlignment.AlignBottomAlways:
-                return targetBottom;
+                return targetBottom + scrollMarginBottom;
             // case ScrollAlignment.AlignCenterAlways:
             default:
                 return targetTop + targetHeight / 2;
@@ -329,11 +343,11 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             case ScrollAlignment.AlignCenterAlways:
                 return targetLeft + targetWidth / 2;
             case ScrollAlignment.AlignRightAlways:
-                return targetRight;
+                return targetRight + scrollMarginRight;
             // case ScrollAlignment.AlignLeftAlways:
             // case ScrollAlignment.AlignToEdgeIfNeeded:
             default:
-                return targetLeft;
+                return targetLeft - scrollMarginLeft;
         }
     })();
 
