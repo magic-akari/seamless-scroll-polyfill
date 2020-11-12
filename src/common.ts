@@ -4,7 +4,14 @@ const ease = (k: number) => {
 
 const DURATION = 500;
 
-export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in document.documentElement.style;
+const isCSSPropertySupported = (property: string): boolean => property in document.documentElement.style;
+
+export const isScrollBehaviorSupported = (): boolean => isCSSPropertySupported("scrollBehavior");
+export const getSupportedScrollMarginProperty = (): string => {
+    // Webkit uses "scroll-snap-margin" https://bugs.webkit.org/show_bug.cgi?id=189265.
+    const [scrollMarginProperty] = ["scroll-margin", "scroll-snap-margin"].filter(isCSSPropertySupported);
+    return scrollMarginProperty;
+};
 
 export const original = {
     _elementScroll: undefined as typeof Element.prototype.scroll | undefined,

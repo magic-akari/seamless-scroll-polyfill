@@ -1,6 +1,7 @@
 import {
     IAnimationOptions,
     IScrollIntoViewOptions,
+    getSupportedScrollMarginProperty,
     isObject,
     isScrollBehaviorSupported,
     modifyPrototypes,
@@ -304,7 +305,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
         computedStyle.getPropertyValue("-ms-writing-mode") ||
         "horizontal-tb";
     const scrollMargins = ["top", "right", "bottom", "left"].map((edge) => {
-        const value = computedStyle.getPropertyValue(`scroll-margin-${edge}`);
+        const scrollProperty = getSupportedScrollMarginProperty();
+        const value = computedStyle.getPropertyValue(`${scrollProperty}-${edge}`);
         return propertyValueToNumber(value);
     });
     const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = scrollMargins;
