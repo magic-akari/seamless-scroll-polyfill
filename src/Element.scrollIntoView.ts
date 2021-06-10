@@ -213,10 +213,31 @@ const canOverflow = (overflow: string | null) => {
     return overflow !== "visible" && overflow !== "clip";
 };
 
+const getFrameElement = (element: Element) => {
+    if (!element.ownerDocument || !element.ownerDocument.defaultView) {
+        return null;
+    }
+
+    try {
+        return element.ownerDocument.defaultView.frameElement;
+    } catch (e) {
+        return null;
+    }
+};
+
+const isHiddenByFrame = (element: Element) => {
+    const frame = getFrameElement(element);
+    if (!frame) {
+        return false;
+    }
+
+    return frame.clientHeight < element.scrollHeight || frame.clientWidth < element.scrollWidth;
+};
+
 const isScrollable = (element: Element) => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
         const style = getComputedStyle(element);
-        return canOverflow(style.overflowY) || canOverflow(style.overflowX);
+        return canOverflow(style.overflowY) || canOverflow(style.overflowX) || isHiddenByFrame(element);
     }
 
     return false;
@@ -224,12 +245,12 @@ const isScrollable = (element: Element) => {
 
 const parentElement = (element: Element): Element | null => {
     const parentNode = element.parentNode;
-    return (
-        parentNode &&
-        (parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE
-            ? (parentNode as ShadowRoot).host
-            : (parentNode as Element))
-    );
+
+    if (parentNode !== null && parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        return (parentNode as ShadowRoot).host;
+    }
+
+    return parentNode as Element | null;
 };
 
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
