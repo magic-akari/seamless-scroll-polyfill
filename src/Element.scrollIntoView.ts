@@ -320,10 +320,9 @@ const isHiddenByFrame = (element: Element): boolean => {
     return frame.clientHeight < element.scrollHeight || frame.clientWidth < element.scrollWidth;
 };
 
-const isScrollable = (element: Element): boolean => {
+const isScrollable = (element: Element, computedStyle: CSSStyleDeclaration): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
-        const style = getComputedStyle(element);
-        return canOverflow(style.overflowY) || canOverflow(style.overflowX) || isHiddenByFrame(element);
+        return canOverflow(computedStyle.overflowY) || canOverflow(computedStyle.overflowX) || isHiddenByFrame(element);
     }
 
     return false;
@@ -389,6 +388,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
     const frames: Element[] = [];
 
+    const documentElementStyle = getComputedStyle(document.documentElement);
+
     for (let cursor = parentElement(element); cursor !== null; cursor = parentElement(cursor)) {
         // Stop when we reach the viewport
         if (cursor === scrollingElement) {
@@ -396,15 +397,25 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             break;
         }
 
+        const cursorStyle = getComputedStyle(cursor);
+
         // Skip document.body if it's not the scrollingElement and documentElement isn't independently scrollable
-        if (cursor === document.body && isScrollable(cursor) && !isScrollable(document.documentElement)) {
+        if (
+            cursor === document.body &&
+            isScrollable(cursor, cursorStyle) &&
+            !isScrollable(document.documentElement, documentElementStyle)
+        ) {
             continue;
         }
 
         // Now we check if the element is scrollable,
         // this code only runs if the loop haven't already hit the viewport or a custom boundary
-        if (isScrollable(cursor)) {
+        if (isScrollable(cursor, cursorStyle)) {
             frames.push(cursor);
+        }
+
+        if (cursorStyle.position === "fixed") {
+            break;
         }
     }
 
