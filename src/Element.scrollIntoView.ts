@@ -9,61 +9,147 @@ import {
 import { elementScroll } from "./Element.scroll.js";
 
 const enum ScrollAlignment {
-    AlignToEdgeIfNeeded,
-    AlignCenterAlways,
-    AlignTopAlways,
-    AlignBottomAlways,
-    AlignLeftAlways,
-    AlignRightAlways,
-}
-const enum ScrollOrientation {
-    HorizontalScroll,
-    VerticalScroll,
+    ToEdgeIfNeeded,
+    CenterAlways,
+    LeftOrTop,
+    RightOrBottom,
 }
 
-// https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/dom/element.cc?l=647-681&rcl=02a6466f4efa021e4e198f373eccda3cfc56142b
+const enum WritingMode {
+    HorizontalTb,
+    VerticalRl,
+    VerticalLr,
+    SidewaysRl,
+    SidewaysLr,
+}
+
+// https://drafts.csswg.org/css-writing-modes-4/#block-flow
+const normalizeWritingMode = (writingMode: string): WritingMode => {
+    switch (writingMode) {
+        case "horizontal-tb":
+        case "lr":
+        case "lr-tb":
+        case "rl":
+        case "rl-tb":
+            return WritingMode.HorizontalTb;
+
+        case "vertical-rl":
+        case "tb":
+        case "tb-rl":
+            return WritingMode.VerticalRl;
+
+        case "vertical-lr":
+        case "tb-lr":
+            return WritingMode.VerticalLr;
+
+        case "sideways-rl":
+            return WritingMode.SidewaysRl;
+
+        case "sideways-lr":
+            return WritingMode.SidewaysLr;
+    }
+
+    return WritingMode.HorizontalTb;
+};
+
+type Tuple2<T> = [T, T];
+
+// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/dom/element.cc;l=1097-1189;drc=6a7533d4a1e9f2372223a9d912a9e53a6fa35ae0
 const toPhysicalAlignment = (
     options: ScrollIntoViewOptions,
-    axis: ScrollOrientation,
-    isHorizontalWritingMode: boolean,
-    isFlippedBlocksMode: boolean,
-): ScrollAlignment => {
-    const alignment =
-        (axis === ScrollOrientation.HorizontalScroll && isHorizontalWritingMode) ||
-        (axis === ScrollOrientation.VerticalScroll && !isHorizontalWritingMode)
-            ? options.inline
-            : options.block;
+    writingMode: WritingMode,
+    isLTR: boolean,
+): Tuple2<ScrollAlignment> => {
+    let [xPos, yPos] = [options.block || "start", options.inline || "nearest"];
 
-    if (alignment === "center") {
-        return ScrollAlignment.AlignCenterAlways;
-    }
-    if (alignment === "nearest") {
-        return ScrollAlignment.AlignToEdgeIfNeeded;
-    }
-    if (alignment === "start") {
-        return axis === ScrollOrientation.HorizontalScroll
-            ? isFlippedBlocksMode
-                ? ScrollAlignment.AlignRightAlways
-                : ScrollAlignment.AlignLeftAlways
-            : ScrollAlignment.AlignTopAlways;
-    }
-    if (alignment === "end") {
-        return axis === ScrollOrientation.HorizontalScroll
-            ? isFlippedBlocksMode
-                ? ScrollAlignment.AlignLeftAlways
-                : ScrollAlignment.AlignRightAlways
-            : ScrollAlignment.AlignBottomAlways;
+    /**  0b{vertical}{horizontal}  0: normal, 1: reverse */
+    let layout = 0b00;
+
+    const enum OP {
+        ReverseHorizontal = 0b01,
+        ReverseVertical = 0b10,
     }
 
-    // Default values
-    if (isHorizontalWritingMode) {
-        return axis === ScrollOrientation.HorizontalScroll
-            ? ScrollAlignment.AlignToEdgeIfNeeded
-            : ScrollAlignment.AlignTopAlways;
+    /**
+     * WritingMode.VerticalLr: ↓→
+     * | 1 | 4 |   |
+     * | 2 | 5 |   |
+     * | 3 |   |   |
+     *
+     * RTL: ↑→
+     * | 3 |   |   |
+     * | 2 | 5 |   |
+     * | 1 | 4 |   |
+     */
+    if (!isLTR) {
+        layout ^= OP.ReverseVertical;
     }
-    return axis === ScrollOrientation.HorizontalScroll
-        ? ScrollAlignment.AlignLeftAlways
-        : ScrollAlignment.AlignToEdgeIfNeeded;
+
+    switch (writingMode) {
+        /**
+         * ↓→
+         * | 1 | 2 | 3 |
+         * | 4 | 5 |   |
+         * |   |   |   |
+         *
+         * RTL: ↓←
+         * | 3 | 2 | 1 |
+         * |   | 5 | 4 |
+         * |   |   |   |
+         */
+        case WritingMode.HorizontalTb:
+            // swap horizontal and vertical
+            layout = (layout >> 1) | ((layout & 1) << 1);
+            [xPos, yPos] = [yPos, xPos];
+            break;
+
+        /**
+         * ↓←
+         * |   | 4 | 1 |
+         * |   | 5 | 2 |
+         * |   |   | 3 |
+         *
+         * RTL: ↑←
+         * |   |   | 3 |
+         * |   | 5 | 2 |
+         * |   | 4 | 1 |
+         */
+        case WritingMode.VerticalRl:
+        case WritingMode.SidewaysRl:
+            //  reverse horizontal
+            layout ^= OP.ReverseHorizontal;
+            break;
+
+        /**
+         * ↑→
+         * | 3 |   |   |
+         * | 2 | 5 |   |
+         * | 1 | 4 |   |
+         *
+         * RTL: ↓→
+         * | 1 | 4 |   |
+         * | 2 | 5 |   |
+         * | 3 |   |   |
+         */
+        case WritingMode.SidewaysLr:
+            // reverse vertical
+            layout ^= OP.ReverseVertical;
+            break;
+    }
+
+    return [xPos, yPos].map((value, index) => {
+        switch (value) {
+            case "center":
+                return ScrollAlignment.CenterAlways;
+            case "nearest":
+                return ScrollAlignment.ToEdgeIfNeeded;
+
+            default: {
+                const reverse = (layout >> index) & 1;
+                return (value === "start") === !reverse ? ScrollAlignment.LeftOrTop : ScrollAlignment.RightOrBottom;
+            }
+        }
+    }) as Tuple2<ScrollAlignment>;
 };
 
 // code from stipsan/compute-scroll-into-view
@@ -209,11 +295,11 @@ const alignNearest = (
     return 0;
 };
 
-const canOverflow = (overflow: string | null) => {
+const canOverflow = (overflow: string | null): boolean => {
     return overflow !== "visible" && overflow !== "clip";
 };
 
-const getFrameElement = (element: Element) => {
+const getFrameElement = (element: Element): Element | null => {
     if (!element.ownerDocument || !element.ownerDocument.defaultView) {
         return null;
     }
@@ -225,7 +311,7 @@ const getFrameElement = (element: Element) => {
     }
 };
 
-const isHiddenByFrame = (element: Element) => {
+const isHiddenByFrame = (element: Element): boolean => {
     const frame = getFrameElement(element);
     if (!frame) {
         return false;
@@ -234,7 +320,7 @@ const isHiddenByFrame = (element: Element) => {
     return frame.clientHeight < element.scrollHeight || frame.clientWidth < element.scrollWidth;
 };
 
-const isScrollable = (element: Element) => {
+const isScrollable = (element: Element): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
         const style = getComputedStyle(element);
         return canOverflow(style.overflowY) || canOverflow(style.overflowX) || isHiddenByFrame(element);
@@ -251,6 +337,18 @@ const parentElement = (element: Element): Element | null => {
     }
 
     return parentNode as Element | null;
+};
+
+const clamp = (value: number, width: number): number => {
+    if (value < -width) {
+        return -width;
+    }
+
+    if (value > width) {
+        return width;
+    }
+
+    return value;
 };
 
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
@@ -310,50 +408,40 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     } = element.getBoundingClientRect();
 
     const computedStyle = getComputedStyle(element);
-    const writingMode =
+    const writingMode = normalizeWritingMode(
         computedStyle.writingMode ||
-        computedStyle.getPropertyValue("-webkit-writing-mode") ||
-        computedStyle.getPropertyValue("-ms-writing-mode") ||
-        "horizontal-tb";
-
-    const isHorizontalWritingMode = ["horizontal-tb", "lr", "lr-tb", "rl"].some((mode) => mode === writingMode);
-    const isFlippedBlocksWritingMode = ["vertical-rl", "tb-rl"].some((mode) => mode === writingMode);
-
-    const alignX = toPhysicalAlignment(
-        options,
-        ScrollOrientation.HorizontalScroll,
-        isHorizontalWritingMode,
-        isFlippedBlocksWritingMode,
+            computedStyle.getPropertyValue("-webkit-writing-mode") ||
+            computedStyle.getPropertyValue("-ms-writing-mode"),
     );
-    const alignY = toPhysicalAlignment(
-        options,
-        ScrollOrientation.VerticalScroll,
-        isHorizontalWritingMode,
-        isFlippedBlocksWritingMode,
-    );
+
+    const isLTR = computedStyle.direction !== "rtl";
+
+    const [alignX, alignY] = toPhysicalAlignment(options, writingMode, isLTR);
 
     let targetBlock = (() => {
         switch (alignY) {
-            case ScrollAlignment.AlignTopAlways:
-            case ScrollAlignment.AlignToEdgeIfNeeded:
-                return targetTop;
-            case ScrollAlignment.AlignBottomAlways:
-                return targetBottom;
-            // case ScrollAlignment.AlignCenterAlways:
-            default:
+            case ScrollAlignment.CenterAlways:
                 return targetTop + targetHeight / 2;
+
+            case ScrollAlignment.LeftOrTop:
+            case ScrollAlignment.ToEdgeIfNeeded:
+                return targetTop;
+
+            case ScrollAlignment.RightOrBottom:
+                return targetBottom;
         }
     })();
 
     let targetInline = (() => {
         switch (alignX) {
-            case ScrollAlignment.AlignCenterAlways:
+            case ScrollAlignment.CenterAlways:
                 return targetLeft + targetWidth / 2;
-            case ScrollAlignment.AlignRightAlways:
+
+            case ScrollAlignment.RightOrBottom:
                 return targetRight;
-            // case ScrollAlignment.AlignLeftAlways:
-            // case ScrollAlignment.AlignToEdgeIfNeeded:
-            default:
+
+            case ScrollAlignment.LeftOrTop:
+            case ScrollAlignment.ToEdgeIfNeeded:
                 return targetLeft;
         }
     })();
@@ -361,14 +449,14 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     type IAction = () => void;
 
     const actions: IAction[] = [];
-    for (const frame of frames) {
+    frames.forEach((frame) => {
         const { height, width, top, right, bottom, left } = frame.getBoundingClientRect();
 
         const frameStyle = getComputedStyle(frame);
-        const borderLeft = parseInt(frameStyle.borderLeftWidth as string, 10);
-        const borderTop = parseInt(frameStyle.borderTopWidth as string, 10);
-        const borderRight = parseInt(frameStyle.borderRightWidth as string, 10);
-        const borderBottom = parseInt(frameStyle.borderBottomWidth as string, 10);
+        const borderLeft = parseInt(frameStyle.borderLeftWidth, 10);
+        const borderTop = parseInt(frameStyle.borderTopWidth, 10);
+        const borderRight = parseInt(frameStyle.borderRightWidth, 10);
+        const borderBottom = parseInt(frameStyle.borderBottomWidth, 10);
 
         let blockScroll = 0;
         let inlineScroll = 0;
@@ -389,19 +477,19 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             // Handle viewport logic (document.documentElement or document.body)
 
             switch (alignY) {
-                case ScrollAlignment.AlignTopAlways: {
+                case ScrollAlignment.LeftOrTop: {
                     blockScroll = targetBlock;
                     break;
                 }
-                case ScrollAlignment.AlignBottomAlways: {
+                case ScrollAlignment.RightOrBottom: {
                     blockScroll = targetBlock - viewportHeight;
                     break;
                 }
-                case ScrollAlignment.AlignCenterAlways: {
+                case ScrollAlignment.CenterAlways: {
                     blockScroll = targetBlock - viewportHeight / 2;
                     break;
                 }
-                case ScrollAlignment.AlignToEdgeIfNeeded: {
+                case ScrollAlignment.ToEdgeIfNeeded: {
                     blockScroll = alignNearest(
                         viewportY,
                         viewportY + viewportHeight,
@@ -417,19 +505,19 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             }
 
             switch (alignX) {
-                case ScrollAlignment.AlignLeftAlways: {
+                case ScrollAlignment.LeftOrTop: {
                     inlineScroll = targetInline;
                     break;
                 }
-                case ScrollAlignment.AlignRightAlways: {
+                case ScrollAlignment.RightOrBottom: {
                     inlineScroll = targetInline - viewportWidth;
                     break;
                 }
-                case ScrollAlignment.AlignCenterAlways: {
+                case ScrollAlignment.CenterAlways: {
                     inlineScroll = targetInline - viewportWidth / 2;
                     break;
                 }
-                case ScrollAlignment.AlignToEdgeIfNeeded: {
+                case ScrollAlignment.ToEdgeIfNeeded: {
                     inlineScroll = alignNearest(
                         viewportX,
                         viewportX + viewportWidth,
@@ -444,26 +532,25 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
                 }
             }
 
-            // Apply scroll position offsets and ensure they are within bounds
-            blockScroll = Math.max(0, blockScroll + viewportY);
-            inlineScroll = Math.max(0, inlineScroll + viewportX);
+            blockScroll += viewportY;
+            inlineScroll += viewportX;
         } else {
             // Handle each scrolling frame that might exist between the target and the viewport
 
             switch (alignY) {
-                case ScrollAlignment.AlignTopAlways: {
+                case ScrollAlignment.LeftOrTop: {
                     blockScroll = targetBlock - top - borderTop;
                     break;
                 }
-                case ScrollAlignment.AlignBottomAlways: {
+                case ScrollAlignment.RightOrBottom: {
                     blockScroll = targetBlock - bottom + borderBottom + scrollbarHeight;
                     break;
                 }
-                case ScrollAlignment.AlignCenterAlways: {
+                case ScrollAlignment.CenterAlways: {
                     blockScroll = targetBlock - (top + height / 2) + scrollbarHeight / 2;
                     break;
                 }
-                case ScrollAlignment.AlignToEdgeIfNeeded: {
+                case ScrollAlignment.ToEdgeIfNeeded: {
                     blockScroll = alignNearest(
                         top,
                         bottom,
@@ -479,19 +566,19 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             }
 
             switch (alignX) {
-                case ScrollAlignment.AlignLeftAlways: {
+                case ScrollAlignment.LeftOrTop: {
                     inlineScroll = targetInline - left - borderLeft;
                     break;
                 }
-                case ScrollAlignment.AlignRightAlways: {
+                case ScrollAlignment.RightOrBottom: {
                     inlineScroll = targetInline - right + borderRight + scrollbarWidth;
                     break;
                 }
-                case ScrollAlignment.AlignCenterAlways: {
+                case ScrollAlignment.CenterAlways: {
                     inlineScroll = targetInline - (left + width / 2) + scrollbarWidth / 2;
                     break;
                 }
-                case ScrollAlignment.AlignToEdgeIfNeeded: {
+                case ScrollAlignment.ToEdgeIfNeeded: {
                     inlineScroll = alignNearest(
                         left,
                         right,
@@ -508,8 +595,8 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
 
             const { scrollLeft, scrollTop } = frame;
             // Ensure scroll coordinates are not out of bounds while applying scroll offsets
-            blockScroll = Math.max(0, Math.min(scrollTop + blockScroll, frame.scrollHeight - height + scrollbarHeight));
-            inlineScroll = Math.max(0, Math.min(scrollLeft + inlineScroll, frame.scrollWidth - width + scrollbarWidth));
+            blockScroll = clamp(scrollTop + blockScroll, frame.scrollHeight - height + scrollbarHeight);
+            inlineScroll = clamp(scrollLeft + inlineScroll, frame.scrollWidth - width + scrollbarWidth);
 
             // Cache the offset so that parent frames can scroll this into view correctly
             targetBlock += scrollTop - blockScroll;
@@ -517,7 +604,7 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
         }
 
         actions.push(() => elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }));
-    }
+    });
 
     actions.forEach((run) => run());
 };
