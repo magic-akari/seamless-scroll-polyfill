@@ -351,6 +351,29 @@ const clamp = (value: number, width: number): number => {
     return value;
 };
 
+const isCSSPropertySupported = (property: string): boolean => property in document.documentElement.style;
+
+const getSupportedScrollMarginProperty = (): string => {
+    // Webkit uses "scroll-snap-margin" https://bugs.webkit.org/show_bug.cgi?id=189265.
+    return ["scroll-margin", "scroll-snap-margin"].filter(isCSSPropertySupported)[0];
+};
+
+const getElementScrollSnapArea = (element: Element, computedStyle: CSSStyleDeclaration) => {
+    const { top, right, bottom, left } = element.getBoundingClientRect();
+    const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = [
+        "top",
+        "right",
+        "bottom",
+        "left",
+    ].map((edge) => {
+        const scrollProperty = getSupportedScrollMarginProperty();
+        const value = computedStyle.getPropertyValue(`${scrollProperty}-${edge}`);
+        return parseInt(value, 10) || 0;
+    });
+
+    return [top - scrollMarginTop, right + scrollMarginRight, bottom + scrollMarginBottom, left - scrollMarginLeft];
+};
+
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
     if (!element.ownerDocument.documentElement.contains(element)) {
         return;
@@ -398,16 +421,12 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
     const viewportX = window.scrollX || window.pageXOffset;
     const viewportY = window.scrollY || window.pageYOffset;
 
-    const {
-        height: targetHeight,
-        width: targetWidth,
-        top: targetTop,
-        right: targetRight,
-        bottom: targetBottom,
-        left: targetLeft,
-    } = element.getBoundingClientRect();
-
     const computedStyle = getComputedStyle(element);
+
+    const [targetTop, targetRight, targetBottom, targetLeft] = getElementScrollSnapArea(element, computedStyle);
+    const targetHeight = targetBottom - targetTop;
+    const targetWidth = targetRight - targetLeft;
+
     const writingMode = normalizeWritingMode(
         computedStyle.writingMode ||
             computedStyle.getPropertyValue("-webkit-writing-mode") ||
