@@ -374,7 +374,7 @@ const getElementScrollSnapArea = (element: Element, computedStyle: CSSStyleDecla
 };
 
 export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
-    if (!element.ownerDocument.documentElement.contains(element)) {
+    if (element.isConnected === false) {
         return;
     }
 
