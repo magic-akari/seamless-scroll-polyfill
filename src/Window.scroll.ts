@@ -10,15 +10,15 @@ import {
     step,
 } from "./common.js";
 
-export const windowScroll = (options: IScrollToOptions): void => {
-    const originalBoundFunc = original.windowScroll.bind(window);
+export const windowScroll = (currentWindow: typeof window, options: IScrollToOptions): void => {
+    const originalBoundFunc = original.windowScroll.bind(currentWindow);
 
     if (options.left === undefined && options.top === undefined) {
         return;
     }
 
-    const startX = window.scrollX || window.pageXOffset;
-    const startY = window.scrollY || window.pageYOffset;
+    const startX = currentWindow.scrollX || currentWindow.pageXOffset;
+    const startY = currentWindow.scrollY || currentWindow.pageYOffset;
 
     const targetX = nonFinite(options.left ?? startX);
     const targetY = nonFinite(options.top ?? startY);
@@ -28,8 +28,8 @@ export const windowScroll = (options: IScrollToOptions): void => {
     }
 
     const removeEventListener = () => {
-        window.removeEventListener("wheel", cancelScroll);
-        window.removeEventListener("touchmove", cancelScroll);
+        currentWindow.removeEventListener("wheel", cancelScroll);
+        currentWindow.removeEventListener("touchmove", cancelScroll);
     };
 
     const context: IContext = {
@@ -50,11 +50,11 @@ export const windowScroll = (options: IScrollToOptions): void => {
         removeEventListener();
     };
 
-    window.addEventListener("wheel", cancelScroll, {
+    currentWindow.addEventListener("wheel", cancelScroll, {
         passive: true,
         once: true,
     });
-    window.addEventListener("touchmove", cancelScroll, {
+    currentWindow.addEventListener("touchmove", cancelScroll, {
         passive: true,
         once: true,
     });
@@ -78,7 +78,7 @@ export const windowScrollPolyfill = (animationOptions?: IAnimationOptions): void
                 );
             }
 
-            return windowScroll({ ...scrollOptions, ...animationOptions });
+            return windowScroll(this, { ...scrollOptions, ...animationOptions });
         }
 
         return originalFunc.apply(this, arguments as any);

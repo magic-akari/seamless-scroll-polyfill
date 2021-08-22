@@ -8,15 +8,15 @@ import {
 } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
-export const windowScrollBy = (options: IScrollToOptions): void => {
-    const left = nonFinite(options.left || 0) + (window.scrollX || window.pageXOffset);
-    const top = nonFinite(options.top || 0) + (window.scrollY || window.pageYOffset);
+export const windowScrollBy = (currentWindow: typeof window, options: IScrollToOptions): void => {
+    const left = nonFinite(options.left || 0) + (currentWindow.scrollX || currentWindow.pageXOffset);
+    const top = nonFinite(options.top || 0) + (currentWindow.scrollY || currentWindow.pageYOffset);
 
     if (options.behavior !== "smooth") {
-        return original.windowScroll.call(window, left, top);
+        return original.windowScroll.call(currentWindow, left, top);
     }
 
-    return windowScroll({ ...options, left, top });
+    return windowScroll(currentWindow, { ...options, left, top });
 };
 
 export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): void => {
@@ -33,12 +33,12 @@ export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): vo
                 );
             }
 
-            return windowScrollBy({ ...scrollByOptions, ...animationOptions });
+            return windowScrollBy(this, { ...scrollByOptions, ...animationOptions });
         }
 
         const left = Number(arguments[0]);
         const top = Number(arguments[1]);
 
-        return windowScrollBy({ left, top });
+        return windowScrollBy(this, { left, top });
     };
 };

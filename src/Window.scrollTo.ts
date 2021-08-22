@@ -22,7 +22,7 @@ export const windowScrollToPolyfill = (animationOptions?: IAnimationOptions): vo
             const left = Number(scrollToOptions.left);
             const top = Number(scrollToOptions.top);
 
-            return windowScroll({ ...scrollToOptions, left, top, ...animationOptions });
+            return windowScroll(this, { ...scrollToOptions, left, top, ...animationOptions });
         }
 
         return originalFunc.apply(this, arguments as any);
