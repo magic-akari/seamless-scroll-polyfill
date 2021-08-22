@@ -39,12 +39,12 @@ elementScrollIntoView(document.querySelector("#target"), { behavior: "smooth", b
 ## Import via script
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@1.0.0/dist/es5/seamless.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@2.0.0/lib/bundle.min.js"></script>
 <script>
     // patch all methods
     seamless.polyfill();
     // or use specific methods
-    seamless.windowScrollBy({ behavior: "smooth", top: 200, left: 0 });
+    seamless.windowScrollBy(window, { behavior: "smooth", top: 200, left: 0 });
 
     seamless.elementScrollIntoView(document.querySelector("#target"), {
         behavior: "smooth",
@@ -54,12 +54,9 @@ elementScrollIntoView(document.querySelector("#target"), { behavior: "smooth", b
 </script>
 ```
 
-## Generated files structure
+## Changelog
 
-|           dir | dist/esm   | dist/umd | dist/es6 | dist/cjs | dist/es5 |
-| ------------: | ---------- | -------- | -------- | -------- | -------- |
-| module format | ES Modules | UMD      | UMD      | CJS      | UMD      |
-|    ES version | ESNext     | ESNext   | ES2015   | ES2015   | ES5      |
+Detailed changes for each release are documented in [CHANGELOG.md](./CHANGELOG.md).
 
 ## Thanks
 
