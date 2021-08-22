@@ -1,7 +1,6 @@
 import {
-    IAnimationOptions,
     IContext,
-    IScrollToOptions,
+    IScrollConfig,
     isObject,
     isScrollBehaviorSupported,
     nonFinite,
@@ -10,7 +9,7 @@ import {
     step,
 } from "./common.js";
 
-export const windowScroll = (currentWindow: typeof window, options: IScrollToOptions): void => {
+export const windowScroll = (currentWindow: typeof window, options: ScrollToOptions, config?: IScrollConfig): void => {
     const originalBoundFunc = original.windowScroll.bind(currentWindow);
 
     if (options.left === undefined && options.top === undefined) {
@@ -33,15 +32,14 @@ export const windowScroll = (currentWindow: typeof window, options: IScrollToOpt
     };
 
     const context: IContext = {
+        ...config,
         timeStamp: now(),
-        duration: options.duration,
         startX,
         startY,
         targetX,
         targetY,
         rafId: 0,
         method: originalBoundFunc,
-        timingFunc: options.timingFunc,
         callback: removeEventListener,
     };
 
@@ -62,7 +60,7 @@ export const windowScroll = (currentWindow: typeof window, options: IScrollToOpt
     step(context);
 };
 
-export const windowScrollPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const windowScrollPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -78,7 +76,7 @@ export const windowScrollPolyfill = (animationOptions?: IAnimationOptions): void
                 );
             }
 
-            return windowScroll(this, { ...scrollOptions, ...animationOptions });
+            return windowScroll(this, scrollOptions, config);
         }
 
         return originalFunc.apply(this, arguments as any);

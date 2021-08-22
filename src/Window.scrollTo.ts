@@ -1,9 +1,9 @@
-import { IAnimationOptions, isObject, isScrollBehaviorSupported, original } from "./common.js";
+import { IScrollConfig, isObject, isScrollBehaviorSupported, original } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
 export { windowScroll as windowScrollTo } from "./Window.scroll.js";
 
-export const windowScrollToPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const windowScrollToPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -22,7 +22,7 @@ export const windowScrollToPolyfill = (animationOptions?: IAnimationOptions): vo
             const left = Number(scrollToOptions.left);
             const top = Number(scrollToOptions.top);
 
-            return windowScroll(this, { ...scrollToOptions, left, top, ...animationOptions });
+            return windowScroll(this, { ...scrollToOptions, left, top }, config);
         }
 
         return originalFunc.apply(this, arguments as any);

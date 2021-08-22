@@ -1,14 +1,11 @@
-import {
-    IAnimationOptions,
-    IScrollToOptions,
-    isObject,
-    isScrollBehaviorSupported,
-    nonFinite,
-    original,
-} from "./common.js";
+import { IScrollConfig, isObject, isScrollBehaviorSupported, nonFinite, original } from "./common.js";
 import { windowScroll } from "./Window.scroll.js";
 
-export const windowScrollBy = (currentWindow: typeof window, options: IScrollToOptions): void => {
+export const windowScrollBy = (
+    currentWindow: typeof window,
+    options: ScrollToOptions,
+    config?: IScrollConfig,
+): void => {
     const left = nonFinite(options.left || 0) + (currentWindow.scrollX || currentWindow.pageXOffset);
     const top = nonFinite(options.top || 0) + (currentWindow.scrollY || currentWindow.pageYOffset);
 
@@ -16,10 +13,10 @@ export const windowScrollBy = (currentWindow: typeof window, options: IScrollToO
         return original.windowScroll.call(currentWindow, left, top);
     }
 
-    return windowScroll(currentWindow, { ...options, left, top });
+    return windowScroll(currentWindow, { ...options, left, top }, config);
 };
 
-export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const windowScrollByPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -33,7 +30,7 @@ export const windowScrollByPolyfill = (animationOptions?: IAnimationOptions): vo
                 );
             }
 
-            return windowScrollBy(this, { ...scrollByOptions, ...animationOptions });
+            return windowScrollBy(this, scrollByOptions, config);
         }
 
         const left = Number(arguments[0]);

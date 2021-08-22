@@ -1,21 +1,14 @@
-import {
-    IAnimationOptions,
-    IScrollToOptions,
-    isObject,
-    isScrollBehaviorSupported,
-    modifyPrototypes,
-    nonFinite,
-} from "./common.js";
+import { IScrollConfig, isObject, isScrollBehaviorSupported, modifyPrototypes, nonFinite } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
-export const elementScrollBy = (element: Element, options: IScrollToOptions): void => {
+export const elementScrollBy = (element: Element, options: ScrollToOptions, config?: IScrollConfig): void => {
     const left = nonFinite(options.left || 0) + element.scrollLeft;
     const top = nonFinite(options.top || 0) + element.scrollTop;
 
-    return elementScroll(element, { ...options, left, top });
+    return elementScroll(element, { ...options, left, top }, config);
 };
 
-export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const elementScrollByPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -31,7 +24,7 @@ export const elementScrollByPolyfill = (animationOptions?: IAnimationOptions): v
                         );
                     }
 
-                    return elementScrollBy(this, { ...scrollByOptions, ...animationOptions });
+                    return elementScrollBy(this, scrollByOptions, config);
                 }
 
                 const left = Number(arguments[0]);

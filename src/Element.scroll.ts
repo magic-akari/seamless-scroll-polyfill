@@ -1,7 +1,6 @@
 import {
-    IAnimationOptions,
     IContext,
-    IScrollToOptions,
+    IScrollConfig,
     isObject,
     isScrollBehaviorSupported,
     modifyPrototypes,
@@ -11,7 +10,7 @@ import {
     step,
 } from "./common.js";
 
-export const elementScroll = (element: Element, options: IScrollToOptions): void => {
+export const elementScroll = (element: Element, options: ScrollToOptions, config?: IScrollConfig): void => {
     const originalBoundFunc = original.elementScroll.bind(element);
 
     if (options.left === undefined && options.top === undefined) {
@@ -34,15 +33,14 @@ export const elementScroll = (element: Element, options: IScrollToOptions): void
     };
 
     const context: IContext = {
+        ...config,
         timeStamp: now(),
-        duration: options.duration,
         startX,
         startY,
         targetX,
         targetY,
         rafId: 0,
         method: originalBoundFunc,
-        timingFunc: options.timingFunc,
         callback: removeEventListener,
     };
 
@@ -63,7 +61,7 @@ export const elementScroll = (element: Element, options: IScrollToOptions): void
     step(context);
 };
 
-export const elementScrollPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const elementScrollPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -81,7 +79,7 @@ export const elementScrollPolyfill = (animationOptions?: IAnimationOptions): voi
                         );
                     }
 
-                    return elementScroll(this, { ...scrollOptions, ...animationOptions });
+                    return elementScroll(this, scrollOptions, config);
                 }
 
                 return originalFunc.apply(this, arguments as any);

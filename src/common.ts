@@ -36,24 +36,20 @@ export const modifyPrototypes = (modification: (prototype: Prototype) => void): 
     prototypes.forEach((prototype) => modification(prototype));
 };
 
-export interface IAnimationOptions {
-    duration?: number;
-    timingFunc?: (k: number) => number;
+export interface IScrollConfig {
+    readonly duration?: number;
+    readonly timingFunc?: (k: number) => number;
 }
 
-export interface IScrollToOptions extends ScrollToOptions, IAnimationOptions {}
-
-export interface IScrollIntoViewOptions extends ScrollIntoViewOptions, IAnimationOptions {}
-
-export interface IContext extends IAnimationOptions {
-    timeStamp: number;
-    startX: number;
-    startY: number;
-    targetX: number;
-    targetY: number;
+export interface IContext extends IScrollConfig {
+    readonly timeStamp: number;
+    readonly startX: number;
+    readonly startY: number;
+    readonly targetX: number;
+    readonly targetY: number;
+    readonly method: (x: number, y: number) => void;
+    readonly callback: () => void;
     rafId: number;
-    method: (x: number, y: number) => void;
-    callback: () => void;
 }
 
 export const now = (): number => window.performance?.now?.() ?? Date.now();

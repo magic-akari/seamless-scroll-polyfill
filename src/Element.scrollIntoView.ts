@@ -1,11 +1,4 @@
-import {
-    IAnimationOptions,
-    IScrollIntoViewOptions,
-    isObject,
-    isScrollBehaviorSupported,
-    modifyPrototypes,
-    original,
-} from "./common.js";
+import { IScrollConfig, isObject, isScrollBehaviorSupported, modifyPrototypes, original } from "./common.js";
 import { elementScroll } from "./Element.scroll.js";
 
 const enum ScrollAlignment {
@@ -373,7 +366,11 @@ const getElementScrollSnapArea = (element: Element, computedStyle: CSSStyleDecla
     return [top - scrollMarginTop, right + scrollMarginRight, bottom + scrollMarginBottom, left - scrollMarginLeft];
 };
 
-export const elementScrollIntoView = (element: Element, options: IScrollIntoViewOptions): void => {
+export const elementScrollIntoView = (
+    element: Element,
+    options: ScrollIntoViewOptions,
+    config?: IScrollConfig,
+): void => {
     if (element.isConnected === false) {
         return;
     }
@@ -633,13 +630,15 @@ export const elementScrollIntoView = (element: Element, options: IScrollIntoView
             targetInline += scrollLeft - inlineScroll;
         }
 
-        actions.push(() => elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }));
+        actions.push(() => {
+            elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }, config);
+        });
     });
 
     actions.forEach((run) => run());
 };
 
-export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptions): void => {
+export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
         return;
     }
@@ -652,7 +651,7 @@ export const elementScrollIntoViewPolyfill = (animationOptions?: IAnimationOptio
                 const scrollIntoViewOptions = arguments[0];
 
                 if (arguments.length === 1 && isObject(scrollIntoViewOptions)) {
-                    return elementScrollIntoView(this, { ...scrollIntoViewOptions, ...animationOptions });
+                    return elementScrollIntoView(this, scrollIntoViewOptions, config);
                 }
 
                 return originalFunc.apply(this, arguments as any);
