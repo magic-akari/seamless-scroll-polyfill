@@ -1,17 +1,16 @@
 {
     "root": true,
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
-    ],
-    "env": {
-        "es2020": true
+    "parserOptions": {
+        "project": "./tsconfig.json"
     },
+    "extends": ["akari", "akari/typescript"],
+    "ignorePatterns": ["**/*.js"],
     "rules": {
-        "prefer-rest-params": "off"
+        "default-case": "off",
+        "prefer-rest-params": "off",
+        "@typescript-eslint/no-unsafe-assignment": "warn",
+        "@typescript-eslint/no-unnecessary-condition": "off",
+        "@typescript-eslint/prefer-readonly-parameter-types": "off",
+        "@typescript-eslint/switch-exhaustiveness-check": "off"
     }
 }
