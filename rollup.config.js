@@ -1,28 +1,33 @@
+import { terser } from "rollup-plugin-terser";
 import typescript from "rollup-plugin-typescript2";
 
-const input = "src/index.ts";
-
-const tsc = (target, outDir) =>
-    typescript({
+/** @type {import('rollup').RollupOptions} */
+const rollupOptions = {
+    input: "lib/index.ts",
+    plugins: typescript({
+        useTsconfigDeclarationDir: true,
         tsconfigOverride: {
             compilerOptions: {
-                target,
-                outDir,
+                target: "es5",
+                importHelpers: true,
             },
         },
-    });
-
-const config = (target, outDir) => {
-    return {
-        input,
-        output: {
-            file: `${outDir}/seamless.js`,
+    }),
+    output: [
+        {
+            file: "lib/bundle.js",
             name: "seamless",
             format: "umd",
             sourcemap: true,
         },
-        plugins: [tsc(target, outDir)],
-    };
+        {
+            file: "lib/bundle.min.js",
+            name: "seamless",
+            format: "umd",
+            sourcemap: true,
+            plugins: [terser()],
+        },
+    ],
 };
 
-export default [config("es2018", "dist/umd"), config("es2015", "dist/es6"), config("es5", "dist/es5")];
+export default rollupOptions;

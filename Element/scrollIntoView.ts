@@ -1,5 +1,7 @@
-import { IScrollConfig, isObject, isScrollBehaviorSupported, modifyPrototypes, original } from "./common.js";
-import { elementScroll } from "./Element.scroll.js";
+/* eslint-disable no-bitwise */
+import { checkBehavior, failedExecuteInvalidEnumValue } from "../.internal/common.js";
+import type { IScrollConfig } from "../.internal/scroll-step";
+import { elementScroll } from "./scroll.js";
 
 const enum ScrollAlignment {
     ToEdgeIfNeeded,
@@ -49,7 +51,7 @@ type Tuple2<T> = [T, T];
 
 // https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/dom/element.cc;l=1097-1189;drc=6a7533d4a1e9f2372223a9d912a9e53a6fa35ae0
 const toPhysicalAlignment = (
-    options: ScrollIntoViewOptions,
+    options: Readonly<ScrollIntoViewOptions>,
     writingMode: WritingMode,
     isLTR: boolean,
 ): Tuple2<ScrollAlignment> => {
@@ -299,7 +301,7 @@ const getFrameElement = (element: Element): Element | null => {
 
     try {
         return element.ownerDocument.defaultView.frameElement;
-    } catch (e) {
+    } catch {
         return null;
     }
 };
@@ -313,7 +315,7 @@ const isHiddenByFrame = (element: Element): boolean => {
     return frame.clientHeight < element.scrollHeight || frame.clientWidth < element.scrollWidth;
 };
 
-const isScrollable = (element: Element, computedStyle: CSSStyleDeclaration): boolean => {
+const isScrollable = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
         return canOverflow(computedStyle.overflowY) || canOverflow(computedStyle.overflowX) || isHiddenByFrame(element);
     }
@@ -350,7 +352,7 @@ const getSupportedScrollMarginProperty = (): string => {
     return ["scroll-margin", "scroll-snap-margin"].filter(isCSSPropertySupported)[0];
 };
 
-const getElementScrollSnapArea = (element: Element, computedStyle: CSSStyleDeclaration) => {
+const getElementScrollSnapArea = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>) => {
     const { top, right, bottom, left } = element.getBoundingClientRect();
     const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = [
         "top",
@@ -368,12 +370,17 @@ const getElementScrollSnapArea = (element: Element, computedStyle: CSSStyleDecla
 
 export const elementScrollIntoView = (
     element: Element,
-    options: ScrollIntoViewOptions,
+    scrollIntoViewOptions?: ScrollIntoViewOptions,
     config?: IScrollConfig,
 ): void => {
-    if (element.isConnected === false) {
-        return;
+    const options = scrollIntoViewOptions || {};
+
+    if (!checkBehavior(options.behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scrollIntoView", "Element", options.behavior));
     }
+
+    const self = config?.window || window;
+    const document = self.document;
 
     // On Chrome and Firefox, document.scrollingElement will return the <html> element.
     // Safari, document.scrollingElement will return the <body> element.
@@ -385,7 +392,7 @@ export const elementScrollIntoView = (
     // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
     const frames: Element[] = [];
 
-    const documentElementStyle = getComputedStyle(document.documentElement);
+    const documentElementStyle = self.getComputedStyle(document.documentElement);
 
     for (let cursor = parentElement(element); cursor !== null; cursor = parentElement(cursor)) {
         // Stop when we reach the viewport
@@ -394,7 +401,7 @@ export const elementScrollIntoView = (
             break;
         }
 
-        const cursorStyle = getComputedStyle(cursor);
+        const cursorStyle = self.getComputedStyle(cursor);
 
         // Skip document.body if it's not the scrollingElement and documentElement isn't independently scrollable
         if (
@@ -422,14 +429,14 @@ export const elementScrollIntoView = (
     // and viewport dimensions on window.innerWidth/Height
     // https://www.quirksmode.org/mobile/viewports2.html
     // https://bokand.github.io/viewport/index.html
-    const viewportWidth = window.visualViewport ? window.visualViewport.width : innerWidth;
-    const viewportHeight = window.visualViewport ? window.visualViewport.height : innerHeight;
+    const viewportWidth = self.visualViewport ? self.visualViewport.width : innerWidth;
+    const viewportHeight = self.visualViewport ? self.visualViewport.height : innerHeight;
 
     // Newer browsers supports scroll[X|Y], page[X|Y]Offset is
-    const viewportX = window.scrollX || window.pageXOffset;
-    const viewportY = window.scrollY || window.pageYOffset;
+    const viewportX = self.scrollX || self.pageXOffset;
+    const viewportY = self.scrollY || self.pageYOffset;
 
-    const computedStyle = getComputedStyle(element);
+    const computedStyle = self.getComputedStyle(element);
 
     const [targetTop, targetRight, targetBottom, targetLeft] = getElementScrollSnapArea(element, computedStyle);
     const targetHeight = targetBottom - targetTop;
@@ -479,7 +486,7 @@ export const elementScrollIntoView = (
     frames.forEach((frame) => {
         const { height, width, top, right, bottom, left } = frame.getBoundingClientRect();
 
-        const frameStyle = getComputedStyle(frame);
+        const frameStyle = self.getComputedStyle(frame);
         const borderLeft = parseInt(frameStyle.borderLeftWidth, 10);
         const borderTop = parseInt(frameStyle.borderTopWidth, 10);
         const borderRight = parseInt(frameStyle.borderRightWidth, 10);
@@ -635,26 +642,7 @@ export const elementScrollIntoView = (
         });
     });
 
-    actions.forEach((run) => run());
-};
-
-export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    const originalFunc = original.elementScrollIntoView;
-
-    modifyPrototypes(
-        (prototype) =>
-            (prototype.scrollIntoView = function scrollIntoView(): void {
-                const scrollIntoViewOptions = arguments[0];
-
-                if (arguments.length === 1 && isObject(scrollIntoViewOptions)) {
-                    return elementScrollIntoView(this, scrollIntoViewOptions, config);
-                }
-
-                return originalFunc.apply(this, arguments as any);
-            }),
-    );
+    actions.forEach((run) => {
+        run();
+    });
 };
