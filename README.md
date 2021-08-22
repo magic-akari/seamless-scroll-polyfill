@@ -54,15 +54,6 @@ elementScrollIntoView(document.querySelector("#target"), { behavior: "smooth", b
 </script>
 ```
 
-## Auto polyfill via script
-
-```html
-<script
-    src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@1.0.0/dist/es5/seamless.auto-polyfill.min.js"
-    data-seamless
-></script>
-```
-
 ## Generated files structure
 
 |           dir | dist/esm   | dist/umd | dist/es6 | dist/cjs | dist/es5 |
