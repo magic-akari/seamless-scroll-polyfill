@@ -1,4 +1,4 @@
-import minify from "rollup-plugin-babel-minify";
+import { terser } from "rollup-plugin-terser";
 import typescript from "rollup-plugin-typescript2";
 
 const input = "src/index.ts";
@@ -49,7 +49,7 @@ export default [
                     },
                 },
             }),
-            minify({ comments: false }),
+            terser(),
         ],
     },
 ];

@@ -1,0 +1,3 @@
+{
+    "**/*.ts": ["pnpx --no-install eslint", "pnpx --no-install prettier -l"]
+}
