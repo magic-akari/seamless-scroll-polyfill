@@ -37,15 +37,14 @@ const elementScrollWithOptions = (
         return;
     }
 
-    const self = config?.window || window;
     const removeEventListener = () => {
-        self.removeEventListener("wheel", cancelScroll);
-        self.removeEventListener("touchmove", cancelScroll);
+        window.removeEventListener("wheel", cancelScroll);
+        window.removeEventListener("touchmove", cancelScroll);
     };
 
     const context: IContext = {
         ...config,
-        timeStamp: now(self),
+        timeStamp: now(),
         startX,
         startY,
         targetX,
@@ -56,20 +55,20 @@ const elementScrollWithOptions = (
     };
 
     const cancelScroll = () => {
-        self.cancelAnimationFrame(context.rafId);
+        window.cancelAnimationFrame(context.rafId);
         removeEventListener();
     };
 
-    self.addEventListener("wheel", cancelScroll, {
+    window.addEventListener("wheel", cancelScroll, {
         passive: true,
         once: true,
     });
-    self.addEventListener("touchmove", cancelScroll, {
+    window.addEventListener("touchmove", cancelScroll, {
         passive: true,
         once: true,
     });
 
-    step(context, config);
+    step(context);
 };
 
 export const elementScroll = (element: Element, scrollOptions?: ScrollToOptions, config?: IScrollConfig): void => {

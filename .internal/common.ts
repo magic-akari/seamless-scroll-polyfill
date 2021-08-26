@@ -34,8 +34,7 @@ export const isObject = (value: unknown): boolean => {
     return value !== null && (type === "object" || type === "function");
 };
 
-export const isScrollBehaviorSupported = (self: typeof window): boolean =>
-    "scrollBehavior" in self.document.documentElement.style;
+export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in window.document.documentElement.style;
 
 export const markPolyfill = (method: Record<never, never>) => {
     Object.defineProperty(method, "__isPolyfill", { value: true });

@@ -9,13 +9,11 @@ import type { IScrollConfig } from "../.internal/scroll-step";
 import { elementScroll, elementScrollBy, elementScrollTo } from "./scroll.js";
 
 export const elementScrollPolyfill = (config?: IScrollConfig): void => {
-    const self = config?.window || window;
-
-    if (isScrollBehaviorSupported(self)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    const originalFunc = getOriginalMethod(self.HTMLElement.prototype, "scroll", elementScrollXY);
+    const originalFunc = getOriginalMethod(window.HTMLElement.prototype, "scroll", elementScrollXY);
 
     modifyPrototypes((prototype) => {
         prototype.scroll = function scroll(): void {
@@ -34,13 +32,11 @@ export const elementScrollPolyfill = (config?: IScrollConfig): void => {
 };
 
 export const elementScrollToPolyfill = (config?: IScrollConfig): void => {
-    const self = config?.window || window;
-
-    if (isScrollBehaviorSupported(self)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    const originalFunc = getOriginalMethod(self.HTMLElement.prototype, "scrollTo", elementScrollXY);
+    const originalFunc = getOriginalMethod(window.HTMLElement.prototype, "scrollTo", elementScrollXY);
 
     modifyPrototypes((prototype) => {
         prototype.scrollTo = function scrollTo(): void {
@@ -59,7 +55,7 @@ export const elementScrollToPolyfill = (config?: IScrollConfig): void => {
 };
 
 export const elementScrollByPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported(config?.window || window)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 

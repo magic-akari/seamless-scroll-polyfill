@@ -9,13 +9,11 @@ import type { IScrollConfig } from "../.internal/scroll-step";
 import { elementScrollIntoView } from "./scrollIntoView.js";
 
 export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
-    const win = config?.window || window;
-
-    if (isScrollBehaviorSupported(win)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    const originalFunc = getOriginalMethod(win.HTMLElement.prototype, "scrollIntoView");
+    const originalFunc = getOriginalMethod(window.HTMLElement.prototype, "scrollIntoView");
 
     modifyPrototypes((prototype) => {
         prototype.scrollIntoView = function scrollIntoView(): void {

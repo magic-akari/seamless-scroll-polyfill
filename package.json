@@ -42,8 +42,8 @@
         "esm": "tsc",
         "rollup": "rollup -c",
         "type-check": "tsc --noEmit --skipLibCheck",
-        "prettier": "prettier --ignore-path .gitignore -l \"**/*.{ts,js,json,md}\"",
-        "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.{ts,js,json,md,yml}\" \"*.{json,md}\"",
+        "prettier": "prettier --ignore-path .gitignore -l \"**/*.{ts,js,json,yml}\" \"README.md\"",
+        "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.{ts,js,json,yml}\" \"README.md\"",
         "lint": "eslint --ignore-path .gitignore \"**/*.ts\"",
         "prepare": "husky install",
         "semantic-release": "HUSKY=0 semantic-release"

@@ -9,7 +9,7 @@ import {
 import { windowScrollByPolyfill, windowScrollPolyfill, windowScrollToPolyfill } from "../Window/polyfill.js";
 
 export const polyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported(config?.window || window)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 

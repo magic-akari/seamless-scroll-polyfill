@@ -38,7 +38,7 @@ const windowScrollWithOptions = (
 
     const context: IContext = {
         ...config,
-        timeStamp: now(config?.window || window),
+        timeStamp: now(),
         startX,
         startY,
         targetX,
@@ -62,7 +62,7 @@ const windowScrollWithOptions = (
         once: true,
     });
 
-    step(context, config);
+    step(context);
 };
 
 export const windowScroll = (

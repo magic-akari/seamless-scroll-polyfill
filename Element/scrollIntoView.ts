@@ -379,9 +379,6 @@ export const elementScrollIntoView = (
         throw new TypeError(failedExecuteInvalidEnumValue("scrollIntoView", "Element", options.behavior));
     }
 
-    const self = config?.window || window;
-    const document = self.document;
-
     // On Chrome and Firefox, document.scrollingElement will return the <html> element.
     // Safari, document.scrollingElement will return the <body> element.
     // On Edge, document.scrollingElement will return the <body> element.
@@ -392,7 +389,7 @@ export const elementScrollIntoView = (
     // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
     const frames: Element[] = [];
 
-    const documentElementStyle = self.getComputedStyle(document.documentElement);
+    const documentElementStyle = window.getComputedStyle(document.documentElement);
 
     for (let cursor = parentElement(element); cursor !== null; cursor = parentElement(cursor)) {
         // Stop when we reach the viewport
@@ -401,7 +398,7 @@ export const elementScrollIntoView = (
             break;
         }
 
-        const cursorStyle = self.getComputedStyle(cursor);
+        const cursorStyle = window.getComputedStyle(cursor);
 
         // Skip document.body if it's not the scrollingElement and documentElement isn't independently scrollable
         if (
@@ -429,14 +426,14 @@ export const elementScrollIntoView = (
     // and viewport dimensions on window.innerWidth/Height
     // https://www.quirksmode.org/mobile/viewports2.html
     // https://bokand.github.io/viewport/index.html
-    const viewportWidth = self.visualViewport ? self.visualViewport.width : innerWidth;
-    const viewportHeight = self.visualViewport ? self.visualViewport.height : innerHeight;
+    const viewportWidth = window.visualViewport ? window.visualViewport.width : innerWidth;
+    const viewportHeight = window.visualViewport ? window.visualViewport.height : innerHeight;
 
     // Newer browsers supports scroll[X|Y], page[X|Y]Offset is
-    const viewportX = self.scrollX || self.pageXOffset;
-    const viewportY = self.scrollY || self.pageYOffset;
+    const viewportX = window.scrollX || window.pageXOffset;
+    const viewportY = window.scrollY || window.pageYOffset;
 
-    const computedStyle = self.getComputedStyle(element);
+    const computedStyle = window.getComputedStyle(element);
 
     const [targetTop, targetRight, targetBottom, targetLeft] = getElementScrollSnapArea(element, computedStyle);
     const targetHeight = targetBottom - targetTop;
@@ -486,7 +483,7 @@ export const elementScrollIntoView = (
     frames.forEach((frame) => {
         const { height, width, top, right, bottom, left } = frame.getBoundingClientRect();
 
-        const frameStyle = self.getComputedStyle(frame);
+        const frameStyle = window.getComputedStyle(frame);
         const borderLeft = parseInt(frameStyle.borderLeftWidth, 10);
         const borderTop = parseInt(frameStyle.borderTopWidth, 10);
         const borderRight = parseInt(frameStyle.borderRightWidth, 10);

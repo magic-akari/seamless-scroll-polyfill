@@ -3,15 +3,13 @@ import type { IScrollConfig } from "../.internal/scroll-step";
 import { windowScroll, windowScrollBy, windowScrollTo } from "./scroll.js";
 
 export const windowScrollPolyfill = (config?: IScrollConfig): void => {
-    const self = config?.window || window;
-
-    if (isScrollBehaviorSupported(self)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    const originalFunc = getOriginalMethod(self, "scroll");
+    const originalFunc = getOriginalMethod(window, "scroll");
 
-    self.scroll = function scroll() {
+    window.scroll = function scroll() {
         const args = arguments;
         if (args.length === 1) {
             windowScroll(this, args[0], config);
@@ -21,19 +19,17 @@ export const windowScrollPolyfill = (config?: IScrollConfig): void => {
         originalFunc.apply(this, args as any);
     };
 
-    markPolyfill(self.scroll);
+    markPolyfill(window.scroll);
 };
 
 export const windowScrollToPolyfill = (config?: IScrollConfig): void => {
-    const self = config?.window || window;
-
-    if (isScrollBehaviorSupported(self)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    const originalFunc = getOriginalMethod(self, "scrollTo");
+    const originalFunc = getOriginalMethod(window, "scrollTo");
 
-    self.scrollTo = function scrollTo() {
+    window.scrollTo = function scrollTo() {
         const args = arguments;
         if (args.length === 1) {
             windowScrollTo(this, args[0], config);
@@ -43,17 +39,15 @@ export const windowScrollToPolyfill = (config?: IScrollConfig): void => {
         originalFunc.apply(this, args as any);
     };
 
-    markPolyfill(self.scrollTo);
+    markPolyfill(window.scrollTo);
 };
 
 export const windowScrollByPolyfill = (config?: IScrollConfig): void => {
-    const self = config?.window || window;
-
-    if (isScrollBehaviorSupported(self)) {
+    if (isScrollBehaviorSupported()) {
         return;
     }
 
-    self.scrollBy = function scrollBy() {
+    window.scrollBy = function scrollBy() {
         const args = arguments;
         if (args.length === 1) {
             windowScrollBy(this, args[0], config);
@@ -65,5 +59,5 @@ export const windowScrollByPolyfill = (config?: IScrollConfig): void => {
         windowScrollBy(this, { left, top }, config);
     };
 
-    markPolyfill(self.scrollBy);
+    markPolyfill(window.scrollBy);
 };

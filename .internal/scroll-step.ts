@@ -1,7 +1,6 @@
 export interface IScrollConfig {
     readonly duration?: number;
     readonly timingFunc?: (k: number) => number;
-    readonly window?: typeof window;
 }
 
 export interface IContext extends IScrollConfig {
@@ -19,13 +18,12 @@ const ease = (k: number) => {
     return 0.5 * (1 - Math.cos(Math.PI * k));
 };
 
-export const now = (self: typeof window): number => self.performance?.now?.() ?? self.Date.now();
+export const now = (): number => window.performance?.now?.() ?? window.Date.now();
 
 const DURATION = 500;
 
-export const step = (context: IContext, config?: IScrollConfig): void => {
-    const self = config?.window || window;
-    const currentTime = now(self);
+export const step = (context: IContext): void => {
+    const currentTime = now();
 
     const elapsed = (currentTime - context.timeStamp) / (context.duration || DURATION);
     if (elapsed > 1) {
@@ -40,7 +38,7 @@ export const step = (context: IContext, config?: IScrollConfig): void => {
 
     context.method(currentX, currentY);
 
-    context.rafId = self.requestAnimationFrame(() => {
-        step(context, config);
+    context.rafId = window.requestAnimationFrame(() => {
+        step(context);
     });
 };
