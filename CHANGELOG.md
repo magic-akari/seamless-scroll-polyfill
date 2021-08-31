@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.0...v2.0.1) (2021-08-31)
+
+
+### Bug Fixes
+
+* element.scrollIntoView in iframe ([a7409a3](https://github.com/magic-akari/seamless-scroll-polyfill/commit/a7409a3b5ce5629cdcfde729aa84df3278b4308e))
+
 # [2.0.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v1.2.4...v2.0.0) (2021-08-22)
 
 
