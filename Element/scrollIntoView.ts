@@ -49,14 +49,7 @@ const normalizeWritingMode = (writingMode: string): WritingMode => {
 
 type Tuple2<T> = [T, T];
 
-// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/dom/element.cc;l=1097-1189;drc=6a7533d4a1e9f2372223a9d912a9e53a6fa35ae0
-const toPhysicalAlignment = (
-    options: Readonly<ScrollIntoViewOptions>,
-    writingMode: WritingMode,
-    isLTR: boolean,
-): Tuple2<ScrollAlignment> => {
-    let [xPos, yPos] = [options.block || "start", options.inline || "nearest"];
-
+const calcPhysicalAxis = <T>(writingMode: WritingMode, isLTR: boolean, hPos: T, vPos: T): [number, T, T] => {
     /**  0b{vertical}{horizontal}  0: normal, 1: reverse */
     let layout = 0b00;
 
@@ -95,7 +88,7 @@ const toPhysicalAlignment = (
         case WritingMode.HorizontalTb:
             // swap horizontal and vertical
             layout = (layout >> 1) | ((layout & 1) << 1);
-            [xPos, yPos] = [yPos, xPos];
+            [hPos, vPos] = [vPos, hPos];
             break;
 
         /**
@@ -132,7 +125,33 @@ const toPhysicalAlignment = (
             break;
     }
 
-    return [xPos, yPos].map((value, index) => {
+    return [layout, hPos, vPos];
+};
+
+const isXScrollAxisReverse = (computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
+    const layout = calcPhysicalAxis(
+        normalizeWritingMode(computedStyle.writingMode),
+        computedStyle.direction !== "rtl",
+        undefined,
+        undefined,
+    )[0];
+    return (layout & 1) === 1;
+};
+
+// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/dom/element.cc;l=1097-1189;drc=6a7533d4a1e9f2372223a9d912a9e53a6fa35ae0
+const toPhysicalAlignment = (
+    options: Readonly<ScrollIntoViewOptions>,
+    writingMode: WritingMode,
+    isLTR: boolean,
+): Tuple2<ScrollAlignment> => {
+    const [layout, hPos, vPos] = calcPhysicalAxis(
+        writingMode,
+        isLTR,
+        options.block || "start",
+        options.inline || "nearest",
+    );
+
+    return [hPos, vPos].map((value, index) => {
         switch (value) {
             case "center":
                 return ScrollAlignment.CenterAlways;
@@ -158,16 +177,19 @@ const toPhysicalAlignment = (
  * │ target │   frame
  * └────────┘ ┗ ━ ━ ━ ┛
  */
-const alignNearest = (
+const mapNearest = (
+    align: ScrollAlignment,
     scrollingEdgeStart: number,
     scrollingEdgeEnd: number,
     scrollingSize: number,
-    scrollingBorderStart: number,
-    scrollingBorderEnd: number,
     elementEdgeStart: number,
     elementEdgeEnd: number,
     elementSize: number,
-): number => {
+): ScrollAlignment | null => {
+    if (align !== ScrollAlignment.ToEdgeIfNeeded) {
+        return align;
+    }
+
     /**
      * If element edge A and element edge B are both outside scrolling box edge A and scrolling box edge B
      *
@@ -191,7 +213,7 @@ const alignNearest = (
         (elementEdgeStart < scrollingEdgeStart && elementEdgeEnd > scrollingEdgeEnd) ||
         (elementEdgeStart > scrollingEdgeStart && elementEdgeEnd < scrollingEdgeEnd)
     ) {
-        return 0;
+        return null;
     }
 
     /**
@@ -237,7 +259,7 @@ const alignNearest = (
         (elementEdgeStart <= scrollingEdgeStart && elementSize <= scrollingSize) ||
         (elementEdgeEnd >= scrollingEdgeEnd && elementSize >= scrollingSize)
     ) {
-        return elementEdgeStart - scrollingEdgeStart - scrollingBorderStart;
+        return ScrollAlignment.LeftOrTop;
     }
 
     /**
@@ -284,10 +306,10 @@ const alignNearest = (
         (elementEdgeEnd > scrollingEdgeEnd && elementSize < scrollingSize) ||
         (elementEdgeStart < scrollingEdgeStart && elementSize > scrollingSize)
     ) {
-        return elementEdgeEnd - scrollingEdgeEnd + scrollingBorderEnd;
+        return ScrollAlignment.RightOrBottom;
     }
 
-    return 0;
+    return null;
 };
 
 const canOverflow = (overflow: string | null): boolean => {
@@ -295,77 +317,210 @@ const canOverflow = (overflow: string | null): boolean => {
 };
 
 const getFrameElement = (element: Element): Element | null => {
-    if (!element.ownerDocument || !element.ownerDocument.defaultView) {
-        return null;
-    }
-
     try {
-        return element.ownerDocument.defaultView.frameElement;
+        return element.ownerDocument.defaultView?.frameElement || null;
     } catch {
         return null;
     }
 };
 
-const isHiddenByFrame = (element: Element): boolean => {
-    const frame = getFrameElement(element);
-    if (!frame) {
-        return false;
-    }
-
-    return frame.clientHeight < element.scrollHeight || frame.clientWidth < element.scrollWidth;
-};
+/**
+ * - On Chrome and Firefox, document.scrollingElement will return the <html> element.
+ * - Safari, document.scrollingElement will return the <body> element.
+ * - On Edge, document.scrollingElement will return the <body> element.
+ * - IE11 does not support document.scrollingElement, but you can assume its <html>.
+ */
+const scrollingElement = (element: Element) =>
+    element.ownerDocument.scrollingElement || element.ownerDocument.documentElement;
 
 const isScrollable = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
-        return canOverflow(computedStyle.overflowY) || canOverflow(computedStyle.overflowX) || isHiddenByFrame(element);
+        return (
+            canOverflow(computedStyle.overflowY) ||
+            canOverflow(computedStyle.overflowX) ||
+            element === scrollingElement(element)
+        );
     }
 
     return false;
 };
 
 const parentElement = (element: Element): Element | null => {
-    const parentNode = element.parentNode;
+    const pNode = element.parentNode;
+    const pElement = element.parentElement;
 
-    if (parentNode !== null && parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-        return (parentNode as ShadowRoot).host;
+    if (pElement === null && pNode !== null) {
+        if (pNode.nodeType === /** Node.DOCUMENT_FRAGMENT_NODE */ 11) {
+            return (pNode as ShadowRoot).host;
+        }
+        if (pNode.nodeType === /** Node.DOCUMENT_NODE */ 9) {
+            return getFrameElement(element);
+        }
     }
 
-    return parentNode as Element | null;
+    return pElement;
 };
 
-const clamp = (value: number, width: number): number => {
-    if (value < -width) {
-        return -width;
+const clamp = (value: number, min: number, max: number): number => {
+    if (value < min) {
+        return min;
     }
 
-    if (value > width) {
-        return width;
+    if (value > max) {
+        return max;
     }
 
     return value;
 };
 
-const isCSSPropertySupported = (property: string): boolean => property in document.documentElement.style;
-
-const getSupportedScrollMarginProperty = (): string => {
+const getSupportedScrollMarginProperty = (
+    ownerDocument: Document,
+): "scroll-margin" | "scroll-snap-margin" | undefined => {
     // Webkit uses "scroll-snap-margin" https://bugs.webkit.org/show_bug.cgi?id=189265.
-    return ["scroll-margin", "scroll-snap-margin"].filter(isCSSPropertySupported)[0];
+    return (["scroll-margin", "scroll-snap-margin"] as const).filter(
+        (property) => property in ownerDocument.documentElement.style,
+    )[0];
 };
 
-const getElementScrollSnapArea = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>) => {
-    const { top, right, bottom, left } = element.getBoundingClientRect();
+const getElementScrollSnapArea = (
+    element: Element,
+    elementRect: Readonly<DOMRect>,
+    computedStyle: Readonly<CSSStyleDeclaration>,
+) => {
+    const { top, right, bottom, left } = elementRect;
     const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = [
         "top",
         "right",
         "bottom",
         "left",
     ].map((edge) => {
-        const scrollProperty = getSupportedScrollMarginProperty();
+        const scrollProperty = getSupportedScrollMarginProperty(element.ownerDocument);
+        if (!scrollProperty) {
+            return 0;
+        }
         const value = computedStyle.getPropertyValue(`${scrollProperty}-${edge}`);
         return parseInt(value, 10) || 0;
     });
 
-    return [top - scrollMarginTop, right + scrollMarginRight, bottom + scrollMarginBottom, left - scrollMarginLeft];
+    return [
+        top - scrollMarginTop,
+        right + scrollMarginRight,
+        bottom + scrollMarginBottom,
+        left - scrollMarginLeft,
+    ] as const;
+};
+
+const calcAlignEdge = (align: ScrollAlignment, start: number, end: number): number => {
+    switch (align) {
+        case ScrollAlignment.CenterAlways:
+            return (start + end) / 2;
+
+        case ScrollAlignment.RightOrBottom:
+            return end;
+
+        case ScrollAlignment.LeftOrTop:
+        case ScrollAlignment.ToEdgeIfNeeded:
+            return start;
+    }
+};
+
+const getFrameViewport = (frame: Element, frameRect: Readonly<DOMRect>) => {
+    const visualViewport = frame.ownerDocument.defaultView?.visualViewport;
+    const [x, y, width, height] =
+        frame === scrollingElement(frame)
+            ? [0, 0, visualViewport?.width ?? frame.clientWidth, visualViewport?.height ?? frame.clientHeight]
+            : [frameRect.left, frameRect.top, frame.clientWidth, frame.clientHeight];
+
+    const left = x + frame.clientLeft;
+    const top = y + frame.clientTop;
+    const right = left + width;
+    const bottom = top + height;
+
+    return [top, right, bottom, left] as const;
+};
+
+const computeScrollIntoView = (element: Element, options: ScrollIntoViewOptions): [Element, ScrollToOptions][] => {
+    // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
+    const actions: [Element, ScrollToOptions][] = [];
+
+    let ownerDocument = element.ownerDocument;
+    let ownerWindow = ownerDocument.defaultView;
+
+    if (!ownerWindow) {
+        return actions;
+    }
+
+    const computedStyle = window.getComputedStyle(element);
+    const isLTR = computedStyle.direction !== "rtl";
+
+    const writingMode = normalizeWritingMode(
+        computedStyle.writingMode ||
+            computedStyle.getPropertyValue("-webkit-writing-mode") ||
+            computedStyle.getPropertyValue("-ms-writing-mode"),
+    );
+
+    const [alignH, alignV] = toPhysicalAlignment(options, writingMode, isLTR);
+
+    let [top, right, bottom, left] = getElementScrollSnapArea(element, element.getBoundingClientRect(), computedStyle);
+
+    for (let frame = parentElement(element); frame !== null; frame = parentElement(frame)) {
+        if (ownerDocument !== frame.ownerDocument) {
+            ownerDocument = frame.ownerDocument;
+            ownerWindow = ownerDocument.defaultView;
+            if (!ownerWindow) {
+                break;
+            }
+
+            const { left: dX, top: dY } = frame.getBoundingClientRect();
+            top += dY;
+            right += dX;
+            bottom += dY;
+            left += dX;
+        }
+
+        const frameStyle = ownerWindow.getComputedStyle(frame);
+
+        if (frameStyle.position === "fixed") {
+            break;
+        }
+
+        if (!isScrollable(frame, frameStyle)) {
+            continue;
+        }
+
+        const frameRect = frame.getBoundingClientRect();
+
+        const [frameTop, frameRight, frameBottom, frameLeft] = getFrameViewport(frame, frameRect);
+
+        const frameX = calcAlignEdge(alignH, frameLeft, frameRight);
+        const frameY = calcAlignEdge(alignV, frameTop, frameBottom);
+
+        const eAlignH = mapNearest(alignH, frameLeft, frameRight, frame.clientWidth, left, right, right - left);
+        const eAlignV = mapNearest(alignV, frameTop, frameBottom, frame.clientHeight, top, bottom, bottom - top);
+
+        const eX = eAlignH === null ? frameX : calcAlignEdge(eAlignH, left, right);
+        const eY = eAlignV === null ? frameY : calcAlignEdge(eAlignV, top, bottom);
+
+        const diffX = eX - frameX;
+        const diffY = eY - frameY;
+
+        const moveX = isXScrollAxisReverse(frameStyle)
+            ? clamp(diffX, -frame.scrollWidth + frame.clientWidth - frame.scrollLeft, -frame.scrollLeft)
+            : clamp(diffX, -frame.scrollLeft, frame.scrollWidth - frame.clientWidth - frame.scrollLeft);
+        const moveY = clamp(diffY, -frame.scrollTop, frame.scrollHeight - frame.clientHeight - frame.scrollTop);
+
+        actions.push([
+            frame,
+            { left: frame.scrollLeft + moveX, top: frame.scrollTop + moveY, behavior: options.behavior },
+        ]);
+
+        top = Math.max(top - moveY, frameTop);
+        right = Math.min(right - moveX, frameRight);
+        bottom = Math.min(bottom - moveY, frameBottom);
+        left = Math.max(left - moveX, frameLeft);
+    }
+
+    return actions;
 };
 
 export const elementScrollIntoView = (
@@ -379,267 +534,9 @@ export const elementScrollIntoView = (
         throw new TypeError(failedExecuteInvalidEnumValue("scrollIntoView", "Element", options.behavior));
     }
 
-    // On Chrome and Firefox, document.scrollingElement will return the <html> element.
-    // Safari, document.scrollingElement will return the <body> element.
-    // On Edge, document.scrollingElement will return the <body> element.
-    // IE11 does not support document.scrollingElement, but you can assume its <html>.
-    // Used to handle the top most element that can be scrolled
-    const scrollingElement = document.scrollingElement || document.documentElement;
+    const actions = computeScrollIntoView(element, scrollIntoViewOptions || {});
 
-    // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
-    const frames: Element[] = [];
-
-    const documentElementStyle = window.getComputedStyle(document.documentElement);
-
-    for (let cursor = parentElement(element); cursor !== null; cursor = parentElement(cursor)) {
-        // Stop when we reach the viewport
-        if (cursor === scrollingElement) {
-            frames.push(cursor);
-            break;
-        }
-
-        const cursorStyle = window.getComputedStyle(cursor);
-
-        // Skip document.body if it's not the scrollingElement and documentElement isn't independently scrollable
-        if (
-            cursor === document.body &&
-            isScrollable(cursor, cursorStyle) &&
-            !isScrollable(document.documentElement, documentElementStyle)
-        ) {
-            continue;
-        }
-
-        // Now we check if the element is scrollable,
-        // this code only runs if the loop haven't already hit the viewport or a custom boundary
-        if (isScrollable(cursor, cursorStyle)) {
-            frames.push(cursor);
-        }
-
-        if (cursorStyle.position === "fixed") {
-            break;
-        }
-    }
-
-    // Support pinch-zooming properly, making sure elements scroll into the visual viewport
-    // Browsers that don't support visualViewport
-    // will report the layout viewport dimensions on document.documentElement.clientWidth/Height
-    // and viewport dimensions on window.innerWidth/Height
-    // https://www.quirksmode.org/mobile/viewports2.html
-    // https://bokand.github.io/viewport/index.html
-    const viewportWidth = window.visualViewport ? window.visualViewport.width : innerWidth;
-    const viewportHeight = window.visualViewport ? window.visualViewport.height : innerHeight;
-
-    // Newer browsers supports scroll[X|Y], page[X|Y]Offset is
-    const viewportX = window.scrollX || window.pageXOffset;
-    const viewportY = window.scrollY || window.pageYOffset;
-
-    const computedStyle = window.getComputedStyle(element);
-
-    const [targetTop, targetRight, targetBottom, targetLeft] = getElementScrollSnapArea(element, computedStyle);
-    const targetHeight = targetBottom - targetTop;
-    const targetWidth = targetRight - targetLeft;
-
-    const writingMode = normalizeWritingMode(
-        computedStyle.writingMode ||
-            computedStyle.getPropertyValue("-webkit-writing-mode") ||
-            computedStyle.getPropertyValue("-ms-writing-mode"),
-    );
-
-    const isLTR = computedStyle.direction !== "rtl";
-
-    const [alignX, alignY] = toPhysicalAlignment(options, writingMode, isLTR);
-
-    let targetBlock = (() => {
-        switch (alignY) {
-            case ScrollAlignment.CenterAlways:
-                return targetTop + targetHeight / 2;
-
-            case ScrollAlignment.LeftOrTop:
-            case ScrollAlignment.ToEdgeIfNeeded:
-                return targetTop;
-
-            case ScrollAlignment.RightOrBottom:
-                return targetBottom;
-        }
-    })();
-
-    let targetInline = (() => {
-        switch (alignX) {
-            case ScrollAlignment.CenterAlways:
-                return targetLeft + targetWidth / 2;
-
-            case ScrollAlignment.RightOrBottom:
-                return targetRight;
-
-            case ScrollAlignment.LeftOrTop:
-            case ScrollAlignment.ToEdgeIfNeeded:
-                return targetLeft;
-        }
-    })();
-
-    type IAction = () => void;
-
-    const actions: IAction[] = [];
-    frames.forEach((frame) => {
-        const { height, width, top, right, bottom, left } = frame.getBoundingClientRect();
-
-        const frameStyle = window.getComputedStyle(frame);
-        const borderLeft = parseInt(frameStyle.borderLeftWidth, 10);
-        const borderTop = parseInt(frameStyle.borderTopWidth, 10);
-        const borderRight = parseInt(frameStyle.borderRightWidth, 10);
-        const borderBottom = parseInt(frameStyle.borderBottomWidth, 10);
-
-        let blockScroll = 0;
-        let inlineScroll = 0;
-
-        // The property existance checks for offfset[Width|Height] is because only HTMLElement objects have them,
-        // but any Element might pass by here
-        // @TODO find out if the "as HTMLElement" overrides can be dropped
-        const scrollbarWidth =
-            "offsetWidth" in frame
-                ? (frame as HTMLElement).offsetWidth - (frame as HTMLElement).clientWidth - borderLeft - borderRight
-                : 0;
-        const scrollbarHeight =
-            "offsetHeight" in frame
-                ? (frame as HTMLElement).offsetHeight - (frame as HTMLElement).clientHeight - borderTop - borderBottom
-                : 0;
-
-        if (scrollingElement === frame) {
-            // Handle viewport logic (document.documentElement or document.body)
-
-            switch (alignY) {
-                case ScrollAlignment.LeftOrTop: {
-                    blockScroll = targetBlock;
-                    break;
-                }
-                case ScrollAlignment.RightOrBottom: {
-                    blockScroll = targetBlock - viewportHeight;
-                    break;
-                }
-                case ScrollAlignment.CenterAlways: {
-                    blockScroll = targetBlock - viewportHeight / 2;
-                    break;
-                }
-                case ScrollAlignment.ToEdgeIfNeeded: {
-                    blockScroll = alignNearest(
-                        viewportY,
-                        viewportY + viewportHeight,
-                        viewportHeight,
-                        borderTop,
-                        borderBottom,
-                        viewportY + targetBlock,
-                        viewportY + targetBlock + targetHeight,
-                        targetHeight,
-                    );
-                    break;
-                }
-            }
-
-            switch (alignX) {
-                case ScrollAlignment.LeftOrTop: {
-                    inlineScroll = targetInline;
-                    break;
-                }
-                case ScrollAlignment.RightOrBottom: {
-                    inlineScroll = targetInline - viewportWidth;
-                    break;
-                }
-                case ScrollAlignment.CenterAlways: {
-                    inlineScroll = targetInline - viewportWidth / 2;
-                    break;
-                }
-                case ScrollAlignment.ToEdgeIfNeeded: {
-                    inlineScroll = alignNearest(
-                        viewportX,
-                        viewportX + viewportWidth,
-                        viewportWidth,
-                        borderLeft,
-                        borderRight,
-                        viewportX + targetInline,
-                        viewportX + targetInline + targetWidth,
-                        targetWidth,
-                    );
-                    break;
-                }
-            }
-
-            blockScroll += viewportY;
-            inlineScroll += viewportX;
-        } else {
-            // Handle each scrolling frame that might exist between the target and the viewport
-
-            switch (alignY) {
-                case ScrollAlignment.LeftOrTop: {
-                    blockScroll = targetBlock - top - borderTop;
-                    break;
-                }
-                case ScrollAlignment.RightOrBottom: {
-                    blockScroll = targetBlock - bottom + borderBottom + scrollbarHeight;
-                    break;
-                }
-                case ScrollAlignment.CenterAlways: {
-                    blockScroll = targetBlock - (top + height / 2) + scrollbarHeight / 2;
-                    break;
-                }
-                case ScrollAlignment.ToEdgeIfNeeded: {
-                    blockScroll = alignNearest(
-                        top,
-                        bottom,
-                        height,
-                        borderTop,
-                        borderBottom + scrollbarHeight,
-                        targetBlock,
-                        targetBlock + targetHeight,
-                        targetHeight,
-                    );
-                    break;
-                }
-            }
-
-            switch (alignX) {
-                case ScrollAlignment.LeftOrTop: {
-                    inlineScroll = targetInline - left - borderLeft;
-                    break;
-                }
-                case ScrollAlignment.RightOrBottom: {
-                    inlineScroll = targetInline - right + borderRight + scrollbarWidth;
-                    break;
-                }
-                case ScrollAlignment.CenterAlways: {
-                    inlineScroll = targetInline - (left + width / 2) + scrollbarWidth / 2;
-                    break;
-                }
-                case ScrollAlignment.ToEdgeIfNeeded: {
-                    inlineScroll = alignNearest(
-                        left,
-                        right,
-                        width,
-                        borderLeft,
-                        borderRight + scrollbarWidth,
-                        targetInline,
-                        targetInline + targetWidth,
-                        targetWidth,
-                    );
-                    break;
-                }
-            }
-
-            const { scrollLeft, scrollTop } = frame;
-            // Ensure scroll coordinates are not out of bounds while applying scroll offsets
-            blockScroll = clamp(scrollTop + blockScroll, frame.scrollHeight - height + scrollbarHeight);
-            inlineScroll = clamp(scrollLeft + inlineScroll, frame.scrollWidth - width + scrollbarWidth);
-
-            // Cache the offset so that parent frames can scroll this into view correctly
-            targetBlock += scrollTop - blockScroll;
-            targetInline += scrollLeft - inlineScroll;
-        }
-
-        actions.push(() => {
-            elementScroll(frame, { ...options, top: blockScroll, left: inlineScroll }, config);
-        });
-    });
-
-    actions.forEach((run) => {
-        run();
+    actions.forEach(([frame, scrollToOptions]) => {
+        elementScroll(frame, scrollToOptions, config);
     });
 };
