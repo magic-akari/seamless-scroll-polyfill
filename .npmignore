@@ -86,21 +86,6 @@ out
 .nuxt
 dist
 
-# OS X
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon
-._*
-.Spotlight-V100
-.Trashes
-
-# windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
@@ -132,6 +117,6 @@ $RECYCLE.BIN/
 .yarn/install-state.gz
 .pnp.*
 
-*/**/*.js
-*/**/*.map
-*/**/*.d.ts
+# */**/*.js
+# */**/*.map
+# */**/*.d.ts

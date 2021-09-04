@@ -1,16 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es2018",
+        "target": "es2021",
         "module": "esnext",
-        "lib": ["dom", "es2018"],
-        "rootDir": "./src",
-        "outDir": "./dist/esm",
-        "strict": true,
-        "sourceMap": true,
+        "lib": ["dom", "es5"],
         "declaration": true,
         "declarationMap": true,
-        "downlevelIteration": true
+        "sourceMap": true,
+        "downlevelIteration": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
     },
-    "include": ["./src"],
-    "exclude": ["src/auto-polyfill.ts"]
+    "include": [".internal", "Element", "lib", "Window"]
 }

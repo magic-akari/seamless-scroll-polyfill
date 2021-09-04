@@ -1,55 +1,33 @@
-import minify from "rollup-plugin-babel-minify";
+import { terser } from "rollup-plugin-terser";
 import typescript from "rollup-plugin-typescript2";
 
-const input = "src/index.ts";
-
-const tsc = (target, outDir) =>
-    typescript({
+/** @type {import('rollup').RollupOptions} */
+const rollupOptions = {
+    input: "lib/index.ts",
+    plugins: typescript({
+        useTsconfigDeclarationDir: true,
         tsconfigOverride: {
             compilerOptions: {
-                target,
-                outDir,
+                target: "es5",
+                importHelpers: true,
             },
         },
-    });
-
-const config = (target, outDir) => {
-    return {
-        input,
-        output: {
-            file: `${outDir}/seamless.js`,
+    }),
+    output: [
+        {
+            file: "lib/bundle.js",
             name: "seamless",
             format: "umd",
             sourcemap: true,
         },
-        plugins: [tsc(target, outDir)],
-    };
+        {
+            file: "lib/bundle.min.js",
+            name: "seamless",
+            format: "umd",
+            sourcemap: true,
+            plugins: [terser()],
+        },
+    ],
 };
 
-export default [
-    config("es2018", "dist/umd"),
-    config("es2015", "dist/es6"),
-    config("es5", "dist/es5"),
-    {
-        input: "src/auto-polyfill.ts",
-        output: {
-            file: `dist/es5/seamless.auto-polyfill.min.js`,
-            name: "seamless",
-            format: "umd",
-            sourcemap: true,
-        },
-        plugins: [
-            typescript({
-                tsconfigOverride: {
-                    compilerOptions: {
-                        target: "es5",
-                        outDir: "dist/es5",
-                        declaration: false,
-                        declarationMap: false,
-                    },
-                },
-            }),
-            minify({ comments: false }),
-        ],
-    },
-];
+export default rollupOptions;

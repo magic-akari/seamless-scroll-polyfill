@@ -1,0 +1,32 @@
+name: Release
+
+on: push
+
+jobs:
+    release:
+        name: Release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Setup Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 14
+            - name: Install dependencies
+              uses: pnpm/action-setup@v2.0.1
+              with:
+                  version: 6.0.2
+                  run_install: true
+            - run: pnpm run prettier
+            - run: pnpm run lint
+            - run: pnpm run esm
+            - run: pnpm run rollup
+            - name: Release
+              env:
+                  HUSKY: 0
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: pnpx semantic-release
