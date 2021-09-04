@@ -534,7 +534,7 @@ export const elementScrollIntoView = (
         throw new TypeError(failedExecuteInvalidEnumValue("scrollIntoView", "Element", options.behavior));
     }
 
-    const actions = computeScrollIntoView(element, scrollIntoViewOptions || {});
+    const actions = computeScrollIntoView(element, options);
 
     actions.forEach(([frame, scrollToOptions]) => {
         elementScroll(frame, scrollToOptions, config);
