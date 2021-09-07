@@ -386,28 +386,24 @@ const getElementScrollSnapArea = (
     element: Element,
     elementRect: Readonly<DOMRect>,
     computedStyle: Readonly<CSSStyleDeclaration>,
-) => {
+): [top: number, right: number, bottom: number, left: number] => {
     const { top, right, bottom, left } = elementRect;
-    const [scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft] = [
-        "top",
-        "right",
-        "bottom",
-        "left",
-    ].map((edge) => {
-        const scrollProperty = getSupportedScrollMarginProperty(element.ownerDocument);
-        if (!scrollProperty) {
-            return 0;
-        }
+    const scrollProperty = getSupportedScrollMarginProperty(element.ownerDocument);
+    if (!scrollProperty) {
+        return [top, right, bottom, left];
+    }
+
+    const scrollMarginValue = (edge: "top" | "right" | "bottom" | "left"): number => {
         const value = computedStyle.getPropertyValue(`${scrollProperty}-${edge}`);
         return parseInt(value, 10) || 0;
-    });
+    };
 
     return [
-        top - scrollMarginTop,
-        right + scrollMarginRight,
-        bottom + scrollMarginBottom,
-        left - scrollMarginLeft,
-    ] as const;
+        top - scrollMarginValue("top"),
+        right + scrollMarginValue("right"),
+        bottom + scrollMarginValue("bottom"),
+        left - scrollMarginValue("left"),
+    ];
 };
 
 const calcAlignEdge = (align: ScrollAlignment, start: number, end: number): number => {
