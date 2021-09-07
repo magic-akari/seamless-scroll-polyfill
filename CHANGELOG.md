@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.1...v2.0.2) (2021-09-07)
+
+
+### Bug Fixes
+
+* add noUncheckedIndexedAccess ([de61125](https://github.com/magic-akari/seamless-scroll-polyfill/commit/de611259d4f9eab825be9e7260a8afacc12d44cf))
+
 ## [2.0.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.0...v2.0.1) (2021-08-31)
 
 
