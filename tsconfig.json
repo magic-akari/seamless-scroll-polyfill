@@ -9,7 +9,8 @@
         "downlevelIteration": true,
         "strict": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "noUncheckedIndexedAccess": true
     },
     "include": [".internal", "Element", "lib", "Window"]
 }
