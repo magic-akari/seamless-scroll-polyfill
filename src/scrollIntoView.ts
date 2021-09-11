@@ -510,7 +510,7 @@ const computeScrollIntoView = (element: Element, options: ScrollIntoViewOptions)
     return actions;
 };
 
-export const elementScrollIntoView = (
+export const scrollIntoView = (
     element: Element,
     scrollIntoViewOptions?: ScrollIntoViewOptions,
     config?: IScrollConfig,
@@ -527,3 +527,5 @@ export const elementScrollIntoView = (
         elementScroll(frame, scrollToOptions, config);
     });
 };
+
+export const elementScrollIntoView = scrollIntoView;

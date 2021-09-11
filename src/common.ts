@@ -50,15 +50,6 @@ export const modifyPrototypes = (modification: (prototype: Prototype) => void): 
     });
 };
 
-// https://drafts.csswg.org/cssom-view/#normalize-non-finite-values
-
-export const nonFinite = (value: unknown): number => {
-    if (!isFinite(value as number)) {
-        return 0;
-    }
-    return Number(value);
-};
-
 /**
  * - On Chrome and Firefox, document.scrollingElement will return the <html> element.
  * - Safari, document.scrollingElement will return the <body> element.

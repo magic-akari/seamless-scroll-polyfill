@@ -1,145 +1,49 @@
-import {
-    elementScrollXY,
-    getOriginalMethod,
-    isScrollBehaviorSupported,
-    markPolyfill,
-    modifyPrototypes,
-} from "./common.js";
+import { isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
 import type { IScrollConfig } from "./scroll-step";
-import {
-    elementScroll,
-    elementScrollBy,
-    elementScrollTo,
-    windowScroll,
-    windowScrollBy,
-    windowScrollTo,
-} from "./scroll.js";
+import { scroll, scrollBy, scrollTo } from "./scroll.js";
 
-export const elementScrollPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
+type ScrollName = "scroll" | "scrollTo" | "scrollBy";
 
-    const originalFunc = getOriginalMethod(window.HTMLElement.prototype, "scroll", elementScrollXY);
+type Patch = (modification: (prototype: Record<ScrollName, (this: Element | typeof window) => void>) => void) => void;
 
-    modifyPrototypes((prototype) => {
-        prototype.scroll = function scroll(): void {
-            const args = arguments;
-            if (args.length === 1) {
-                elementScroll(this, args[0], config);
-                return;
-            }
-
-            originalFunc.apply(this, args as any);
-        };
-
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        markPolyfill(prototype.scroll);
-    });
-};
-
-export const elementScrollToPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    const originalFunc = getOriginalMethod(window.HTMLElement.prototype, "scrollTo", elementScrollXY);
-
-    modifyPrototypes((prototype) => {
-        prototype.scrollTo = function scrollTo(): void {
-            const args = arguments;
-            if (args.length === 1) {
-                elementScrollTo(this, args[0], config);
-                return;
-            }
-
-            originalFunc.apply(this, args as any);
-        };
-
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        markPolyfill(prototype.scrollTo);
-    });
-};
-
-export const elementScrollByPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    modifyPrototypes((prototype) => {
-        prototype.scrollBy = function scrollBy(): void {
-            const args = arguments;
-            if (args.length === 1) {
-                elementScrollBy(this, args[0], config);
-                return;
-            }
-
-            const [left, top] = args as unknown as [number, number];
-
-            elementScrollBy(this, { left, top }, config);
-        };
-
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        markPolyfill(prototype.scrollBy);
-    });
-};
-
-export const windowScrollPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    const originalFunc = getOriginalMethod(window, "scroll");
-
-    window.scroll = function scroll() {
-        const args = arguments;
-        if (args.length === 1) {
-            windowScroll(this, args[0], config);
+const createPolyfill =
+    (scrollName: ScrollName, patch: Patch) =>
+    (config?: IScrollConfig): void => {
+        if (isScrollBehaviorSupported()) {
             return;
         }
 
-        originalFunc.apply(this, args as any);
+        const scrollMethod = {
+            scroll,
+            scrollTo,
+            scrollBy,
+        }[scrollName];
+
+        patch((prototype) => {
+            prototype[scrollName] = function (): void {
+                const args = arguments;
+                if (arguments.length === 1) {
+                    scrollMethod(this, args[0], config);
+                    return;
+                }
+
+                const left = args[0] as number;
+                const top = args[1] as number;
+                scrollMethod(this, { left, top });
+            };
+
+            markPolyfill(prototype[scrollName]);
+        });
     };
 
-    markPolyfill(window.scroll);
+export const elementScrollPolyfill = createPolyfill("scroll", modifyPrototypes);
+export const elementScrollToPolyfill = createPolyfill("scrollTo", modifyPrototypes);
+export const elementScrollByPolyfill = createPolyfill("scrollBy", modifyPrototypes);
+
+const modifyWindow: Patch = (modification) => {
+    modification(window);
 };
 
-export const windowScrollToPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    const originalFunc = getOriginalMethod(window, "scrollTo");
-
-    window.scrollTo = function scrollTo() {
-        const args = arguments;
-        if (args.length === 1) {
-            windowScrollTo(this, args[0], config);
-            return;
-        }
-
-        originalFunc.apply(this, args as any);
-    };
-
-    markPolyfill(window.scrollTo);
-};
-
-export const windowScrollByPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
-        return;
-    }
-
-    window.scrollBy = function scrollBy() {
-        const args = arguments;
-        if (args.length === 1) {
-            windowScrollBy(this, args[0], config);
-            return;
-        }
-
-        const [left, top] = args as unknown as [number, number];
-
-        windowScrollBy(this, { left, top }, config);
-    };
-
-    markPolyfill(window.scrollBy);
-};
+export const windowScrollPolyfill = createPolyfill("scroll", modifyWindow);
+export const windowScrollToPolyfill = createPolyfill("scrollTo", modifyWindow);
+export const windowScrollByPolyfill = createPolyfill("scrollBy", modifyWindow);

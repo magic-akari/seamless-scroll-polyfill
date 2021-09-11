@@ -4,18 +4,21 @@ import {
     getOriginalMethod,
     failedExecuteInvalidEnumValue,
     isObject,
-    nonFinite,
     elementScrollXY,
     scrollingElement,
 } from "./common.js";
 import type { IContext, IScrollConfig } from "./scroll-step";
 import { now, step } from "./scroll-step.js";
 
-const elementScrollWithOptions = (
-    element: Element,
-    options: Readonly<ScrollToOptions>,
-    config?: IScrollConfig,
-): void => {
+// https://drafts.csswg.org/cssom-view/#normalize-non-finite-values
+const nonFinite = (value: unknown): number => {
+    if (!isFinite(value as number)) {
+        return 0;
+    }
+    return Number(value);
+};
+
+const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>, config?: IScrollConfig): void => {
     if (!element.isConnected) {
         return;
     }
@@ -72,109 +75,45 @@ const elementScrollWithOptions = (
     step(context);
 };
 
-export const elementScroll = (element: Element, scrollOptions?: ScrollToOptions, config?: IScrollConfig): void => {
-    const options = scrollOptions ?? {};
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scroll", "Element"));
-    }
+const isWindow = (obj: unknown): obj is Window => (obj as Window).window === obj;
 
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scroll", "Element", options.behavior));
-    }
+interface ScrollMethod<T extends Element | typeof window> {
+    (target: T, scrollOptions?: ScrollToOptions, config?: IScrollConfig): void;
+}
 
-    elementScrollWithOptions(element, options, config);
-};
+const createScroll =
+    <T extends Element | typeof window>(scrollName: "scroll" | "scrollTo" | "scrollBy"): ScrollMethod<T> =>
+    (target, scrollOptions, config): void => {
+        const [element, scrollType]: [Element, "Window" | "Element"] = isWindow(target)
+            ? [scrollingElement(target.document.documentElement), "Window"]
+            : [target, "Element"];
 
-export const elementScrollTo = (element: Element, scrollToOptions?: ScrollToOptions, config?: IScrollConfig): void => {
-    const options = scrollToOptions ?? {};
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scrollTo", "Element"));
-    }
+        const options = scrollOptions ?? {};
 
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollTo", "Element", options.behavior));
-    }
+        if (!isObject(options)) {
+            throw new TypeError(failedExecute(scrollName, scrollType));
+        }
 
-    elementScrollWithOptions(element, options, config);
-};
+        if (!checkBehavior(options.behavior)) {
+            throw new TypeError(failedExecuteInvalidEnumValue(scrollName, scrollType, options.behavior));
+        }
 
-export const elementScrollBy = (element: Element, scrollByOptions?: ScrollToOptions, config?: IScrollConfig): void => {
-    const options = scrollByOptions ?? {};
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scrollBy", "Element"));
-    }
+        if (scrollName === "scrollBy") {
+            options.left = nonFinite(options.left) + element.scrollLeft;
+            options.top = nonFinite(options.top) + element.scrollTop;
+        }
 
-    const { behavior } = options;
+        scrollWithOptions(element, options, config);
+    };
 
-    if (!checkBehavior(behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Element", behavior));
-    }
+export const scroll = createScroll("scroll");
+export const scrollTo = createScroll("scrollTo");
+export const scrollBy = createScroll("scrollBy");
 
-    const left = nonFinite(options.left) + element.scrollLeft;
-    const top = nonFinite(options.top) + element.scrollTop;
+export const elementScroll = scroll as ScrollMethod<Element>;
+export const elementScrollTo = scrollTo as ScrollMethod<Element>;
+export const elementScrollBy = scrollBy as ScrollMethod<Element>;
 
-    elementScrollWithOptions(element, { left, top, behavior }, config);
-};
-
-export const windowScroll = (
-    currentWindow: typeof window,
-    scrollOptions?: ScrollToOptions,
-    config?: IScrollConfig,
-): void => {
-    const options = scrollOptions ?? {};
-
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scroll", "Window"));
-    }
-
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scroll", "Window", options.behavior));
-    }
-
-    const element = scrollingElement(currentWindow.document.documentElement);
-
-    elementScrollWithOptions(element, options, config);
-};
-
-export const windowScrollTo = (
-    currentWindow: typeof window,
-    scrollToOptions?: ScrollToOptions,
-    config?: IScrollConfig,
-): void => {
-    const options = scrollToOptions ?? {};
-
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scrollTo", "Window"));
-    }
-
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollTo", "Window", options.behavior));
-    }
-
-    const element = scrollingElement(currentWindow.document.documentElement);
-
-    elementScrollWithOptions(element, options, config);
-};
-
-export const windowScrollBy = (
-    currentWindow: typeof window,
-    scrollByOptions?: ScrollToOptions,
-    config?: IScrollConfig,
-): void => {
-    const options = scrollByOptions ?? {};
-
-    if (!isObject(options)) {
-        throw new TypeError(failedExecute("scrollBy", "Window"));
-    }
-
-    const { behavior } = options;
-
-    if (!checkBehavior(behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Window", behavior));
-    }
-
-    const left = nonFinite(options.left) + (currentWindow.scrollX || currentWindow.pageXOffset);
-    const top = nonFinite(options.top) + (currentWindow.scrollY || currentWindow.pageYOffset);
-
-    windowScroll(currentWindow, { left, top, behavior }, config);
-};
+export const windowScroll = scroll as ScrollMethod<typeof window>;
+export const windowScrollTo = scrollTo as ScrollMethod<typeof window>;
+export const windowScrollBy = scrollBy as ScrollMethod<typeof window>;
