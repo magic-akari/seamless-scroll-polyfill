@@ -18,8 +18,17 @@ const nonFinite = (value: unknown): number => {
     return Number(value);
 };
 
+const isConnected = (node: Node) => {
+    return (
+        node.isConnected ??
+        (!node.ownerDocument ||
+            // eslint-disable-next-line no-bitwise
+            !(node.ownerDocument.compareDocumentPosition(node) & /** DOCUMENT_POSITION_DISCONNECTED */ 1))
+    );
+};
+
 const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>, config?: IScrollConfig): void => {
-    if (!element.isConnected) {
+    if (!isConnected(element)) {
         return;
     }
 
