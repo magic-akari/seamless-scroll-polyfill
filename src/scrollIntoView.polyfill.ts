@@ -1,11 +1,5 @@
-import {
-    getOriginalMethod,
-    isObject,
-    isScrollBehaviorSupported,
-    markPolyfill,
-    modifyPrototypes,
-} from "../.internal/common.js";
-import type { IScrollConfig } from "../.internal/scroll-step";
+import { getOriginalMethod, isObject, isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
+import type { IScrollConfig } from "./scroll-step";
 import { elementScrollIntoView } from "./scrollIntoView.js";
 
 export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {

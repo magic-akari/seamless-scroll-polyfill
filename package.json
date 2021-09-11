@@ -34,8 +34,14 @@
         "tslib": "^2.3.1",
         "typescript": "^4.4.2"
     },
-    "main": "lib/bundle.js",
-    "module": "lib/index.js",
+    "type": "module",
+    "main": "./lib/bundle.js",
+    "browser": "./lib/bundle.min.js",
+    "module": "./lib/index.js",
+    "exports": {
+        "import": "./lib/index.js",
+        "default": "./lib/bundle.js"
+    },
     "types": "lib/index.d.ts",
     "sideEffects": false,
     "scripts": {

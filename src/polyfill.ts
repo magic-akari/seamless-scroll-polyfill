@@ -1,12 +1,17 @@
-import { isScrollBehaviorSupported } from "../.internal/common.js";
-import type { IScrollConfig } from "../.internal/scroll-step";
+import { isScrollBehaviorSupported } from "./common.js";
+import type { IScrollConfig } from "./scroll-step.js";
 import {
     elementScrollByPolyfill,
-    elementScrollIntoViewPolyfill,
     elementScrollPolyfill,
     elementScrollToPolyfill,
-} from "../Element/polyfill.js";
-import { windowScrollByPolyfill, windowScrollPolyfill, windowScrollToPolyfill } from "../Window/polyfill.js";
+    windowScrollByPolyfill,
+    windowScrollPolyfill,
+    windowScrollToPolyfill,
+} from "./scroll.polyfill.js";
+import { elementScrollIntoViewPolyfill } from "./scrollIntoView.polyfill.js";
+
+export * from "./scroll.polyfill.js";
+export * from "./scrollIntoView.polyfill.js";
 
 export const polyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {

@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
-import { checkBehavior, failedExecuteInvalidEnumValue } from "../.internal/common.js";
-import type { IScrollConfig } from "../.internal/scroll-step";
+import { checkBehavior, failedExecuteInvalidEnumValue, scrollingElement } from "./common.js";
+import type { IScrollConfig } from "./scroll-step";
 import { elementScroll } from "./scroll.js";
 
 const enum ScrollAlignment {
@@ -324,15 +324,6 @@ const getFrameElement = (element: Element): Element | null => {
     }
 };
 
-/**
- * - On Chrome and Firefox, document.scrollingElement will return the <html> element.
- * - Safari, document.scrollingElement will return the <body> element.
- * - On Edge, document.scrollingElement will return the <body> element.
- * - IE11 does not support document.scrollingElement, but you can assume its <html>.
- */
-const scrollingElement = (element: Element) =>
-    element.ownerDocument.scrollingElement || element.ownerDocument.documentElement;
-
 const isScrollable = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {
         return (
@@ -519,7 +510,7 @@ const computeScrollIntoView = (element: Element, options: ScrollIntoViewOptions)
     return actions;
 };
 
-export const elementScrollIntoView = (
+export const scrollIntoView = (
     element: Element,
     scrollIntoViewOptions?: ScrollIntoViewOptions,
     config?: IScrollConfig,
@@ -536,3 +527,5 @@ export const elementScrollIntoView = (
         elementScroll(frame, scrollToOptions, config);
     });
 };
+
+export const elementScrollIntoView = scrollIntoView;
