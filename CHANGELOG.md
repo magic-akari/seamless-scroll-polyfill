@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.0...v2.1.1) (2021-09-11)
+
+
+### Bug Fixes
+
+* workaround isConnected for IE ([fc88062](https://github.com/magic-akari/seamless-scroll-polyfill/commit/fc88062b3870af90c75a39d1c5a34953a79f4079))
+
 # [2.1.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.2...v2.1.0) (2021-09-11)
 
 
