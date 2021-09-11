@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.2...v2.1.0) (2021-09-11)
+
+
+### Features
+
+* export universe scroll, scrollTo and scrollBy functions ([89a631a](https://github.com/magic-akari/seamless-scroll-polyfill/commit/89a631a41eb25c36b560152ef006fba5439e70e8))
+
 ## [2.0.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.0.1...v2.0.2) (2021-09-07)
 
 
