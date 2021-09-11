@@ -112,12 +112,14 @@ export const windowScrollBy = (
         throw new TypeError(failedExecute("scrollBy", "Window"));
     }
 
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Window", options.behavior));
+    const { behavior } = options;
+
+    if (!checkBehavior(behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Window", behavior));
     }
 
     const left = nonFinite(options.left) + (currentWindow.scrollX || currentWindow.pageXOffset);
     const top = nonFinite(options.top) + (currentWindow.scrollY || currentWindow.pageYOffset);
 
-    windowScroll(currentWindow, { ...options, left, top }, config);
+    windowScroll(currentWindow, { left, top, behavior }, config);
 };

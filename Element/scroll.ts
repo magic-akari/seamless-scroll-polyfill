@@ -103,12 +103,14 @@ export const elementScrollBy = (element: Element, scrollByOptions?: ScrollToOpti
         throw new TypeError(failedExecute("scrollBy", "Element"));
     }
 
-    if (!checkBehavior(options.behavior)) {
-        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Element", options.behavior));
+    const { behavior } = options;
+
+    if (!checkBehavior(behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Element", behavior));
     }
 
     const left = nonFinite(options.left) + element.scrollLeft;
     const top = nonFinite(options.top) + element.scrollTop;
 
-    elementScrollWithOptions(element, { ...options, left, top }, config);
+    elementScrollWithOptions(element, { left, top, behavior }, config);
 };
