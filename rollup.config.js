@@ -3,7 +3,7 @@ import typescript from "rollup-plugin-typescript2";
 
 /** @type {import('rollup').RollupOptions} */
 const rollupOptions = {
-    input: "lib/index.ts",
+    input: "src/index.ts",
     plugins: typescript({
         useTsconfigDeclarationDir: true,
         tsconfigOverride: {

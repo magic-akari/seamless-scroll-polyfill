@@ -7,10 +7,10 @@ export function elementScrollXY(this: Element, x: number, y: number): void {
     this.scrollTop = y;
 }
 
-export const failedExecute = (method: string, object: string, reason: string = "cannot convert to dictionary.") =>
+export const failedExecute = (method: string, object: string, reason = "cannot convert to dictionary."): string =>
     `Failed to execute '${method}' on '${object}': ${reason}`;
 
-export const failedExecuteInvalidEnumValue = (method: string, object: string, value: string) =>
+export const failedExecuteInvalidEnumValue = (method: string, object: string, value: string): string =>
     failedExecute(method, object, `The provided value '${value}' is not a valid enum value of type ScrollBehavior.`);
 
 interface GetOriginalMethod {
@@ -18,6 +18,7 @@ interface GetOriginalMethod {
     <K extends keyof Window>(proto: Window, method: K, fallback?: unknown): Window[K];
 }
 
+/* eslint-disable */
 export const getOriginalMethod: GetOriginalMethod = (proto: any, method: string, fallback?: unknown) => {
     const backup = `__seamless__$$${method}$$__backup__`;
     proto[backup] ||= proto[method] ||= fallback;
@@ -28,6 +29,7 @@ export const getOriginalMethod: GetOriginalMethod = (proto: any, method: string,
 
     return proto[backup];
 };
+/* eslint-enable */
 
 export const isObject = (value: unknown): boolean => {
     const type = typeof value;
@@ -36,7 +38,7 @@ export const isObject = (value: unknown): boolean => {
 
 export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in window.document.documentElement.style;
 
-export const markPolyfill = (method: Record<never, never>) => {
+export const markPolyfill = (method: Record<never, never>): void => {
     Object.defineProperty(method, "__isPolyfill", { value: true });
 };
 
@@ -63,5 +65,5 @@ export const nonFinite = (value: unknown): number => {
  * - On Edge, document.scrollingElement will return the <body> element.
  * - IE11 does not support document.scrollingElement, but you can assume its <html>.
  */
-export const scrollingElement = (element: Element) =>
+export const scrollingElement = (element: Element): Element =>
     element.ownerDocument.scrollingElement || element.ownerDocument.documentElement;

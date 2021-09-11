@@ -4,8 +4,8 @@ import {
     isScrollBehaviorSupported,
     markPolyfill,
     modifyPrototypes,
-} from "../.internal/common.js";
-import type { IScrollConfig } from "../.internal/scroll-step";
+} from "./common.js";
+import type { IScrollConfig } from "./scroll-step";
 import {
     elementScroll,
     elementScrollBy,

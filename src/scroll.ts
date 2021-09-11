@@ -7,9 +7,9 @@ import {
     nonFinite,
     elementScrollXY,
     scrollingElement,
-} from "../.internal/common.js";
-import type { IContext, IScrollConfig } from "../.internal/scroll-step";
-import { now, step } from "../.internal/scroll-step.js";
+} from "./common.js";
+import type { IContext, IScrollConfig } from "./scroll-step";
+import { now, step } from "./scroll-step.js";
 
 const elementScrollWithOptions = (
     element: Element,

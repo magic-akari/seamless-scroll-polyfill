@@ -4,7 +4,7 @@
         "project": "./tsconfig.json"
     },
     "extends": ["akari", "akari/typescript"],
-    "ignorePatterns": ["**/*.js"],
+    "ignorePatterns": ["**/*.js", "**/*.d.ts"],
     "rules": {
         "default-case": "off",
         "prefer-rest-params": "off",

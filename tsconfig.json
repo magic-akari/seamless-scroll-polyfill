@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "lib",
         "target": "es2021",
         "module": "esnext",
         "lib": ["dom", "es5"],
@@ -11,6 +13,5 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "noUncheckedIndexedAccess": true
-    },
-    "include": [".internal", "lib", "src"]
+    }
 }
