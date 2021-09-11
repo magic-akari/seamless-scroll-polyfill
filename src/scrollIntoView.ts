@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-import { checkBehavior, failedExecuteInvalidEnumValue } from "../.internal/common.js";
+import { checkBehavior, failedExecuteInvalidEnumValue, scrollingElement } from "../.internal/common.js";
 import type { IScrollConfig } from "../.internal/scroll-step";
 import { elementScroll } from "./scroll.js";
 
@@ -323,15 +323,6 @@ const getFrameElement = (element: Element): Element | null => {
         return null;
     }
 };
-
-/**
- * - On Chrome and Firefox, document.scrollingElement will return the <html> element.
- * - Safari, document.scrollingElement will return the <body> element.
- * - On Edge, document.scrollingElement will return the <body> element.
- * - IE11 does not support document.scrollingElement, but you can assume its <html>.
- */
-const scrollingElement = (element: Element) =>
-    element.ownerDocument.scrollingElement || element.ownerDocument.documentElement;
 
 const isScrollable = (element: Element, computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
     if (element.clientHeight < element.scrollHeight || element.clientWidth < element.scrollWidth) {

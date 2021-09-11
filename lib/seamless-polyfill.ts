@@ -5,8 +5,10 @@ import {
     elementScrollIntoViewPolyfill,
     elementScrollPolyfill,
     elementScrollToPolyfill,
-} from "../Element/polyfill.js";
-import { windowScrollByPolyfill, windowScrollPolyfill, windowScrollToPolyfill } from "../Window/polyfill.js";
+    windowScrollByPolyfill,
+    windowScrollPolyfill,
+    windowScrollToPolyfill,
+} from "../src/polyfill.js";
 
 export const polyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {

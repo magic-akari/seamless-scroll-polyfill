@@ -6,6 +6,7 @@ import {
     isObject,
     nonFinite,
     elementScrollXY,
+    scrollingElement,
 } from "../.internal/common.js";
 import type { IContext, IScrollConfig } from "../.internal/scroll-step";
 import { now, step } from "../.internal/scroll-step.js";
@@ -113,4 +114,67 @@ export const elementScrollBy = (element: Element, scrollByOptions?: ScrollToOpti
     const top = nonFinite(options.top) + element.scrollTop;
 
     elementScrollWithOptions(element, { left, top, behavior }, config);
+};
+
+export const windowScroll = (
+    currentWindow: typeof window,
+    scrollOptions?: ScrollToOptions,
+    config?: IScrollConfig,
+): void => {
+    const options = scrollOptions ?? {};
+
+    if (!isObject(options)) {
+        throw new TypeError(failedExecute("scroll", "Window"));
+    }
+
+    if (!checkBehavior(options.behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scroll", "Window", options.behavior));
+    }
+
+    const element = scrollingElement(currentWindow.document.documentElement);
+
+    elementScrollWithOptions(element, options, config);
+};
+
+export const windowScrollTo = (
+    currentWindow: typeof window,
+    scrollToOptions?: ScrollToOptions,
+    config?: IScrollConfig,
+): void => {
+    const options = scrollToOptions ?? {};
+
+    if (!isObject(options)) {
+        throw new TypeError(failedExecute("scrollTo", "Window"));
+    }
+
+    if (!checkBehavior(options.behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scrollTo", "Window", options.behavior));
+    }
+
+    const element = scrollingElement(currentWindow.document.documentElement);
+
+    elementScrollWithOptions(element, options, config);
+};
+
+export const windowScrollBy = (
+    currentWindow: typeof window,
+    scrollByOptions?: ScrollToOptions,
+    config?: IScrollConfig,
+): void => {
+    const options = scrollByOptions ?? {};
+
+    if (!isObject(options)) {
+        throw new TypeError(failedExecute("scrollBy", "Window"));
+    }
+
+    const { behavior } = options;
+
+    if (!checkBehavior(behavior)) {
+        throw new TypeError(failedExecuteInvalidEnumValue("scrollBy", "Window", behavior));
+    }
+
+    const left = nonFinite(options.left) + (currentWindow.scrollX || currentWindow.pageXOffset);
+    const top = nonFinite(options.top) + (currentWindow.scrollY || currentWindow.pageYOffset);
+
+    windowScroll(currentWindow, { left, top, behavior }, config);
 };

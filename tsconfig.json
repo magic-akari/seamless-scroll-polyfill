@@ -12,5 +12,5 @@
         "forceConsistentCasingInFileNames": true,
         "noUncheckedIndexedAccess": true
     },
-    "include": [".internal", "Element", "lib", "Window"]
+    "include": [".internal", "lib", "src"]
 }

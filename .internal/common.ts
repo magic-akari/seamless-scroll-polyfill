@@ -56,3 +56,12 @@ export const nonFinite = (value: unknown): number => {
     }
     return Number(value);
 };
+
+/**
+ * - On Chrome and Firefox, document.scrollingElement will return the <html> element.
+ * - Safari, document.scrollingElement will return the <body> element.
+ * - On Edge, document.scrollingElement will return the <body> element.
+ * - IE11 does not support document.scrollingElement, but you can assume its <html>.
+ */
+export const scrollingElement = (element: Element) =>
+    element.ownerDocument.scrollingElement || element.ownerDocument.documentElement;
