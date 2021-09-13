@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.1...v2.1.2) (2021-09-13)
+
+
+### Bug Fixes
+
+* call scroll directly to avoid loop deps ([c61cf19](https://github.com/magic-akari/seamless-scroll-polyfill/commit/c61cf19b0e8a47bc2f91da8a9a1fa972eb5c73f3))
+
 ## [2.1.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.0...v2.1.1) (2021-09-11)
 
 
