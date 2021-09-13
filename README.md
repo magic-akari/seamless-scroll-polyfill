@@ -39,7 +39,8 @@ elementScrollIntoView(document.querySelector("#target"), { behavior: "smooth", b
 ## Import via script
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@2.0.0/lib/bundle.min.js"></script>
+<!-- please replace the `latest` with specific version -->
+<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@latest/lib/bundle.min.js"></script>
 <script>
     // patch all methods
     seamless.polyfill();
