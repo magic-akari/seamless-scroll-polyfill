@@ -1,10 +1,9 @@
 import {
     checkBehavior,
+    elementScrollXY,
     failedExecute,
-    getOriginalMethod,
     failedExecuteInvalidEnumValue,
     isObject,
-    elementScrollXY,
     scrollingElement,
 } from "./common.js";
 import type { IContext, IScrollConfig } from "./scroll-step";
@@ -42,11 +41,10 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
         return;
     }
 
-    const originalFunc = getOriginalMethod(Object.getPrototypeOf(element), "scroll", elementScrollXY);
-    const originalBoundFunc = originalFunc.bind(element);
+    const method = elementScrollXY.bind(element);
 
     if (options.behavior !== "smooth") {
-        originalBoundFunc(targetX, targetY);
+        method(targetX, targetY);
         return;
     }
 
@@ -63,7 +61,7 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
         targetX,
         targetY,
         rafId: 0,
-        method: originalBoundFunc,
+        method,
         callback: removeEventListener,
     };
 

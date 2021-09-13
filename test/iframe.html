@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css" />
+
+<div class="placehoolder"></div>
+<iframe src="./shadowdom.html" frameborder="0"></iframe>
+<div class="placehoolder"></div>
+
+<style>
+    .placehoolder {
+        width: 100%;
+        height: 400px;
+        background-color: lavender;
+    }
+    iframe {
+        display: block;
+        width: 800px;
+        height: 500px;
+    }
+</style>
+
+<script type="module">
+    import { elementScrollIntoView } from "../lib/scrollIntoView.js";
+    window.elementScrollIntoView = elementScrollIntoView;
+</script>
