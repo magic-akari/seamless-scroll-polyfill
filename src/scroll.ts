@@ -1,4 +1,11 @@
-import { checkBehavior, failedExecute, failedExecuteInvalidEnumValue, isObject, scrollingElement } from "./common.js";
+import {
+    checkBehavior,
+    elementScrollXY,
+    failedExecute,
+    failedExecuteInvalidEnumValue,
+    isObject,
+    scrollingElement,
+} from "./common.js";
 import type { IContext, IScrollConfig } from "./scroll-step";
 import { now, step } from "./scroll-step.js";
 
@@ -18,11 +25,6 @@ const isConnected = (node: Node) => {
             !(node.ownerDocument.compareDocumentPosition(node) & /** DOCUMENT_POSITION_DISCONNECTED */ 1))
     );
 };
-
-function elementScrollXY(this: Element, x: number, y: number): void {
-    this.scrollLeft = x;
-    this.scrollTop = y;
-}
 
 const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>, config?: IScrollConfig): void => {
     if (!isConnected(element)) {

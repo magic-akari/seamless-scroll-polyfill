@@ -1,24 +1,6 @@
-import { isObject, isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
+import { getOriginalMethod, isObject, isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
 import type { IScrollConfig } from "./scroll-step";
 import { elementScrollIntoView } from "./scrollIntoView.js";
-
-interface GetOriginalMethod {
-    <K extends keyof Element>(proto: Element, method: K, fallback?: unknown): Element[K];
-    <K extends keyof Window>(proto: Window, method: K, fallback?: unknown): Window[K];
-}
-
-/* eslint-disable */
-const getOriginalMethod: GetOriginalMethod = (proto: any, method: string, fallback?: unknown) => {
-    const backup = `__seamless__$$${method}$$__backup__`;
-    proto[backup] ||= proto[method] ||= fallback;
-
-    if (proto[backup]?.__isPolyfill) {
-        throw new Error("unexpected_method");
-    }
-
-    return proto[backup];
-};
-/* eslint-enable */
 
 export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
     if (isScrollBehaviorSupported()) {
