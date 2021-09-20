@@ -13,21 +13,22 @@ export const failedExecute = (method: string, object: string, reason = "cannot c
 export const failedExecuteInvalidEnumValue = (method: string, object: string, value: string): string =>
     failedExecute(method, object, `The provided value '${value}' is not a valid enum value of type ScrollBehavior.`);
 
-interface GetOriginalMethod {
-    <K extends keyof Element>(proto: Element, method: K, fallback?: unknown): Element[K];
-    <K extends keyof Window>(proto: Window, method: K, fallback?: unknown): Window[K];
+interface BackupMethod {
+    <K extends keyof Element>(proto: Element, method: K): Element[K] | undefined;
+    <K extends keyof Element>(proto: Element, method: K, fallback: unknown): Element[K];
+    <K extends keyof Window>(proto: Window, method: K): Window[K] | undefined;
+    <K extends keyof Window>(proto: Window, method: K, fallback: unknown): Window[K];
 }
 
 /* eslint-disable */
-export const getOriginalMethod: GetOriginalMethod = (proto: any, method: string, fallback?: unknown) => {
-    const backup = `__seamless__$$${method}$$__backup__`;
-    proto[backup] ||= proto[method] ||= fallback;
+export const backupMethod: BackupMethod = (proto: any, method: string, fallback?: unknown) => {
+    const backup = `__SEAMLESS.BACKUP$${method}`;
 
-    if (proto[backup]?.__isPolyfill) {
-        throw new Error("unexpected_method");
+    if (proto[method] && !proto[method]?.__isPolyfill) {
+        proto[backup] ||= proto[method];
     }
 
-    return proto[backup];
+    return proto[backup] || fallback;
 };
 /* eslint-enable */
 
@@ -38,15 +39,20 @@ export const isObject = (value: unknown): boolean => {
 
 export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in window.document.documentElement.style;
 
-export const markPolyfill = (method: Record<never, never>): void => {
+export const markPolyfill = (method: () => void): void => {
     Object.defineProperty(method, "__isPolyfill", { value: true });
 };
 
 type Prototype = typeof HTMLElement.prototype | typeof SVGElement.prototype | typeof Element.prototype;
 
-export const modifyPrototypes = (modification: (prototype: Prototype) => void): void => {
+export const modifyPrototypes = <T extends "scroll" | "scrollTo" | "scrollBy" | "scrollIntoView">(
+    prop: T,
+    func: Prototype[T],
+): void => {
+    markPolyfill(func);
     [HTMLElement.prototype, SVGElement.prototype, Element.prototype].forEach((prototype) => {
-        modification(prototype);
+        backupMethod(prototype, prop);
+        prototype[prop] = func;
     });
 };
 

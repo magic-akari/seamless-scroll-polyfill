@@ -1,4 +1,5 @@
 import {
+    backupMethod,
     checkBehavior,
     elementScrollXY,
     failedExecute,
@@ -41,7 +42,8 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
         return;
     }
 
-    const method = elementScrollXY.bind(element);
+    const fallback = backupMethod(HTMLElement.prototype, "scroll", elementScrollXY);
+    const method = backupMethod(Object.getPrototypeOf(element), "scroll", fallback).bind(element);
 
     if (options.behavior !== "smooth") {
         method(targetX, targetY);

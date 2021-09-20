@@ -1,10 +1,10 @@
-import { isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
+import { backupMethod, isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
 import type { IScrollConfig } from "./scroll-step";
 import { scroll, scrollBy, scrollTo } from "./scroll.js";
 
 type ScrollName = "scroll" | "scrollTo" | "scrollBy";
 
-type Patch = (modification: (prototype: Record<ScrollName, (this: Element | typeof window) => void>) => void) => void;
+type Patch = <T extends ScrollName>(prop: T, func: (Element | typeof window)[T]) => void;
 
 const createPolyfill =
     (scrollName: ScrollName, patch: Patch) =>
@@ -19,20 +19,16 @@ const createPolyfill =
             scrollBy,
         }[scrollName];
 
-        patch((prototype) => {
-            prototype[scrollName] = function (): void {
-                const args = arguments;
-                if (arguments.length === 1) {
-                    scrollMethod(this, args[0], config);
-                    return;
-                }
+        patch(scrollName, function (this: Element | typeof window): void {
+            const args = arguments;
+            if (arguments.length === 1) {
+                scrollMethod(this, args[0], config);
+                return;
+            }
 
-                const left = args[0] as number;
-                const top = args[1] as number;
-                scrollMethod(this, { left, top });
-            };
-
-            markPolyfill(prototype[scrollName]);
+            const left = args[0] as number;
+            const top = args[1] as number;
+            scrollMethod(this, { left, top });
         });
     };
 
@@ -40,8 +36,10 @@ export const elementScrollPolyfill = createPolyfill("scroll", modifyPrototypes);
 export const elementScrollToPolyfill = createPolyfill("scrollTo", modifyPrototypes);
 export const elementScrollByPolyfill = createPolyfill("scrollBy", modifyPrototypes);
 
-const modifyWindow: Patch = (modification) => {
-    modification(window);
+export const modifyWindow = <T extends "scroll" | "scrollTo" | "scrollBy">(prop: T, func: typeof window[T]): void => {
+    markPolyfill(func);
+    backupMethod(window, prop);
+    window[prop] = func;
 };
 
 export const windowScrollPolyfill = createPolyfill("scroll", modifyWindow);
