@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.2...v2.1.3) (2021-09-20)
+
+
+### Bug Fixes
+
+* make sure Element#scroll === HTMLElement#scroll === SVGElement#scroll ([0eae3a4](https://github.com/magic-akari/seamless-scroll-polyfill/commit/0eae3a48aa89702562c2dd6e51bf0eb95a055245))
+
 ## [2.1.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.1...v2.1.2) (2021-09-13)
 
 
