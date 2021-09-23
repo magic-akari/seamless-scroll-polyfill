@@ -128,7 +128,7 @@ const calcPhysicalAxis = <T>(writingMode: WritingMode, isLTR: boolean, hPos: T, 
     return [layout, hPos, vPos];
 };
 
-const isXScrollAxisReverse = (computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
+const isXReversed = (computedStyle: Readonly<CSSStyleDeclaration>): boolean => {
     const layout = calcPhysicalAxis(
         normalizeWritingMode(computedStyle.writingMode),
         computedStyle.direction !== "rtl",
@@ -185,7 +185,7 @@ const mapNearest = (
     elementEdgeStart: number,
     elementEdgeEnd: number,
     elementSize: number,
-): ScrollAlignment | null => {
+): Exclude<ScrollAlignment, ScrollAlignment.ToEdgeIfNeeded> | null => {
     if (align !== ScrollAlignment.ToEdgeIfNeeded) {
         return align;
     }
@@ -479,19 +479,15 @@ const computeScrollIntoView = (element: Element, options: ScrollIntoViewOptions)
 
         const [frameTop, frameRight, frameBottom, frameLeft] = getFrameViewport(frame, frameRect);
 
-        const frameX = calcAlignEdge(alignH, frameLeft, frameRight);
-        const frameY = calcAlignEdge(alignV, frameTop, frameBottom);
-
         const eAlignH = mapNearest(alignH, frameLeft, frameRight, frame.clientWidth, left, right, right - left);
         const eAlignV = mapNearest(alignV, frameTop, frameBottom, frame.clientHeight, top, bottom, bottom - top);
 
-        const eX = eAlignH === null ? frameX : calcAlignEdge(eAlignH, left, right);
-        const eY = eAlignV === null ? frameY : calcAlignEdge(eAlignV, top, bottom);
+        const diffX =
+            eAlignH === null ? 0 : calcAlignEdge(eAlignH, left, right) - calcAlignEdge(eAlignH, frameLeft, frameRight);
+        const diffY =
+            eAlignV === null ? 0 : calcAlignEdge(eAlignV, top, bottom) - calcAlignEdge(eAlignV, frameTop, frameBottom);
 
-        const diffX = eX - frameX;
-        const diffY = eY - frameY;
-
-        const moveX = isXScrollAxisReverse(frameStyle)
+        const moveX = isXReversed(frameStyle)
             ? clamp(diffX, -frame.scrollWidth + frame.clientWidth - frame.scrollLeft, -frame.scrollLeft)
             : clamp(diffX, -frame.scrollLeft, frame.scrollWidth - frame.clientWidth - frame.scrollLeft);
         const moveY = clamp(diffY, -frame.scrollTop, frame.scrollHeight - frame.clientHeight - frame.scrollTop);
