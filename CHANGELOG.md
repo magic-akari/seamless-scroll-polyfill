@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.3...v2.1.4) (2021-09-23)
+
+
+### Bug Fixes
+
+* correct nearest position ([f194982](https://github.com/magic-akari/seamless-scroll-polyfill/commit/f194982537532202d661aa158a006b519f99853d))
+
 ## [2.1.3](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.2...v2.1.3) (2021-09-20)
 
 
