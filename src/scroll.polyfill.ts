@@ -22,7 +22,7 @@ const createPolyfill =
         patch(scrollName, function (this: Element | typeof window): void {
             const args = arguments;
             if (arguments.length === 1) {
-                scrollMethod(this, args[0], config);
+                scrollMethod(this, args[0] as ScrollToOptions, config);
                 return;
             }
 

@@ -25,6 +25,6 @@ export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
             return;
         }
 
-        originalFunc.apply(this, args as any);
+        originalFunc.apply(this, args as never);
     });
 };
