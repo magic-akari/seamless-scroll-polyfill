@@ -24,8 +24,8 @@ interface BackupMethod {
 export const backupMethod: BackupMethod = (proto: any, method: string, fallback?: unknown) => {
     const backup = `__SEAMLESS.BACKUP$${method}`;
 
-    if (proto[method] && !proto[method]?.__isPolyfill) {
-        proto[backup] ||= proto[method];
+    if (!proto[backup] && proto[method] && !proto[method]?.__isPolyfill) {
+        proto[backup] = proto[method];
     }
 
     return proto[backup] || fallback;

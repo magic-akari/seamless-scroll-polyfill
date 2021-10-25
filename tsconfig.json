@@ -2,7 +2,7 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "lib",
-        "target": "es2021",
+        "target": "es2020",
         "module": "esnext",
         "lib": ["dom", "es5"],
         "declaration": true,
