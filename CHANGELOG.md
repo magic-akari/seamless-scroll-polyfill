@@ -1,3 +1,10 @@
+## [2.1.5](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.4...v2.1.5) (2021-10-25)
+
+
+### Bug Fixes
+
+* change the output target to es2020 for more compatibility ([c0f5a08](https://github.com/magic-akari/seamless-scroll-polyfill/commit/c0f5a08c19f3a2b7f467b7f227be04db2f27910d))
+
 ## [2.1.4](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.3...v2.1.4) (2021-09-23)
 
 
