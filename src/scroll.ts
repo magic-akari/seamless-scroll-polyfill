@@ -115,9 +115,9 @@ const createScroll =
         scrollWithOptions(element, options, config);
     };
 
-export const scroll = createScroll("scroll");
-export const scrollTo = createScroll("scrollTo");
-export const scrollBy = createScroll("scrollBy");
+export const scroll = /* #__PURE__ */ createScroll("scroll");
+export const scrollTo = /* #__PURE__ */ createScroll("scrollTo");
+export const scrollBy = /* #__PURE__ */ createScroll("scrollBy");
 
 export const elementScroll = scroll as ScrollMethod<Element>;
 export const elementScrollTo = scrollTo as ScrollMethod<Element>;

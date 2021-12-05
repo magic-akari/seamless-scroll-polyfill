@@ -32,9 +32,9 @@ const createPolyfill =
         });
     };
 
-export const elementScrollPolyfill = createPolyfill("scroll", modifyPrototypes);
-export const elementScrollToPolyfill = createPolyfill("scrollTo", modifyPrototypes);
-export const elementScrollByPolyfill = createPolyfill("scrollBy", modifyPrototypes);
+export const elementScrollPolyfill = /* #__PURE__ */ createPolyfill("scroll", modifyPrototypes);
+export const elementScrollToPolyfill = /* #__PURE__ */ createPolyfill("scrollTo", modifyPrototypes);
+export const elementScrollByPolyfill = /* #__PURE__ */ createPolyfill("scrollBy", modifyPrototypes);
 
 export const modifyWindow = <T extends "scroll" | "scrollTo" | "scrollBy">(prop: T, func: typeof window[T]): void => {
     markPolyfill(func);
@@ -42,6 +42,6 @@ export const modifyWindow = <T extends "scroll" | "scrollTo" | "scrollBy">(prop:
     window[prop] = func;
 };
 
-export const windowScrollPolyfill = createPolyfill("scroll", modifyWindow);
-export const windowScrollToPolyfill = createPolyfill("scrollTo", modifyWindow);
-export const windowScrollByPolyfill = createPolyfill("scrollBy", modifyWindow);
+export const windowScrollPolyfill = /* #__PURE__ */ createPolyfill("scroll", modifyWindow);
+export const windowScrollToPolyfill = /* #__PURE__ */ createPolyfill("scrollTo", modifyWindow);
+export const windowScrollByPolyfill = /* #__PURE__ */ createPolyfill("scrollBy", modifyWindow);
