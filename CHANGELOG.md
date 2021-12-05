@@ -1,3 +1,10 @@
+## [2.1.6](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.5...v2.1.6) (2021-12-05)
+
+
+### Bug Fixes
+
+* allow tree-shake if necessary ([aae469f](https://github.com/magic-akari/seamless-scroll-polyfill/commit/aae469f61abd921e40ebe87133011774e4be0d37))
+
 ## [2.1.5](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.4...v2.1.5) (2021-10-25)
 
 
