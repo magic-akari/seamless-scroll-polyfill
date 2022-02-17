@@ -1,3 +1,10 @@
+## [2.1.7](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.6...v2.1.7) (2022-02-17)
+
+
+### Bug Fixes
+
+* use `.cjs` as bundle extension ([be50916](https://github.com/magic-akari/seamless-scroll-polyfill/commit/be50916c448fc4856464767a9fb20e3e318aa094))
+
 ## [2.1.6](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.5...v2.1.6) (2021-12-05)
 
 
