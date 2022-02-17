@@ -36,12 +36,12 @@
     },
     "packageManager": "pnpm@6.23.6",
     "type": "module",
-    "main": "./lib/bundle.js",
-    "browser": "./lib/bundle.min.js",
+    "main": "./lib/bundle.cjs",
+    "browser": "./lib/bundle.min.cjs",
     "module": "./lib/index.js",
     "exports": {
         "import": "./lib/index.js",
-        "default": "./lib/bundle.js"
+        "default": "./lib/bundle.cjs"
     },
     "types": "lib/index.d.ts",
     "sideEffects": false,

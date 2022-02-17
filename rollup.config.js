@@ -15,13 +15,13 @@ const rollupOptions = {
     }),
     output: [
         {
-            file: "lib/bundle.js",
+            file: "lib/bundle.cjs",
             name: "seamless",
             format: "umd",
             sourcemap: true,
         },
         {
-            file: "lib/bundle.min.js",
+            file: "lib/bundle.min.cjs",
             name: "seamless",
             format: "umd",
             sourcemap: true,

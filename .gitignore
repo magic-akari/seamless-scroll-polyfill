@@ -133,5 +133,6 @@ $RECYCLE.BIN/
 .pnp.*
 
 */**/*.js
+*/**/*.cjs
 */**/*.map
 */**/*.d.ts
