@@ -1,3 +1,10 @@
+## [2.1.8](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.7...v2.1.8) (2022-02-19)
+
+
+### Bug Fixes
+
+* downlevel to es2015 target ([d1d7e01](https://github.com/magic-akari/seamless-scroll-polyfill/commit/d1d7e0163f3f60230860cbd872ab07fca3145f72))
+
 ## [2.1.7](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.6...v2.1.7) (2022-02-17)
 
 
