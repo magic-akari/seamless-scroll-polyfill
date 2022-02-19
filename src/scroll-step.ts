@@ -18,7 +18,20 @@ const ease = (k: number) => {
     return 0.5 * (1 - Math.cos(Math.PI * k));
 };
 
-export const now = (): number => window.performance?.now?.() ?? window.Date.now();
+/* eslint-disable */
+export function now(): number {
+    let fn: () => number;
+    if (window.performance?.now) {
+        fn = () => window.performance.now();
+    } else {
+        fn = () => window.Date.now();
+    }
+
+    // @ts-ignore
+    now = fn;
+    return fn();
+}
+/* eslint-enable */
 
 const DURATION = 500;
 
