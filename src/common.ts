@@ -1,3 +1,9 @@
+declare global {
+    interface Window {
+        __forceSmoothScrollPolyfill__?: boolean;
+    }
+}
+
 export const checkBehavior = (behavior?: string): behavior is undefined | ScrollBehavior => {
     return behavior === undefined || behavior === "auto" || behavior === "instant" || behavior === "smooth";
 };
@@ -37,7 +43,8 @@ export const isObject = (value: unknown): boolean => {
     return value !== null && (type === "object" || type === "function");
 };
 
-export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in window.document.documentElement.style;
+export const isScrollBehaviorSupported = (): boolean =>
+    "scrollBehavior" in window.document.documentElement.style && !(window.__forceSmoothScrollPolyfill__ ?? false);
 
 export const markPolyfill = (method: () => void): void => {
     Object.defineProperty(method, "__isPolyfill", { value: true });
