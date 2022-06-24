@@ -14,7 +14,7 @@ export * from "./scroll.polyfill.js";
 export * from "./scrollIntoView.polyfill.js";
 
 export const polyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
+    if (!config?.force && isScrollBehaviorSupported()) {
         return;
     }
 
