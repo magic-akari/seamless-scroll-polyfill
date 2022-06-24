@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.8...v2.2.0) (2022-06-24)
+
+
+### Features
+
+* add configuration to force polyfill's use ([#136](https://github.com/magic-akari/seamless-scroll-polyfill/issues/136)) ([93d1818](https://github.com/magic-akari/seamless-scroll-polyfill/commit/93d1818721bb1aa87859f033deaf2408b67a2797))
+
 ## [2.1.8](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.7...v2.1.8) (2022-02-19)
 
 
