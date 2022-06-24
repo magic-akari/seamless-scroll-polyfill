@@ -1,3 +1,5 @@
+import type { IScrollConfig } from "./scroll-step";
+
 export const checkBehavior = (behavior?: string): behavior is undefined | ScrollBehavior => {
     return behavior === undefined || behavior === "auto" || behavior === "instant" || behavior === "smooth";
 };
@@ -37,7 +39,8 @@ export const isObject = (value: unknown): boolean => {
     return value !== null && (type === "object" || type === "function");
 };
 
-export const isScrollBehaviorSupported = (): boolean => "scrollBehavior" in window.document.documentElement.style;
+export const isScrollBehaviorSupported = (config?: IScrollConfig): boolean =>
+    "scrollBehavior" in window.document.documentElement.style && config?.forcePolyfill !== true;
 
 export const markPolyfill = (method: () => void): void => {
     Object.defineProperty(method, "__isPolyfill", { value: true });

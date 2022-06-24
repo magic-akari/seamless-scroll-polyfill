@@ -1,5 +1,6 @@
 export interface IScrollConfig {
     readonly duration?: number;
+    readonly forcePolyfill?: boolean;
     readonly timingFunc?: (k: number) => number;
 }
 

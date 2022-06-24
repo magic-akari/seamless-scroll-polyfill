@@ -9,7 +9,7 @@ type Patch = <T extends ScrollName>(prop: T, func: (Element | typeof window)[T])
 const createPolyfill =
     (scrollName: ScrollName, patch: Patch) =>
     (config?: IScrollConfig): void => {
-        if (isScrollBehaviorSupported()) {
+        if (isScrollBehaviorSupported(config)) {
             return;
         }
 
