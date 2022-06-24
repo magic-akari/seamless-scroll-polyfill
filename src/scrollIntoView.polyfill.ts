@@ -10,7 +10,7 @@ function elementScrollIntoViewBoolean(this: Element, alignToTop?: unknown) {
 }
 
 export const elementScrollIntoViewPolyfill = (config?: IScrollConfig): void => {
-    if (isScrollBehaviorSupported()) {
+    if (isScrollBehaviorSupported(config)) {
         return;
     }
 
