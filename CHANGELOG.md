@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.2.1...v2.3.0) (2023-01-26)
+
+
+### Features
+
+* support scrollend event ([5072b41](https://github.com/magic-akari/seamless-scroll-polyfill/commit/5072b418f88e842105138b6159729e1a564a1357))
+
 ## [2.2.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.2.0...v2.2.1) (2023-01-26)
 
 
