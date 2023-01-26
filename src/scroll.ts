@@ -7,6 +7,7 @@ import {
     isObject,
     scrollingElement,
 } from "./common.js";
+import { scrollEndEvent } from "./scroll-end-event.js";
 import type { IContext, IScrollConfig } from "./scroll-step";
 import { now, step } from "./scroll-step.js";
 
@@ -55,6 +56,12 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
         window.removeEventListener("touchmove", cancelScroll);
     };
 
+    const callback = () => {
+        removeEventListener();
+        const isDocument = element.nodeType === /** Node.DOCUMENT_NODE */ 9;
+        element.dispatchEvent(scrollEndEvent(isDocument));
+    };
+
     const context: IContext = {
         ...config,
         timeStamp: now(),
@@ -64,7 +71,7 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
         targetY,
         rafId: 0,
         method,
-        callback: removeEventListener,
+        callback,
     };
 
     const cancelScroll = () => {
