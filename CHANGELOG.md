@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.2.0...v2.2.1) (2023-01-26)
+
+
+### Bug Fixes
+
+* typescript config ([0ccb8fe](https://github.com/magic-akari/seamless-scroll-polyfill/commit/0ccb8fee7f51a3f9cc4ae9339db083e4d3a3d7e8))
+
 # [2.2.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.1.8...v2.2.0) (2022-06-24)
 
 
