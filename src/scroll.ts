@@ -86,9 +86,11 @@ const scrollWithOptions = (element: Element, options: Readonly<ScrollToOptions>,
 
 const isWindow = (obj: unknown): obj is Window => (obj as Window).window === obj;
 
-interface ScrollMethod<T extends Element | typeof window> {
-    (target: T, scrollOptions?: ScrollToOptions, config?: IScrollConfig): void;
-}
+type ScrollMethod<T extends Element | typeof window> = (
+    target: T,
+    scrollOptions?: ScrollToOptions,
+    config?: IScrollConfig,
+) => void;
 
 const createScroll =
     <T extends Element | typeof window>(scrollName: "scroll" | "scrollTo" | "scrollBy"): ScrollMethod<T> =>

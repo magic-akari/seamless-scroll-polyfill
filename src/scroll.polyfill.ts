@@ -36,7 +36,7 @@ export const elementScrollPolyfill = /* #__PURE__ */ createPolyfill("scroll", mo
 export const elementScrollToPolyfill = /* #__PURE__ */ createPolyfill("scrollTo", modifyPrototypes);
 export const elementScrollByPolyfill = /* #__PURE__ */ createPolyfill("scrollBy", modifyPrototypes);
 
-export const modifyWindow = <T extends "scroll" | "scrollTo" | "scrollBy">(prop: T, func: typeof window[T]): void => {
+export const modifyWindow = <T extends "scroll" | "scrollTo" | "scrollBy">(prop: T, func: (typeof window)[T]): void => {
     markPolyfill(func);
     backupMethod(window, prop);
     window[prop] = func;

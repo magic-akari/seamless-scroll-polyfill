@@ -3,14 +3,22 @@
     "parserOptions": {
         "project": "./tsconfig.json"
     },
-    "extends": ["akari", "akari/typescript"],
     "ignorePatterns": ["**/*.js", "**/*.d.ts"],
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": [
+        "eslint:recommended",
+        "akari",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict",
+        "akari/typescript",
+        "prettier"
+    ],
     "rules": {
         "default-case": "off",
         "prefer-rest-params": "off",
-        "@typescript-eslint/no-unsafe-assignment": "warn",
         "@typescript-eslint/no-unnecessary-condition": "off",
-        "@typescript-eslint/prefer-readonly-parameter-types": "off",
-        "@typescript-eslint/switch-exhaustiveness-check": "off"
+        "@typescript-eslint/prefer-nullish-coalescing": "off"
     }
 }

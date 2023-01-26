@@ -6,14 +6,14 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v1
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
               with:
-                  node-version: 14
-            - uses: pnpm/action-setup@v2.0.1
+                  node-version-file: ".node-version"
+            - uses: pnpm/action-setup@v2
               with:
-                  version: 6.0.2
-                  run_install: true
+                  run_install: |
+                      - args: [--frozen-lockfile, --strict-peer-dependencies]
             - run: pnpm run prettier
             - run: pnpm run lint
             - run: pnpm run esm
