@@ -40,7 +40,7 @@ scrollIntoView(document.querySelector("#target"), { behavior: "smooth", block: "
 
 ```html
 <!-- please replace the `latest` with specific version -->
-<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@latest/lib/bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@latest"></script>
 <script>
     // patch all methods
     seamless.polyfill();

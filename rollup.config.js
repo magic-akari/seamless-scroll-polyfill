@@ -15,15 +15,20 @@ const rollupOptions = {
     }),
     output: [
         {
-            file: "lib/bundle.cjs",
+            file: "lib/index.cjs",
+            format: "cjs",
+            sourcemap: true,
+        },
+        {
+            file: "lib/bundle.umd.cjs",
             name: "seamless",
             format: "umd",
             sourcemap: true,
         },
         {
-            file: "lib/bundle.min.cjs",
+            file: "lib/browser.min.js",
             name: "seamless",
-            format: "umd",
+            format: "iife",
             sourcemap: true,
             plugins: [terser()],
         },

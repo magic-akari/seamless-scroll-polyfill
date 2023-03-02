@@ -1,5 +1,5 @@
 import { backupMethod, isObject, isScrollBehaviorSupported, modifyPrototypes } from "./common.js";
-import type { IScrollConfig } from "./scroll-step";
+import type { IScrollConfig } from "./scroll-step.js";
 import { elementScrollIntoView } from "./scrollIntoView.js";
 
 function elementScrollIntoViewBoolean(this: Element, alignToTop?: unknown) {

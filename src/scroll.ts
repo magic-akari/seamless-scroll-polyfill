@@ -8,7 +8,7 @@ import {
     scrollingElement,
 } from "./common.js";
 import { scrollEndEvent } from "./scroll-end-event.js";
-import type { IContext, IScrollConfig } from "./scroll-step";
+import type { IContext, IScrollConfig } from "./scroll-step.js";
 import { now, step } from "./scroll-step.js";
 
 // https://drafts.csswg.org/cssom-view/#normalize-non-finite-values

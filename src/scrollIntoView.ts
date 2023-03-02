@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
 import { checkBehavior, failedExecuteInvalidEnumValue, scrollingElement } from "./common.js";
-import type { IScrollConfig } from "./scroll-step";
+import type { IScrollConfig } from "./scroll-step.js";
 import { elementScroll } from "./scroll.js";
 
 const enum ScrollAlignment {

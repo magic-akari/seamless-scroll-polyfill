@@ -1,4 +1,4 @@
-import type { IScrollConfig } from "./scroll-step";
+import type { IScrollConfig } from "./scroll-step.js";
 
 export const checkBehavior = (behavior?: string): behavior is undefined | ScrollBehavior => {
     return behavior === undefined || behavior === "auto" || behavior === "instant" || behavior === "smooth";

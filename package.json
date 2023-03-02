@@ -39,12 +39,17 @@
     },
     "packageManager": "pnpm@7.26.0",
     "type": "module",
-    "main": "./lib/bundle.cjs",
-    "browser": "./lib/bundle.min.cjs",
+    "main": "./lib/bundle.umd.cjs",
+    "browser": "./lib/browser.min.js",
     "module": "./lib/index.js",
     "exports": {
-        "import": "./lib/index.js",
-        "default": "./lib/bundle.cjs"
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.js",
+            "require": "./lib/index.cjs",
+            "default": "./lib/bundle.umd.cjs"
+        },
+        "./package.json": "./package.json"
     },
     "types": "lib/index.d.ts",
     "sideEffects": false,

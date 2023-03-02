@@ -1,5 +1,5 @@
 import { backupMethod, isScrollBehaviorSupported, markPolyfill, modifyPrototypes } from "./common.js";
-import type { IScrollConfig } from "./scroll-step";
+import type { IScrollConfig } from "./scroll-step.js";
 import { scroll, scrollBy, scrollTo } from "./scroll.js";
 
 type ScrollName = "scroll" | "scrollTo" | "scrollBy";
