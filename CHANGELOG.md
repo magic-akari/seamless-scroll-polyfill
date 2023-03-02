@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.0...v2.3.1) (2023-03-02)
+
+
+### Bug Fixes
+
+* nodenext and exports ([a455967](https://github.com/magic-akari/seamless-scroll-polyfill/commit/a45596773af020e1103c82fdcbd525e2a62a161a))
+
 # [2.3.0](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.2.1...v2.3.0) (2023-01-26)
 
 
