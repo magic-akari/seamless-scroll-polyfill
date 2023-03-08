@@ -1,3 +1,10 @@
+## [2.3.3](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.2...v2.3.3) (2023-03-08)
+
+
+### Bug Fixes
+
+* types for nodenext in cjs ([6e20245](https://github.com/magic-akari/seamless-scroll-polyfill/commit/6e20245a042752cf70bdbd9c074cb82553e8bccd))
+
 ## [2.3.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.1...v2.3.2) (2023-03-08)
 
 
