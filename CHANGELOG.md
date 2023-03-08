@@ -1,3 +1,11 @@
+## [2.3.2](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.1...v2.3.2) (2023-03-08)
+
+
+### Bug Fixes
+
+* `modifyWindow` should not be public ([a98f724](https://github.com/magic-akari/seamless-scroll-polyfill/commit/a98f72468ed0729f937ff74ee2a80748ee60cd42))
+* exclude config from npm pack ([2612851](https://github.com/magic-akari/seamless-scroll-polyfill/commit/2612851dc3942e97d84fabe108e1156f1a456a36))
+
 ## [2.3.1](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.0...v2.3.1) (2023-03-02)
 
 
