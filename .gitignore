@@ -132,6 +132,7 @@ $RECYCLE.BIN/
 .yarn/install-state.gz
 .pnp.*
 
+lib/
 */**/*.js
 */**/*.cjs
 */**/*.map

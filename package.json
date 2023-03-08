@@ -44,9 +44,14 @@
     "module": "./lib/index.js",
     "exports": {
         ".": {
-            "types": "./lib/index.d.ts",
-            "import": "./lib/index.js",
-            "require": "./lib/index.cjs",
+            "require": {
+                "types": "./lib/index.d.cts",
+                "default": "./lib/index.cjs"
+            },
+            "import": {
+                "types": "./lib/index.d.ts",
+                "default": "./lib/index.js"
+            },
             "default": "./lib/bundle.umd.cjs"
         },
         "./package.json": "./package.json"
@@ -56,6 +61,7 @@
     "scripts": {
         "esm": "tsc",
         "rollup": "rollup -c",
+        "fix-cts-type": "cp -rf lib/index.d.ts lib/index.d.cts",
         "type-check": "tsc --noEmit --skipLibCheck",
         "prettier": "prettier --ignore-path .gitignore -l \"**/*.{ts,js,json,yml}\" \"README.md\"",
         "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.{ts,js,json,yml}\" \"README.md\"",

@@ -24,6 +24,7 @@ jobs:
             - run: pnpm run lint
             - run: pnpm run esm
             - run: pnpm run rollup
+            - run: pnpm run fix-cts-type
             - name: Release
               env:
                   HUSKY: 0
