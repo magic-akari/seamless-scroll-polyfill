@@ -31,6 +31,7 @@ const rollupOptions = {
             format: "iife",
             sourcemap: true,
             plugins: [terser()],
+            footer: `if(typeof module==="object")module.exports=seamless;`,
         },
     ],
 };

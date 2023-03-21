@@ -40,8 +40,9 @@
     "packageManager": "pnpm@7.28.0",
     "type": "module",
     "main": "./lib/bundle.umd.cjs",
-    "browser": "./lib/browser.min.js",
     "module": "./lib/index.js",
+    "unpkg": "./lib/browser.min.js",
+    "jsdelivr": "./lib/browser.min.js",
     "exports": {
         ".": {
             "require": {
@@ -54,7 +55,8 @@
             },
             "default": "./lib/bundle.umd.cjs"
         },
-        "./package.json": "./package.json"
+        "./package.json": "./package.json",
+        "./lib/*": "./lib/*"
     },
     "types": "lib/index.d.ts",
     "sideEffects": false,
