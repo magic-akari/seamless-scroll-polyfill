@@ -1,3 +1,10 @@
+## [2.3.4](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.3...v2.3.4) (2023-03-21)
+
+
+### Bug Fixes
+
+* remove `browser` from package.json ([e5c0748](https://github.com/magic-akari/seamless-scroll-polyfill/commit/e5c074871838e1512bf6015b9be7455af12b9e48))
+
 ## [2.3.3](https://github.com/magic-akari/seamless-scroll-polyfill/compare/v2.3.2...v2.3.3) (2023-03-08)
 
 
